@@ -8,7 +8,18 @@
 var PatternEditor = (function () {
     'use strict';
 
-    var STORAGE_KEY = 'dz_user_patterns_v1';
+    // Per-DZ storage : chaque DZ a ses propres patterns / zone de posé /
+    // NFZ. Quand l'utilisateur switch de DZ, on charge automatiquement
+    // la config sauvegardée pour cette DZ (ou des seeds si vide).
+    var STORAGE_PREFIX = 'dz_user_patterns_v1_';
+
+    function _currentDzCode() {
+        var dz = (typeof getDZ === 'function') ? getDZ() : null;
+        return (dz && dz.code) ? dz.code : '_default';
+    }
+    function _storageKey() {
+        return STORAGE_PREFIX + _currentDzCode();
+    }
 
     // Default empty pattern slot. Two slots are exposed in the UI but they
     // are NOT pre-bound to a specific wind direction — the pattern's "wind
@@ -51,8 +62,29 @@ var PatternEditor = (function () {
     // ── Persistence ────────────────────────────────────────────
     function load() {
         try {
-            var raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return;
+            // 1) Lit la clé spécifique à la DZ courante
+            var raw = localStorage.getItem(_storageKey());
+            // 2) Fallback : migre l'ancienne clé globale `dz_user_patterns_v1`
+            //    vers la clé de la DZ courante (1 seule fois) puis la supprime
+            if (!raw) {
+                var legacy = localStorage.getItem('dz_user_patterns_v1');
+                if (legacy) {
+                    localStorage.setItem(_storageKey(), legacy);
+                    localStorage.removeItem('dz_user_patterns_v1');
+                    raw = legacy;
+                }
+            }
+            if (!raw) {
+                // Pas de config pour cette DZ — on reset l'état en mémoire
+                _state.patterns = { a: _defaultPattern('#f59e0b'), b: _defaultPattern('#3b82f6') };
+                _state.zonePolygon = null;
+                if (typeof NFZ !== 'undefined') {
+                    var dz0 = typeof getDZ === 'function' ? getDZ() : { lat: 0, lon: 0 };
+                    NFZ.init(dz0.lat, dz0.lon);
+                    NFZ.clearZones();
+                }
+                return;
+            }
             var data = JSON.parse(raw);
             if (data.patterns) {
                 // Legacy key migration: east → a, west → b
@@ -82,12 +114,32 @@ var PatternEditor = (function () {
                     polygon: z.polygon
                 };
             }) : [];
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            localStorage.setItem(_storageKey(), JSON.stringify({
                 patterns: _state.patterns,
                 zonePolygon: _state.zonePolygon,
                 nfz: nfzList
             }));
         } catch (e) { console.warn('PatternEditor.save failed', e); }
+    }
+
+    // Recharge la config de la DZ courante depuis localStorage. Appelée
+    // par app.js sur changement de DZ.
+    function reload() {
+        // Efface tous les rendus carte (patterns + NFZ). refreshDisplay()
+        // redessine les patterns + zone de posé.
+        if (_map) {
+            _displayLayers.forEach(function (l) { _map.removeLayer(l); });
+            _displayLayers = [];
+            if (typeof NFZ !== 'undefined' && typeof NFZ.clearMapLayers === 'function') {
+                NFZ.clearMapLayers(_map);
+            }
+        }
+        load();
+        refreshDisplay();
+        if (typeof NFZ !== 'undefined' && _map) NFZ.drawOnMap(_map);
+        if (typeof UIOptimizer !== 'undefined' && typeof UIOptimizer.refreshNFZ === 'function') {
+            UIOptimizer.refreshNFZ();
+        }
     }
 
     function exportJSON() {
@@ -705,6 +757,7 @@ var PatternEditor = (function () {
         reset: reset,
         save: save,
         load: load,
+        reload: reload,
         exportJSON: exportJSON,
         importJSON: importJSON,
         refreshDisplay: refreshDisplay,

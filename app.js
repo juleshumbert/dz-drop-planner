@@ -241,6 +241,11 @@ function onDZChange(isInit) {
     document.getElementById('dz_info').textContent =
         dz.lat.toFixed(4) + '°N  ' + dz.lon.toFixed(4) + '°E — Elev ' + dz.elev + ' m (' + (dz.elev * 3.28084).toFixed(0) + ' ft)';
     updateMapDZ(dz);
+    // Recharge les patterns + zone de posé + NFZ associés à la DZ courante
+    // (storage scopé par code OACI : chaque DZ a sa propre config).
+    if (!isInit && typeof PatternEditor !== 'undefined' && typeof PatternEditor.reload === 'function') {
+        PatternEditor.reload();
+    }
     recompute();
 }
 
