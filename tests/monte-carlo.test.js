@@ -95,15 +95,21 @@ test('perturbJumpers handles subOverrides (PAC moniteur breakoff)', () => {
         'mono has _breakoffAxisNoise');
 });
 
-test('perturbJumpers : flipProb applies 180° flip with probability', () => {
-    // flipProb=1 always flips
-    const jumpers = [
-        { vc: 50, vzVoile: 5, glide: 2.5, hOuv: 1500, skill: 0.5, nbPara: 1,
-          isTracking: true, trackDist: 600, flipProb: 1.0 }
-    ];
-    const p = MC.perturbJumpers(jumpers, {});
-    assert.ok(p[0]._flipped, 'flipped=true with flipProb=1');
-    // _trackAxisNoise includes 180° shift
-    assert.ok(Math.abs(p[0]._trackAxisNoise) >= 170,
-        `trackAxisNoise ${p[0]._trackAxisNoise} should include ~180`);
+test('perturbJumpers : flipProb=1 always sets _flipped + adds 180° to tracking noise', () => {
+    // Repeat over many draws to defend against gaussian noise from σ=15° default
+    // pushing the absolute value below a tight threshold (~ ±45° at 3σ).
+    let allFlipped = true, sumAbs = 0;
+    const N = 50;
+    for (let i = 0; i < N; i++) {
+        const p = MC.perturbJumpers([
+            { vc: 50, vzVoile: 5, glide: 2.5, hOuv: 1500, skill: 0.5, nbPara: 1,
+              isTracking: true, trackDist: 600, flipProb: 1.0 }
+        ], {});
+        if (!p[0]._flipped) allFlipped = false;
+        sumAbs += Math.abs(p[0]._trackAxisNoise);
+    }
+    assert.ok(allFlipped, 'flipped=true on every draw with flipProb=1');
+    const avgAbs = sumAbs / N;
+    assert.ok(avgAbs > 150 && avgAbs < 250,
+        `|trackAxisNoise| avg ≈ 180° (got ${avgAbs.toFixed(1)})`);
 });
