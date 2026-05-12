@@ -1,0 +1,2191 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DZ Drop Planner</title>
+    <!-- NEW LAYOUT v11 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ─── DZ DROP PLANNER v11 — new CSS ─── */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            background: #070b14;
+            color: #e2e8f0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ── LAYOUT ────────────────────────────── */
+        .app-root {
+            display: grid;
+            grid-template-rows: 52px 1fr;
+            height: 100vh;
+        }
+
+        .main-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            overflow: hidden;
+        }
+
+        /* ── TOP BAR ───────────────────────────── */
+        .top-bar {
+            background: linear-gradient(180deg, #0d1526 0%, #070b14 100%);
+            border-bottom: 1px solid #1a2744;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 200;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .top-bar-kpis {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 2px;
+            scrollbar-width: thin;
+            scrollbar-color: #1e2d47 transparent;
+        }
+
+        .top-bar-kpis::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .top-bar-kpis::-webkit-scrollbar-thumb {
+            background: #1e2d47;
+            border-radius: 2px;
+        }
+
+        .top-bar-kpis .pill {
+            flex-shrink: 0;
+        }
+
+        .top-bar > .logo,
+        .top-bar > .sep,
+        .top-bar > .dz-select,
+        .top-bar > .mode-toggle,
+        .top-bar > .btn-opt {
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, .35);
+        }
+
+        .logo-name {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            color: #e2e8f0;
+        }
+
+        .logo-ver {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: #475569;
+            background: #1e293b;
+            border: 1px solid #2d3f5c;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .sep {
+            width: 1px;
+            height: 24px;
+            background: #1e293b;
+            flex-shrink: 0;
+        }
+
+        .dz-select {
+            background: #111a2e;
+            border: 1px solid #2d3f5c;
+            border-radius: 7px;
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 24px 5px 8px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 7px center;
+            cursor: pointer;
+            transition: border-color .2s;
+        }
+
+        .dz-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .dz-select option {
+            background: #111a2e;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #0f172a;
+            border: 1px solid #1e2d47;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .pill-lbl {
+            font-family: 'Inter', sans-serif;
+            font-size: 8px;
+            font-weight: 500;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .mode-toggle {
+            display: inline-flex;
+            background: #111a2e;
+            border-radius: 7px;
+            padding: 2px;
+            border: 1px solid #1e2d47;
+        }
+
+        .mode-btn {
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: 700;
+            color: #4a5568;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: all .2s;
+        }
+
+        .mode-btn.on {
+            background: #4f46e5;
+            color: #fff;
+            box-shadow: 0 1px 6px rgba(79, 70, 229, .3);
+        }
+
+        .verdict-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            transition: all .3s;
+        }
+
+        .verdict-badge.go {
+            background: #06503066;
+            color: #34d399;
+            border: 1px solid #059669;
+        }
+
+        .verdict-badge.nogo {
+            background: #7f1d1d66;
+            color: #f87171;
+            border: 1px solid #dc2626;
+        }
+
+        .verdict-badge.marginal {
+            background: #78350f66;
+            color: #fbbf24;
+            border: 1px solid #d97706;
+        }
+
+        .verdict-badge.idle {
+            background: #111a2e;
+            color: #475569;
+            border: 1px solid #1e2d47;
+        }
+
+        .btn-opt {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            padding: 7px 20px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: all .25s;
+            box-shadow: 0 2px 14px rgba(99, 102, 241, .3);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: -.01em;
+        }
+
+        .btn-opt:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 22px rgba(99, 102, 241, .5);
+        }
+
+        .btn-opt:active {
+            transform: translateY(0);
+        }
+
+        .btn-opt:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .08), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* ── SIDE PANELS ──────────────────────── */
+        .left-panel {
+            background: #090e1c;
+            border-right: 1px solid #141f38;
+            width: 0;
+            overflow: hidden;
+            transition: width .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .left-panel.open {
+            width: 320px;
+        }
+
+        .panel-inner {
+            width: 320px;
+            height: 100%;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .panel-inner::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .panel-inner::-webkit-scrollbar-thumb {
+            background: #1e2d47;
+            border-radius: 2px;
+        }
+
+        .right-panel {
+            background: #f1f5f9;
+            border-left: 1px solid #e2e8f0;
+            width: 0;
+            overflow: hidden;
+            transition: width .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .right-panel.open {
+            width: 420px;
+        }
+
+        .rpanel-inner {
+            width: 420px;
+            height: 100%;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .rpanel-inner::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .rpanel-inner::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+
+        .ptab {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 64px;
+            background: #111a2e;
+            border: 1px solid #1e2d47;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+            z-index: 600;
+            transition: all .2s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+        }
+
+        .ptab:hover {
+            background: #1e2d47;
+            color: #fff;
+        }
+
+        .ptab.left {
+            left: 0;
+            border-left: none;
+            border-radius: 0 9px 9px 0;
+        }
+
+        .ptab.right {
+            right: 0;
+            border-right: none;
+            border-radius: 9px 0 0 9px;
+        }
+
+        /* ── CENTER COLUMN ────────────────────── */
+        .center-col {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* ── MAP AREA ─────────────────────────── */
+        .map-area {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ── BOTTOM CHART PANEL ──────────────── */
+        .bottom-chart-panel {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: height .35s cubic-bezier(.4, 0, .2, 1);
+            height: 28px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bottom-chart-panel.open {
+            height: 300px;
+        }
+
+        .bottom-chart-header {
+            height: 28px;
+            flex-shrink: 0;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .15s;
+        }
+
+        .bottom-chart-header:hover {
+            background: #f1f5f9;
+        }
+
+        .bottom-chart-header .bch-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            flex: 1;
+        }
+
+        .bottom-chart-header .bch-chev {
+            color: #94a3b8;
+            transition: transform .25s;
+            flex-shrink: 0;
+        }
+
+        .bottom-chart-panel.open .bottom-chart-header .bch-chev {
+            transform: rotate(180deg);
+        }
+
+        .bottom-chart-inner {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 8px 14px;
+            background: #ffffff;
+        }
+
+        .bottom-chart-inner::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .bottom-chart-inner::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+
+        .bottom-chart-panel .chart-box {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        .bottom-chart-panel .chart-ttl {
+            color: #64748b;
+        }
+
+        /* ── SECTION CARDS ────────────────────── */
+        .scard {
+            background: #0d1526;
+            border: 1px solid #141f38;
+            border-radius: 11px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            transition: border-color .2s;
+        }
+
+        .scard:hover {
+            border-color: #1e2d47;
+        }
+
+        .scard-hdr {
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .15s;
+        }
+
+        .scard-hdr:hover {
+            background: #111a2e44;
+        }
+
+        .scard-ico {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .scard-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #c1cde0;
+            flex: 1;
+        }
+
+        .scard-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .scard-chev {
+            width: 14px;
+            height: 14px;
+            color: #3a4d6e;
+            transition: transform .2s;
+            flex-shrink: 0;
+        }
+
+        .scard-hdr.open .scard-chev {
+            transform: rotate(180deg);
+        }
+
+        .scard-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .4s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .scard-body.open {
+            max-height: 2400px;
+            padding: 0 12px 14px;
+        }
+
+        /* ── OLD COMPAT (acc-item / acc-body) ─── keep for app.js */
+        .acc-item {
+            margin-bottom: 2px;
+        }
+
+        .acc-hdr {
+            display: none;
+        }
+
+        .acc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease;
+        }
+
+        .acc-body.open {
+            max-height: 1500px;
+        }
+
+        .lbl {
+            display: block;
+            font-size: 9px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 3px;
+        }
+
+        .val-box {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 3px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── FORM ELEMENTS ────────────────────── */
+        .flbl {
+            display: block;
+            font-size: 9px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 3px;
+        }
+
+        .fi {
+            width: 100%;
+            padding: 5px 8px;
+            border-radius: 7px;
+            border: 1px solid #1e2d47;
+            background: #111a2e;
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .fi:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .12);
+        }
+
+        select.fi {
+            padding-right: 22px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 7px center;
+            cursor: pointer;
+        }
+
+        select.fi option {
+            background: #111a2e;
+        }
+
+        /* legacy sidebar inputs */
+        .sidebar select,
+        .sidebar input[type="number"],
+        .sidebar input[type="text"] {
+            width: 100%;
+            padding: 5px 8px;
+            border-radius: 6px;
+            border: 1px solid #1e2d47;
+            background: #111a2e;
+            color: #e2e8f0;
+            font-size: 11px;
+        }
+
+        .sidebar select:focus,
+        .sidebar input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .sidebar select option {
+            background: #1e293b;
+        }
+
+        /* ── COMPASS ──────────────────────────── */
+        .compass-wrap {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 8px auto;
+        }
+
+        .compass-wrap svg {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .compass-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 800;
+            color: #818cf8;
+            pointer-events: none;
+            text-shadow: 0 0 14px rgba(129, 140, 248, .3);
+        }
+
+        /* ── WIND LAYERS ──────────────────────── */
+        .wlayer {
+            display: grid;
+            grid-template-columns: 70px 1fr 1fr;
+            gap: 4px;
+            align-items: center;
+            padding: 3px 4px;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+
+        .wlayer:hover {
+            background: #111a2e44;
+        }
+
+        .wlayer .walt {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            color: #3a4d6e;
+        }
+
+        .wlayer span {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .wlayer input {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            padding: 3px 4px;
+            border-radius: 4px;
+            border: 1px solid #1e2d47;
+            background: #111a2e;
+            color: #e2e8f0;
+        }
+
+        .wlayer input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        /* ── JUMPER CARDS ─────────────────────── */
+        .para-entry {
+            background: #0d1526;
+            border: 1px solid #141f38;
+            border-radius: 7px;
+            padding: 7px 9px;
+            margin-bottom: 3px;
+            cursor: grab;
+            transition: all .2s;
+        }
+
+        .para-entry:hover {
+            border-color: #1e2d47;
+            background: #111a2e;
+        }
+
+        .para-entry:active {
+            cursor: grabbing;
+        }
+
+        .para-entry.dragging {
+            opacity: .4;
+            border-style: dashed;
+        }
+
+        .para-drop-zone {
+            height: 3px;
+            background: #4f46e5;
+            margin: 2px 0;
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .para-drop-zone.active {
+            opacity: 1;
+        }
+
+        /* ── OPT CARD ─────────────────────────── */
+        .opt-card {
+            background: #0d1526;
+            border: 1.5px solid #141f38;
+            border-radius: 9px;
+            padding: 9px 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .opt-card:hover {
+            border-color: #1e2d47;
+            transform: translateY(-1px);
+        }
+
+        .opt-card.active {
+            border-color: #4f46e5;
+            background: #1e1b4b22;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .1);
+        }
+
+        /* ── FLOATING MAP OVERLAYS ────────────── */
+        .playbar {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(9, 14, 28, .9);
+            backdrop-filter: blur(14px);
+            border: 1px solid #141f38;
+            border-radius: 12px;
+            padding: 7px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 40;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, .5);
+        }
+
+        .playbar-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: #1e2d47;
+            color: #e2e8f0;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .playbar-btn:hover {
+            background: #2d3f5c;
+        }
+
+        .playbar-btn.playing {
+            background: #4f46e5;
+        }
+
+        .playbar-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: #e2e8f0;
+            min-width: 46px;
+        }
+
+        .playbar-phase {
+            font-size: 8px;
+            color: #3a4d6e;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .timeline-wrap {
+            width: 160px;
+            position: relative;
+            background: #111a2e;
+            height: 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        #anim_progress {
+            height: 100%;
+            background: #4f46e5;
+            border-radius: 2px;
+            transition: width .1s;
+            pointer-events: none;
+        }
+
+        .gono-float {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(9, 14, 28, .9);
+            backdrop-filter: blur(14px);
+            border: 1px solid #141f38;
+            border-radius: 11px;
+            padding: 10px 12px;
+            z-index: 40;
+            min-width: 190px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, .5);
+        }
+
+        .kpi-strip {
+            display: none; /* KPIs moved to top bar */
+            position: absolute;
+            bottom: 26px;
+            left: 10px;
+            right: 10px;
+            background: rgba(9, 14, 28, .92);
+            backdrop-filter: blur(14px);
+            border: 1px solid #141f38;
+            border-radius: 11px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 1px;
+            z-index: 40;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, .4);
+        }
+
+        .kpi-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            padding: 2px 4px;
+            border-right: 1px solid #14193022;
+        }
+
+        .kpi-item:last-child {
+            border-right: none;
+        }
+
+        .kpi-lbl {
+            font-size: 7px;
+            font-weight: 600;
+            color: #3a4d6e;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .kpi-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .kpi-unit {
+            font-size: 7px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .opt-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(9, 14, 28, .97);
+            backdrop-filter: blur(20px);
+            border: 1px solid #1e2d47;
+            border-radius: 16px;
+            padding: 32px 48px;
+            z-index: 90;
+            text-align: center;
+            display: none;
+            box-shadow: 0 8px 48px rgba(0, 0, 0, .7);
+        }
+
+        .opt-overlay.active {
+            display: block;
+        }
+
+        .prog-track {
+            width: 100%;
+            height: 4px;
+            background: #111a2e;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 2px;
+            transition: width .3s;
+        }
+
+        .mc-legend {
+            position: absolute;
+            bottom: 72px;
+            left: 10px;
+            background: rgba(9, 14, 28, .9);
+            backdrop-filter: blur(10px);
+            border: 1px solid #141f38;
+            border-radius: 8px;
+            padding: 7px 10px;
+            z-index: 40;
+            display: none;
+        }
+
+        .mc-legend.show {
+            display: block;
+        }
+
+        .mc-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 9px;
+            color: #7a8faa;
+            margin: 2px 0;
+        }
+
+        .mc-swatch {
+            width: 16px;
+            height: 6px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* ── EXPERT MODE ──────────────────────── */
+        .expert-only {
+            display: none;
+        }
+
+        body.expert .expert-only {
+            display: block;
+        }
+
+        /* ── MAP LAYER TOGGLES ────────────────── */
+        .map-toggles {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .map-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #1e2d47;
+            background: #111a2e;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+        }
+
+        .map-toggle-btn:hover {
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        .map-toggle-btn.active {
+            background: #1e1b4b44;
+            border-color: #6366f1;
+            color: #a5b4fc;
+        }
+
+        /* ── CHARTS ───────────────────────────── */
+        .chart-box {
+            background: #0d1526;
+            border: 1px solid #141f38;
+            border-radius: 10px;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .chart-ttl {
+            font-size: 9px;
+            font-weight: 700;
+            color: #3a4d6e;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 6px;
+        }
+
+        .d3-chart {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* ── WIND SLIDER ──────────────────────── */
+        .wind-slider-wrap {
+            position: relative;
+            width: 44px;
+            height: 44px;
+        }
+
+        .wind-slider-svg {
+            width: 44px;
+            height: 44px;
+            cursor: crosshair;
+        }
+
+        .wind-slider-val {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8px;
+            font-weight: 800;
+            color: #94a3b8;
+            pointer-events: none;
+            background: rgba(15, 23, 42, .6);
+            padding: 1px 2px;
+            border-radius: 3px;
+        }
+
+        /* ── SUB-ACCORDION (legacy compat) ───── */
+        .sub-acc-hdr {
+            background: #1e293b;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            padding: 6px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            border: 1px solid #334155;
+            user-select: none;
+            margin-bottom: 2px;
+            transition: color .15s;
+        }
+
+        .sub-acc-hdr:hover {
+            color: #e2e8f0;
+        }
+
+        .sub-acc-hdr svg {
+            width: 12px;
+            height: 12px;
+            margin-left: auto;
+            flex-shrink: 0;
+            transition: transform .2s;
+        }
+
+        .sub-acc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease;
+        }
+
+        .sub-acc-body.open {
+            max-height: 1600px;
+        }
+
+        /* ── LEFT PANEL — LIGHT THEME ─────────────── */
+        .left-panel {
+            background: #f1f5f9;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .left-panel .panel-inner::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        .left-panel .scard {
+            background: #ffffff;
+            border-color: #e2e8f0;
+        }
+
+        .left-panel .scard:hover {
+            border-color: #cbd5e1;
+        }
+
+        .left-panel .scard-hdr:hover {
+            background: #f8fafc;
+        }
+
+        .left-panel .scard-title {
+            color: #1e293b;
+        }
+
+        .left-panel .scard-chev {
+            color: #94a3b8;
+        }
+
+        .left-panel .flbl,
+        .left-panel .lbl {
+            color: #64748b;
+        }
+
+        .left-panel .fi {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .left-panel .fi:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .12);
+        }
+
+        .left-panel select.fi {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        }
+
+        .left-panel select.fi option {
+            background: #ffffff;
+            color: #1e293b;
+        }
+
+        .left-panel .val-box {
+            color: #1e293b;
+        }
+
+        .left-panel .wlayer .walt {
+            color: #64748b;
+        }
+
+        .left-panel .wlayer span {
+            color: #64748b;
+        }
+
+        .left-panel .wlayer input {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .left-panel .para-entry {
+            background: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        .left-panel .para-entry:hover {
+            background: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        .left-panel .opt-card {
+            background: #ffffff;
+            border-color: #e2e8f0;
+        }
+
+        .left-panel .opt-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .left-panel .opt-card.active {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .left-panel .sub-acc-hdr {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            color: #475569;
+        }
+
+        .left-panel .sub-acc-hdr:hover {
+            color: #1e293b;
+        }
+
+        .left-panel .map-toggle-btn {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #64748b;
+        }
+
+        .left-panel .map-toggle-btn:hover {
+            border-color: #94a3b8;
+            color: #334155;
+        }
+
+        .left-panel .map-toggle-btn.active {
+            background: #eef2ff;
+            border-color: #6366f1;
+            color: #4338ca;
+        }
+
+        /* Override Tailwind slate utility classes used in dynamically-generated content */
+        .left-panel .text-slate-300 { color: #334155 !important; }
+        .left-panel .text-slate-400 { color: #475569 !important; }
+        .left-panel .text-slate-500 { color: #64748b !important; }
+        .left-panel .text-blue-400 { color: #2563eb !important; }
+        /* Dim 400-level accent colors → 600-level so they're readable on white */
+        .left-panel .text-violet-400 { color: #7c3aed !important; }
+        .left-panel .text-emerald-400 { color: #059669 !important; }
+        .left-panel .text-sky-400 { color: #0284c7 !important; }
+        .left-panel .text-amber-400 { color: #d97706 !important; }
+        .left-panel .text-red-400 { color: #dc2626 !important; }
+        .left-panel .bg-slate-800\/40,
+        .left-panel .bg-slate-800\/50 { background-color: #f8fafc !important; }
+        .left-panel .bg-slate-900,
+        .left-panel .bg-slate-900\/50 { background-color: #ffffff !important; color: #1e293b !important; }
+        .left-panel .bg-red-900\/30 { background-color: #fef2f2 !important; }
+        .left-panel .border-red-700 { border-color: #fca5a5 !important; }
+        .left-panel .border-slate-700,
+        .left-panel .border-slate-700\/50,
+        .left-panel .border-slate-800,
+        .left-panel .border-slate-800\/50 {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Separators used inline with hardcoded #1e293b colors */
+        .left-panel div[style*="background:#1e293b"],
+        .left-panel div[style*="background: #1e293b"] {
+            background: #e2e8f0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-root">
+
+        <!-- ══════════════════════════════════════════
+         TOP BAR
+         ══════════════════════════════════════════ -->
+        <header class="top-bar">
+            <div class="logo">
+                <div class="logo-mark">🪂</div>
+                <span class="logo-name">DZ Planner</span>
+            </div>
+            <div class="sep"></div>
+            <select id="dz_select" class="dz-select" onchange="onDZChange()"></select>
+            <div id="dz_info" style="display:none;font-size:10px;color:#3a4d6e;font-family:monospace;"></div>
+            <div class="sep"></div>
+            <div class="top-bar-kpis">
+                <div class="pill">
+                    <span class="pill-lbl">FL</span>
+                    <span id="pill_fl" style="color:#34d399;font-size:11px;">140</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">KIAS</span>
+                    <span id="pill_kias" style="color:#60a5fa;font-size:11px;">80</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">Surf</span>
+                    <span id="pill_wind_sfc" style="color:#fbbf24;font-size:11px;">-- kt</span>
+                </div>
+                <div class="sep"></div>
+                <!-- KPI pills (populated by simulation) -->
+                <div class="pill">
+                    <span class="pill-lbl">Paras</span>
+                    <span id="kpi_npara" style="color:#c084fc;font-size:11px;">--</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">Axe</span>
+                    <span id="kpi_axe" style="color:#60a5fa;font-size:11px;">---°</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">Offset</span>
+                    <span id="kpi_offset" style="color:#fbbf24;font-size:11px;">--</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">Δt</span>
+                    <span id="kpi_dt" style="color:#fb923c;font-size:11px;">--</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">Sep</span>
+                    <span id="kpi_sep" style="color:#34d399;font-size:11px;">--</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">Marge</span>
+                    <span id="kpi_marge" style="color:#38bdf8;font-size:11px;">--</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">🟢</span>
+                    <span id="kpi_green" style="color:#34d399;font-size:11px;">--</span>
+                </div>
+                <div class="pill">
+                    <span class="pill-lbl">🔴</span>
+                    <span id="kpi_red" style="color:#f87171;font-size:11px;">--</span>
+                </div>
+            </div>
+            <div class="mode-toggle">
+                <button class="mode-btn on" id="mode_simple" onclick="setMode('simple')">Simple</button>
+                <button class="mode-btn" id="mode_expert" onclick="setMode('expert')">Expert</button>
+            </div>
+            <div class="sep"></div>
+            <!-- Verdict badge (populated by updateGonoBadge) -->
+            <div id="gono_badge" class="verdict-badge idle">
+                <span id="gono_badge_icon">⚪</span>
+                <span id="gono_badge_text">PRÊT</span>
+            </div>
+            <span id="gono_summary" style="display:none;"></span>
+            <button class="btn-opt" id="btn_main_optimize" onclick="onMainOptimize()">
+                <span class="shimmer"></span>
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                OPTIMISER
+            </button>
+        </header>
+        <!-- Hidden config_recap target (for JS compat) -->
+        <div id="config_recap" style="display:none;"></div>
+
+        <!-- ══════════════════════════════════════════
+         MAIN ROW
+         ══════════════════════════════════════════ -->
+        <div class="main-row">
+
+            <!-- ═══════════════════════════════
+             LEFT PANEL
+             ═══════════════════════════════ -->
+            <div class="left-panel open" id="left_panel">
+                <div class="panel-inner">
+
+                    <!-- Results V2 (moved from right panel) -->
+                    <div class="scard">
+                        <div class="scard-hdr open" id="hdr_res" onclick="toggleSection('sec_res','hdr_res')">
+                            <div class="scard-ico" style="background:#19124444;color:#a5b4fc;">🏆</div>
+                            <span class="scard-title">Résultats Optimisation</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body open" id="sec_res">
+                            <div id="opt2_results" style="font-size:10px;color:#475569;font-style:italic;">
+                                Appuyez sur <strong style="color:#a5b4fc;">OPTIMISER</strong> pour lancer.
+                            </div>
+                            <div id="opt2_progress" class="hidden" style="margin-top:8px;">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <div class="prog-track" style="flex:1;">
+                                        <div id="opt2_bar" class="prog-fill" style="width:0%;"></div>
+                                    </div>
+                                    <span id="opt2_pct"
+                                        style="font-size:9px;color:#475569;font-family:'JetBrains Mono',monospace;min-width:28px;text-align:right;">0%</span>
+                                </div>
+                                <div id="opt2_status" style="font-size:9px;color:#3a4d6e;margin-top:2px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MC results (moved from right panel) -->
+                    <div class="scard" id="mc_section" style="display:none;">
+                        <div class="scard-hdr open" id="hdr_mc" onclick="toggleSection('sec_mc','hdr_mc')">
+                            <div class="scard-ico" style="background:#1e0a3c44;color:#c084fc;">🎲</div>
+                            <span class="scard-title">Monte-Carlo</span>
+                            <span class="scard-badge" id="mc_prob_badge"
+                                style="background:#06503044;color:#34d399;">--%</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body open" id="sec_mc">
+                            <div id="mc_verdict_banner"
+                                style="border-radius:10px;padding:10px 12px;border:2px solid #334155;background:#1e293b;text-align:center;margin-bottom:10px;">
+                                <div id="mc_verdict_icon" style="font-size:28px;margin-bottom:2px;">🎲</div>
+                                <div id="mc_verdict_text" style="font-size:13px;font-weight:900;color:#e2e8f0;">--</div>
+                                <div id="mc_verdict_detail" style="font-size:9px;color:#475569;margin-top:2px;"></div>
+                            </div>
+                            <div class="map-toggles" style="margin-bottom:8px;">
+                                <button class="map-toggle-btn active" id="btn_toggle_ellipses"
+                                    onclick="toggleEllipses()">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <ellipse cx="12" cy="12" rx="10" ry="6" />
+                                    </svg>
+                                    Ellipses 95%
+                                </button>
+                            </div>
+                            <div id="mc_jumper_table"></div>
+                        </div>
+                    </div>
+
+                    <!-- AVION -->
+                    <div class="scard">
+                        <div class="scard-hdr" id="hdr_ac" onclick="toggleSection('sec_ac','hdr_ac')">
+                            <div class="scard-ico" style="background:#0f2a4a44;color:#60a5fa;">✈️</div>
+                            <span class="scard-title">Avion & Altitude</span>
+                            <span class="scard-badge" id="ac_badge"
+                                style="background:#0f2a4a44;color:#60a5fa;">FL140</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body" id="sec_ac">
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flbl">KIAS</label>
+                                        <input type="number" id="kias" value="90" step="5" class="fi"
+                                            oninput="recompute()">
+                                        <div id="speed_display" class="val-box"
+                                            style="color:#38bdf8;background:#0c2a4a22;font-size:9px;"></div>
+                                    </div>
+                                    <div>
+                                        <label class="flbl">FL Largage</label>
+                                        <input type="number" id="fl_jump" value="140" step="5" class="fi"
+                                            oninput="recompute()">
+                                        <div id="alt_display" class="val-box"
+                                            style="color:#34d399;background:#06503022;font-size:9px;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="flbl">Cible (Lat / Lon)</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="relative">
+                                            <input type="number" id="target_lat" step="0.0001" class="fi"
+                                                oninput="updateTargetFromInput()" placeholder="Lat">
+                                            <div class="absolute right-1 top-[6px] flex flex-col"
+                                                style="transform:scale(.7);transform-origin:right center;">
+                                                <button onclick="adjTarget('lat',0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;line-height:1;">▲</button>
+                                                <button onclick="adjTarget('lat',-0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;line-height:1;">▼</button>
+                                            </div>
+                                        </div>
+                                        <div class="relative">
+                                            <input type="number" id="target_lon" step="0.0001" class="fi"
+                                                oninput="updateTargetFromInput()" placeholder="Lon">
+                                            <div class="absolute right-1 top-[6px] flex flex-col"
+                                                style="transform:scale(.7);transform-origin:right center;">
+                                                <button onclick="adjTarget('lon',0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;line-height:1;">▲</button>
+                                                <button onclick="adjTarget('lon',-0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;line-height:1;">▼</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AXE & LARGAGE -->
+                    <div class="scard">
+                        <div class="scard-hdr" id="hdr_axis" onclick="toggleSection('sec_axis','hdr_axis')">
+                            <div class="scard-ico" style="background:#2a200044;color:#fbbf24;">🎯</div>
+                            <span class="scard-title">Axe & Largage</span>
+                            <span class="scard-badge" id="axis_badge"
+                                style="background:#2a200044;color:#fbbf24;">270°</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body" id="sec_axis">
+                            <div class="space-y-2">
+                                <div>
+                                    <label class="flbl" style="text-align:center;display:block;">Route de
+                                        Largage</label>
+                                    <div class="compass-wrap">
+                                        <svg id="compass_svg" viewBox="0 0 200 200"></svg>
+                                        <div class="compass-center" id="compass_val">270°</div>
+                                    </div>
+                                    <input type="hidden" id="axe_largage" value="0">
+                                    <div id="track_info" class="val-box"
+                                        style="color:#38bdf8;background:#0c2a4a22;font-size:10px;text-align:center;margin-top:4px;">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flbl">Cross-Track (NM)</label>
+                                        <input type="number" id="cross_track_nm" value="0.0" step="0.05" class="fi"
+                                            oninput="recompute()">
+                                        <div id="offset_display" class="val-box"
+                                            style="color:#fbbf24;background:#3d280022;font-size:9px;margin-top:2px;">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flbl">Top Vert (NM)</label>
+                                        <input type="number" id="top_largage_nm" value="0.0" step="0.1" class="fi"
+                                            oninput="recompute()">
+                                        <div style="font-size:9px;color:#2d3f5c;margin-top:2px;font-style:italic;">(-:
+                                            avant)</div>
+                                        <input type="hidden" id="opt_start_offset" value="0">
+                                    </div>
+                                </div>
+                                <!-- Expert timing -->
+                                <div class="expert-only" style="padding-top:8px;border-top:1px solid #1e293b;">
+                                    <span class="flbl" style="color:#fbbf24;margin-bottom:6px;">Espacement &
+                                        Timing</span>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="flbl">Sortie (m)</label>
+                                            <input type="number" id="espacement_m" value="400" step="10" class="fi"
+                                                oninput="syncEspM()">
+                                        </div>
+                                        <div>
+                                            <label class="flbl">Sortie (s)</label>
+                                            <input type="number" id="dt_sortie_s" value="5.0" step="0.5" class="fi"
+                                                oninput="syncEspS()">
+                                        </div>
+                                        <div>
+                                            <label class="flbl">Délai top (s)</label>
+                                            <input type="number" id="delai_top_vert" value="5" step="1" class="fi"
+                                                oninput="recompute()">
+                                        </div>
+                                        <div>
+                                            <label class="flbl">Durée totale</label>
+                                            <div id="duree_largage_display" class="fi"
+                                                style="background:#1c1200;border-color:#3d2b0020;color:#fbbf24;text-align:center;">
+                                                -- s</div>
+                                        </div>
+                                        <div>
+                                            <label class="flbl">Phase pilote (s)</label>
+                                            <input type="number" id="t_pilot_common" value="8" step="1" class="fi"
+                                                oninput="recompute()">
+                                        </div>
+                                        <div>
+                                            <label class="flbl">Axe/Larg (°)</label>
+                                            <input type="number" id="axe_pilot_offset" value="90" step="5" class="fi"
+                                                oninput="recompute()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARACHUTISTES -->
+                    <div class="scard">
+                        <div class="scard-hdr" id="hdr_jmp" onclick="toggleSection('sec_jmp','hdr_jmp')">
+                            <div class="scard-ico" style="background:#1e0a3c44;color:#c084fc;">🧑‍🚀</div>
+                            <span class="scard-title">Parachutistes</span>
+                            <span class="scard-badge" id="jumpers_badge"
+                                style="background:#1e0a3c44;color:#c084fc;">0</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body" id="sec_jmp">
+                            <div class="space-y-2">
+                                <div class="flex gap-2" style="min-width:0;">
+                                    <!-- Options peuplées dynamiquement depuis PARA_TYPOLOGIES (voir app.js _populateTypologySelect) -->
+                                    <select id="typology_select" class="fi" style="flex:1 1 auto;min-width:0;font-size:10px;text-overflow:ellipsis;"></select>
+                                    <button onclick="addJumper(document.getElementById('typology_select').value)"
+                                        style="flex:0 0 auto;background:#4f46e5;color:#fff;border:none;font-size:11px;font-weight:800;padding:5px 12px;border-radius:7px;cursor:pointer;transition:background .2s;">+</button>
+                                    <button onclick="generateFullStick()"
+                                        style="flex:0 0 auto;background:#7c3aed;color:#fff;border:none;font-size:11px;font-weight:800;padding:5px 9px;border-radius:7px;cursor:pointer;"
+                                        title="Stick complet">♾️</button>
+                                </div>
+                                <div id="jumpers_ctn" style="space-y:1;max-height:384px;overflow-y:auto;"></div>
+                                <div class="expert-only" style="padding-top:8px;border-top:1px solid #1e293b;">
+                                    <button onclick="optimizeStickOrder()" id="btn_opt_stick"
+                                        style="width:100%;background:linear-gradient(90deg,#5b21b6,#7c3aed);color:#fff;border:none;padding:8px;border-radius:8px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;">
+                                        ⚡ Optimiser l'ordre du stick
+                                    </button>
+                                    <div id="opt_stick_progress" class="hidden" style="margin-top:6px;">
+                                        <div class="prog-track">
+                                            <div id="opt_stick_bar" class="prog-fill" style="width:0%;"></div>
+                                        </div>
+                                        <div id="opt_stick_status"
+                                            style="font-size:9px;color:#64748b;margin-top:3px;text-align:center;">
+                                            Calcul...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zone de posé & GO/NO-GO (expert) -->
+                    <div class="scard expert-only">
+                        <div class="scard-hdr" id="hdr_crit" onclick="toggleSection('sec_crit','hdr_crit')">
+                            <div class="scard-ico" style="background:#052e1c44;color:#34d399;">✅</div>
+                            <span class="scard-title">Zone de posé & Critères GO</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body" id="sec_crit">
+                            <div class="space-y-2">
+                                <span class="flbl" style="color:#60a5fa;">📍 Zone de posé</span>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flbl">Lat</label>
+                                        <div class="relative">
+                                            <input type="number" id="rv_lat" step="0.0001" value="43.0914" class="fi"
+                                                oninput="updateRVFromInput()">
+                                            <div class="absolute right-1 top-[6px] flex flex-col"
+                                                style="transform:scale(.7);transform-origin:right center;">
+                                                <button onclick="adjRV('lat',0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;">▲</button>
+                                                <button onclick="adjRV('lat',-0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;">▼</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flbl">Lon</label>
+                                        <div class="relative">
+                                            <input type="number" id="rv_lon" step="0.0001" value="1.6975" class="fi"
+                                                oninput="updateRVFromInput()">
+                                            <div class="absolute right-1 top-[6px] flex flex-col"
+                                                style="transform:scale(.7);transform-origin:right center;">
+                                                <button onclick="adjRV('lon',0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;">▲</button>
+                                                <button onclick="adjRV('lon',-0.0001)"
+                                                    style="color:#60a5fa;background:none;border:none;cursor:pointer;">▼</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="flbl">Zone L E-W (m)</label>
+                                        <input type="number" id="rv_length" value="400" step="10" class="fi">
+                                    </div>
+                                    <div>
+                                        <label class="flbl">Zone W N-S (m)</label>
+                                        <input type="number" id="rv_width" value="100" step="10" class="fi">
+                                    </div>
+                                </div>
+                                <div style="height:1px;background:#1e293b;margin:4px 0;"></div>
+                                <span class="flbl" style="color:#34d399;">Seuils Sécurité (Geens)</span>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flbl" title="Distance horizontale minimale entre voiles à l'ouverture (3 s × 13 m/s × 2)">Sépa sécurité (m)</label>
+                                        <input type="number" id="gono_sep_dist" value="78" step="2" class="fi"
+                                            oninput="recompute()">
+                                    </div>
+                                    <div>
+                                        <label class="flbl" title="Distance horizontale rapprochement critique = collision imminente">Sépa critique (m)</label>
+                                        <input type="number" id="gono_crit_dist" value="30" step="2" class="fi"
+                                            oninput="recompute()">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mt-1">
+                                    <div>
+                                        <label class="flbl">Alt zone (m)</label>
+                                        <input type="number" id="gono_rv_alt" value="300" step="50" class="fi"
+                                            oninput="recompute()">
+                                    </div>
+                                    <div>
+                                        <label class="flbl">Δt sortie min (s)</label>
+                                        <input type="number" id="gono_min_dt" value="5.0" step="0.5" class="fi"
+                                            oninput="recompute()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NFZ : déplacé dans la carte « Circuits d'atterrissage »
+                         du panneau droit (même endroit que la zone de posé) -->
+
+                    <!-- OPTIMISEUR & MONTE-CARLO -->
+                    <div class="scard">
+                        <div class="scard-hdr open" id="hdr_optprm" onclick="toggleSection('sec_optprm','hdr_optprm')">
+                            <div class="scard-ico" style="background:#19124444;color:#a5b4fc;">🚀</div>
+                            <span class="scard-title">Optimiseur & Monte-Carlo</span>
+                            <svg class="scard-chev" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <div class="scard-body open" id="sec_optprm">
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-2 gap-2 expert-only">
+                                    <div>
+                                        <label class="flbl">Offset max (NM)</label>
+                                        <input type="number" id="opt_off_range" value="1.0" min="0" max="3" step="0.1"
+                                            class="fi">
+                                    </div>
+                                    <div>
+                                        <label class="flbl">Top NM max</label>
+                                        <input type="number" id="opt_top_max" value="3.0" min="0.5" max="10" step="0.5"
+                                            class="fi">
+                                    </div>
+                                </div>
+                                <!-- Optimizer V2 + Monte-Carlo controls injected here by ui-optimizer.js -->
+                                <div id="optimizer_v2_container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- end panel-inner -->
+            </div><!-- end left-panel -->
+
+            <!-- ═══════════════════════════════
+             CENTER COLUMN (map + bottom chart)
+             ═══════════════════════════════ -->
+            <div class="center-col" id="center_col">
+            <div class="map-area" id="map_area">
+
+                <!-- Panel toggle tabs -->
+                <div class="ptab left" id="ptab_left" onclick="togglePanel('left')" title="Panneau gauche">
+                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11 2L5 8l6 6" />
+                    </svg>
+                </div>
+                <div class="ptab right" id="ptab_right" onclick="togglePanel('right')" title="Panneau droit">
+                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5 2l6 6-6 6" />
+                    </svg>
+                </div>
+
+                <!-- Map container -->
+                <div id="map" style="width:100%;height:100%;"></div>
+
+                <!-- Playback bar (floating, top center) -->
+                <div class="playbar" id="playback_bar" style="display:none;">
+                    <button class="playbar-btn" id="play_btn" onclick="togglePlay()">
+                        <span id="play_icon">▶</span>
+                    </button>
+                    <span id="play_text" style="display:none;">Jouer</span>
+                    <span class="playbar-time" id="anim_time">00.0s</span>
+                    <div class="timeline-wrap" id="anim_timeline_container" onclick="seekAnim(event)">
+                        <div id="anim_progress" style="width:0%;"></div>
+                    </div>
+                    <input type="range" id="anim_slider" min="0" max="100" step="0.1" value="0"
+                        style="width:0;opacity:0;position:absolute;pointer-events:none;"
+                        oninput="onSliderChange(this.value)">
+                    <span class="playbar-phase" id="anim_phase">Prêt</span>
+                    <div style="display:flex;align-items:center;gap:3px;">
+                        <span style="font-size:8px;color:#2d3f5c;">×</span>
+                        <select id="anim_speed" onchange="updateAnimSpeed()"
+                            style="background:transparent;font-size:10px;color:#64748b;font-family:'JetBrains Mono',monospace;font-weight:700;border:none;outline:none;cursor:pointer;">
+                            <option value="0.5">0.5</option>
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                        </select>
+                        <span id="speed_val" style="display:none;font-size:10px;color:#64748b;">1x</span>
+                    </div>
+                    <button class="playbar-btn" onclick="resetAnim()" style="width:26px;height:26px;font-size:11px;"
+                        title="Rembobiner">↺</button>
+                </div>
+
+                <!-- GO/NO-GO floating panel — hidden, kept for JS compat (simulation.js writes to inner nodes) -->
+                <div class="gono-float" id="gono_float" style="display:none;">
+                    <div id="gono_banner">
+                        <div id="gono_verdict">--</div>
+                    </div>
+                    <div id="gono_conditions"></div>
+                </div>
+
+                <!-- KPI strip (bottom) -->
+                <!-- KPI strip removed — KPIs now in top bar -->
+
+                <!-- MC legend (shown after MC run) -->
+                <div class="mc-legend" id="mc_legend">
+                    <div
+                        style="font-size:8px;font-weight:700;color:#3a4d6e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">
+                        MC 95%</div>
+                    <div class="mc-legend-item">
+                        <div class="mc-swatch" style="background:#4f46e544;border:1px dashed #4f46e5;"></div>Ouverture
+                    </div>
+                    <div class="mc-legend-item">
+                        <div class="mc-swatch" style="background:#4f46e522;border:1px solid #4f46e5;"></div>Atterrissage
+                    </div>
+                </div>
+
+                <!-- Canopy modes legend — always visible bottom-left of the map -->
+                <div style="position:absolute; bottom:12px; left:12px; background:rgba(15,23,42,0.85); border:1px solid #334155; border-radius:6px; padding:6px 8px; font-size:9px; color:#cbd5e1; z-index:500; pointer-events:none; line-height:1.5;">
+                    <div style="font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em; font-size:8px; margin-bottom:3px;">Sous voile — pilotage</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><svg width="36" height="6"><line x1="0" y1="3" x2="36" y2="3" stroke="#94a3b8" stroke-width="3"/></svg>plein vol (TRIM)</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><svg width="36" height="6"><line x1="0" y1="3" x2="36" y2="3" stroke="#94a3b8" stroke-width="3" stroke-dasharray="14,4"/></svg>arrière (BEST GLIDE)</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><svg width="36" height="6"><line x1="0" y1="3" x2="36" y2="3" stroke="#94a3b8" stroke-width="3" stroke-dasharray="2,4"/></svg>freins ½ (MIN SINK)</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><svg width="36" height="6"><line x1="0" y1="3" x2="36" y2="3" stroke="#94a3b8" stroke-width="5" stroke-dasharray="4,2"/></svg>flare (touchdown)</div>
+                </div>
+
+                <!-- (bottom chart toggle moved to header of bottom panel) -->
+
+                <!-- Optimizer progress overlay (center) -->
+                <div class="opt-overlay" id="opt_overlay">
+                    <div style="font-size:36px;margin-bottom:10px;" id="opt_overlay_icon">🔍</div>
+                    <div style="font-size:13px;font-weight:700;color:#c1cde0;margin-bottom:8px;" id="opt_overlay_title">
+                        Optimisation en cours</div>
+                    <div class="prog-track" style="width:260px;margin:0 auto 8px;">
+                        <div class="prog-fill" id="opt_overlay_bar" style="width:0%;"></div>
+                    </div>
+                    <div style="font-size:10px;color:#3a4d6e;" id="opt_overlay_status">Initialisation...</div>
+                    <div style="font-size:9px;color:#2d3f5c;margin-top:4px;font-family:'JetBrains Mono',monospace;"
+                        id="opt_overlay_detail"></div>
+                </div>
+
+            </div><!-- end map-area -->
+
+            <!-- ═══════════════════════════════
+             BOTTOM CHART (transversal / side view)
+             ═══════════════════════════════ -->
+            <div class="bottom-chart-panel open" id="bottom_chart_panel">
+                <div class="bottom-chart-header" onclick="toggleBottomChart()" title="Afficher / masquer la vue transversale">
+                    <span style="font-size:12px;">📐</span>
+                    <span class="bch-title">Vue transversale</span>
+                    <svg class="bch-chev" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 15l-7-7-7 7" />
+                    </svg>
+                </div>
+                <div class="bottom-chart-inner">
+                    <div class="chart-box">
+                        <div class="chart-ttl">Vue transversale</div>
+                        <div id="transversal-chart" class="d3-chart" style="height:260px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            </div><!-- end center-col -->
+
+            <!-- ═══════════════════════════════
+             RIGHT PANEL
+             ═══════════════════════════════ -->
+            <div class="right-panel open" id="right_panel">
+                <div class="rpanel-inner" style="background:#f1f5f9;display:flex;flex-direction:column;height:100%;padding:8px;">
+
+                    <!-- Meteo controls (compact top bar) -->
+                    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin-bottom:6px;flex-shrink:0;">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                            <span style="font-size:14px;">🌤</span>
+                            <span style="font-size:11px;font-weight:800;color:#1e293b;">Météo & Vent</span>
+                            <span id="meteo_badge" style="font-size:9px;font-weight:700;background:#dbeafe;color:#2563eb;padding:2px 6px;border-radius:4px;margin-left:auto;">--</span>
+                        </div>
+                        <div style="display:flex;gap:4px;align-items:end;flex-wrap:wrap;">
+                            <div style="flex:1;min-width:100px;">
+                                <label style="font-size:8px;font-weight:700;color:#64748b;text-transform:uppercase;display:block;margin-bottom:2px;">Modèle</label>
+                                <select id="meteo_model" onchange="fetchMeteo()" style="width:100%;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:10px;background:#fff;color:#1e293b;">
+                                    <option value="meteofrance_arome_france0025">AROME 2.5km</option>
+                                    <option value="gfs">GFS 0.25</option>
+                                    <option value="dwd_icon">ICON 7km</option>
+                                    <option value="ecmwf_ifs025">ECMWF IFS</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;min-width:150px;">
+                                <label style="font-size:8px;font-weight:700;color:#64748b;text-transform:uppercase;display:block;margin-bottom:2px;">Échéance</label>
+                                <select id="meteo_hour" onchange="fetchMeteo()" style="width:100%;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:10px;background:#fff;color:#1e293b;"></select>
+                            </div>
+                            <button onclick="fetchMeteo()" style="background:#2563eb;color:#fff;border:none;font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">
+                                📡 Charger
+                            </button>
+                        </div>
+                        <!-- Météo "type" issue du clustering K-means de ~1400 demi-journées
+                             à Pamiers (LFDJ). Charge un profil vent caractéristique. -->
+                        <div style="display:flex;gap:4px;align-items:end;margin-top:6px;">
+                            <div style="flex:1;">
+                                <label style="font-size:8px;font-weight:700;color:#64748b;text-transform:uppercase;display:block;margin-bottom:2px;">Météo type (cluster)</label>
+                                <select id="wx_cluster_select" onchange="loadWxCluster(this.value)" style="width:100%;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:10px;background:#fff;color:#1e293b;">
+                                    <option value="">— sélectionner un profil clusterisé —</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="meteo_status" style="font-size:9px;min-height:14px;padding:2px 4px;color:#2563eb;margin-top:4px;"></div>
+                        <div style="display:flex;gap:6px;margin-top:4px;">
+                            <div style="flex:1;">
+                                <label style="font-size:8px;font-weight:700;color:#64748b;text-transform:uppercase;display:block;margin-bottom:2px;">QNH (hPa)</label>
+                                <input type="number" id="qnh_val" value="1013.25" step="0.1" readonly
+                                    style="width:100%;padding:3px 6px;border:1px solid #cbd5e1;border-radius:5px;font-size:10px;background:#f8fafc;color:#1e293b;font-family:'JetBrains Mono',monospace;">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:8px;font-weight:700;color:#64748b;text-transform:uppercase;display:block;margin-bottom:2px;">ΔISA (°C)</label>
+                                <input type="number" id="isa_delta" value="0" step="0.5" onchange="recompute()"
+                                    style="width:100%;padding:3px 6px;border:1px solid #cbd5e1;border-radius:5px;font-size:10px;background:#fff;color:#1e293b;font-family:'JetBrains Mono',monospace;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Airgram (fills remaining space) -->
+                    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;">
+                        <div style="font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;padding:6px 8px 2px;flex-shrink:0;">Airgram — Profil de vent</div>
+                        <div style="flex:1;min-height:0;display:flex;overflow:hidden;">
+                            <!-- Wind speed inputs column (left side of airgram) -->
+                            <div id="wind_inputs_col" style="width:52px;flex-shrink:0;overflow-y:hidden;border-right:1px solid #e2e8f0;padding:0 2px;background:#f8fafc;">
+                                <!-- Filled dynamically by createAirgramChart -->
+                            </div>
+                            <!-- Airgram SVG -->
+                            <div id="airgram-chart" class="d3-chart" style="flex:1;min-width:0;min-height:0;"></div>
+                        </div>
+                        <div id="airgram_tag" style="display:none;"></div>
+                    </div>
+
+                    <!-- Hidden wind layers container (for data compatibility) -->
+                    <div id="wind_layers_ctn" style="display:none;"></div>
+
+                    <!-- winners recap (legacy, hidden) -->
+                    <div id="winners_dashboard" style="display:none;"></div>
+
+                </div><!-- end rpanel-inner -->
+            </div><!-- end right-panel -->
+
+        </div><!-- end main-row -->
+    </div><!-- end app-root -->
+
+    <!-- ════════════════════════════════════════════
+     INLINE SCRIPTS
+     ════════════════════════════════════════════ -->
+    <script>
+        // ── Mode toggle ─────────────────────────────────────────────
+        function setMode(m) {
+            document.getElementById('mode_simple').classList.toggle('on', m === 'simple');
+            document.getElementById('mode_expert').classList.toggle('on', m === 'expert');
+            document.body.classList.toggle('expert', m === 'expert');
+            localStorage.setItem('dz_mode', m);
+        }
+        (function () { var s = localStorage.getItem('dz_mode'); if (s === 'expert') setMode('expert'); })();
+
+        // ── Ellipse toggle ───────────────────────────────────────────
+        window._ellipsesVisible = true;
+        window._lastMcResult = null;
+        window._lastMcDz = null;
+        function toggleEllipses() {
+            var btn = document.getElementById('btn_toggle_ellipses');
+            window._ellipsesVisible = !window._ellipsesVisible;
+            if (btn) btn.classList.toggle('active', window._ellipsesVisible);
+            if (typeof MonteCarlo !== 'undefined' && window._map) {
+                if (window._ellipsesVisible && window._lastMcResult && window._lastMcDz) {
+                    MonteCarlo.drawEllipses(window._map, window._lastMcResult, window._lastMcDz);
+                } else {
+                    MonteCarlo.clearEllipses(window._map);
+                }
+            }
+        }
+
+        // ── Panel toggle ─────────────────────────────────────────────
+        function togglePanel(side) {
+            var p = document.getElementById(side === 'left' ? 'left_panel' : 'right_panel');
+            var tb = document.getElementById('ptab_' + side);
+            p.classList.toggle('open');
+            var open = p.classList.contains('open');
+            if (side === 'left') {
+                tb.innerHTML = open
+                    ? '<svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path d="M11 2L5 8l6 6"/></svg>'
+                    : '<svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path d="M5 2l6 6-6 6"/></svg>';
+            } else {
+                tb.innerHTML = open
+                    ? '<svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path d="M5 2l6 6-6 6"/></svg>'
+                    : '<svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path d="M11 2L5 8l6 6"/></svg>';
+            }
+            setTimeout(function () { if (window._map) window._map.invalidateSize(); }, 380);
+        }
+
+        // ── Bottom chart toggle ──────────────────────────────────────
+        function toggleBottomChart() {
+            var p = document.getElementById('bottom_chart_panel');
+            p.classList.toggle('open');
+            setTimeout(function () { if (window._map) window._map.invalidateSize(); }, 380);
+        }
+
+        // ── Section toggle (scard pattern) ──────────────────────────
+        function toggleSection(bodyId, hdrId) {
+            var b = document.getElementById(bodyId);
+            var h = hdrId ? document.getElementById(hdrId) : null;
+            if (!b) return;
+            b.classList.toggle('open');
+            if (h) h.classList.toggle('open');
+        }
+        // Legacy compatibility aliases
+        function toggleAcc(id) {
+            // Legacy: map old acc IDs to new section IDs
+            var map = {
+                'play-p': null,   // playback now floating
+                'meteo-p': ['sec_meteo', 'hdr_meteo'],
+                'ac-p': ['sec_ac', 'hdr_ac'],
+                'jmp-p': ['sec_jmp', 'hdr_jmp'],
+                'gono-p': null
+            };
+            if (map[id]) {
+                toggleSection(map[id][0], map[id][1]);
+            } else {
+                // fallback: toggle by body id directly
+                var b = document.getElementById(id);
+                if (b) b.classList.toggle('open');
+            }
+        }
+        function toggleSubAcc(id) {
+            var b = document.getElementById(id);
+            if (!b) return;
+            b.classList.toggle('open');
+            var icon = document.getElementById(id + '-icon');
+            if (icon) icon.style.transform = b.classList.contains('open') ? 'rotate(180deg)' : '';
+        }
+
+        // ── Main OPTIMISER handler ───────────────────────────────────
+        function onMainOptimize() {
+            var rp = document.getElementById('right_panel');
+            if (!rp.classList.contains('open')) togglePanel('right');
+            document.getElementById('opt_overlay').classList.add('active');
+            var btn = document.getElementById('btn_main_optimize');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="shimmer"></span>⏳ En cours...';
+            var v3btn = document.getElementById('btn_optimize_v3');
+            if (v3btn && typeof OptimizerV3 !== 'undefined') {
+                v3btn.click();
+            } else {
+                resetMainButton();
+                alert('OptimizerV3 indisponible.');
+            }
+        }
+        function resetMainButton() {
+            var btn = document.getElementById('btn_main_optimize');
+            if (!btn) return;
+            btn.disabled = false;
+            btn.innerHTML = '<span class="shimmer"></span>'
+                + '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">'
+                + '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>'
+                + 'OPTIMISER';
+            document.getElementById('opt_overlay').classList.remove('active');
+        }
+
+        // ── KPI strip update ────────────────────────────────────────
+        function updateKPIStrip(res) {
+            if (!res) return;
+            function set(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+            var np = res.nPara || (res.positions ? res.positions.length : '--');
+            set('kpi_npara', np);
+            set('kpi_axe', res.axe != null ? String(Math.round(res.axe)).padStart(3, '0') + '°' : '---°');
+            set('kpi_offset', res.crossNm != null ? (res.crossNm >= 0 ? '+' : '') + res.crossNm.toFixed(1) + 'NM' : '--');
+            set('kpi_dt', res.dtSortie != null ? res.dtSortie.toFixed(1) + 's' : '--s');
+            var sepMin = null;
+            if (res.allPairMinDists) {
+                var dists = res.allPairMinDists.map(function (m) { return m.dist; });
+                if (dists.length) sepMin = Math.min.apply(null, dists);
+            }
+            var sepEl = document.getElementById('kpi_sep');
+            if (sepEl) { sepEl.textContent = sepMin != null ? Math.round(sepMin) + 'm' : '--m'; sepEl.style.color = (sepMin != null && sepMin < 50) ? '#f87171' : '#34d399'; }
+            var mgMin = null;
+            if (res.positions) {
+                var mgs = res.positions.map(function (p) { return p.margeRDV; }).filter(function (v) { return v != null; });
+                if (mgs.length) mgMin = Math.min.apply(null, mgs);
+            }
+            var mgEl = document.getElementById('kpi_marge');
+            if (mgEl) { mgEl.textContent = mgMin != null ? Math.round(mgMin) + 'm' : '--m'; mgEl.style.color = (mgMin != null && mgMin < 0) ? '#f87171' : '#38bdf8'; }
+            if (res.greenLightAlongTrack != null && res.targetAlongTrack != null) {
+                var gNm = (res.greenLightAlongTrack - res.targetAlongTrack) / 1852;
+                set('kpi_green', (gNm >= 0 ? '+' : '') + gNm.toFixed(2));
+            }
+            if (res.redLightAlongTrack != null && res.targetAlongTrack != null) {
+                var rNm = (res.redLightAlongTrack - res.targetAlongTrack) / 1852;
+                set('kpi_red', (rNm >= 0 ? '+' : '') + rNm.toFixed(2));
+            }
+        }
+
+        // ── GO/NO-GO badge ──────────────────────────────────────────
+        function updateGonoBadge(go, mcVerdict) {
+            var badge = document.getElementById('gono_badge');
+            var icon = document.getElementById('gono_badge_icon');
+            var text = document.getElementById('gono_badge_text');
+            if (!badge) return;
+            var v = mcVerdict || (go ? 'GO' : 'NOGO');
+            var cls = v === 'GO' ? 'go' : v === 'MARGINAL' ? 'marginal' : 'nogo';
+            var ic = v === 'GO' ? '🟢' : v === 'MARGINAL' ? '🟡' : '🔴';
+            badge.className = 'verdict-badge ' + cls;
+            icon.textContent = ic;
+            text.textContent = v;
+        }
+
+        // ── Top bar pills helper ────────────────────────────────────
+        window.updateTopBarPills = function (fl, kias, windSfcKt) {
+            function s(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
+            if (fl != null) s('pill_fl', fl);
+            if (kias != null) s('pill_kias', kias);
+            if (windSfcKt != null) s('pill_wind_sfc', windSfcKt.toFixed(0) + ' kt');
+        };
+
+        // ── Simulation complete hook ────────────────────────────────
+        window.onSimulationComplete = function () {
+            if (window.simResults) {
+                updateKPIStrip(window.simResults);
+                updateGonoBadge(window.simResults.go);
+            }
+            document.getElementById('playback_bar').style.display = 'flex';
+            if (typeof window.updateAnimationMarkers === 'function') {
+                window.updateAnimationMarkers();
+            }
+            // Restore MC overlays when the transversal chart is rebuilt
+            var hmBox = document.getElementById('mc_show_heatmap');
+            if (hmBox && hmBox.checked && window.UIOptimizer && window.UIOptimizer.renderHeatmap) {
+                window.UIOptimizer.renderHeatmap();
+            }
+            var tubeBox = document.getElementById('mc_show_tube');
+            if (tubeBox && tubeBox.checked && window.UIOptimizer && window.UIOptimizer.renderTrajectoryTube) {
+                window.UIOptimizer.renderTrajectoryTube();
+            }
+        };
+
+        // ── Map resize observer ─────────────────────────────────────
+        if (typeof ResizeObserver !== 'undefined') {
+            var ro = new ResizeObserver(function () {
+                if (window._map) window._map.invalidateSize();
+            });
+            ro.observe(document.getElementById('map_area'));
+            ro.observe(document.getElementById('center_col'));
+        }
+    </script>
+
+    <!-- ════════════════════════════════════════════
+     JS MODULES
+     ════════════════════════════════════════════ -->
+    <!-- Cache-bust: bump ?v=N when JS files change so browsers don't serve stale code -->
+    <script src="physics-core.js?v=65"></script>
+    <script src="nfz.js?v=65"></script>
+    <script src="monte-carlo.js?v=65"></script>
+    <script src="simulation.js?v=65"></script>
+    <script src="wx-clusters.js?v=65"></script>
+    <script src="app.js?v=65"></script>
+    <script src="charts.js?v=65"></script>
+    <script src="map.js?v=65"></script>
+    <script src="animation.js?v=65"></script>
+    <script src="optimizer-v3.js?v=65"></script>
+    <script src="pattern-editor.js?v=65"></script>
+    <script src="ui-optimizer.js?v=65"></script>
+
+</body>
+
+</html>

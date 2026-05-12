@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Aérodynamique du parachutisme — vitesses, finesse, ouvertures, rentrée du long</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --fg:#1a1a1a; --muted:#555; --bg:#fafafa; --accent:#0b5394; --accent2:#b45309;
+    --accent3:#2f855a; --card:#fff; --border:#e5e5e5; --code-bg:#f3f4f6;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  main{max-width:1080px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+  h1{font-size:2rem;margin:0 0 .25rem;color:var(--accent);}
+  h2{font-size:1.5rem;margin:2.5rem 0 .75rem;padding-bottom:.3rem;border-bottom:3px solid var(--accent);color:var(--accent);}
+  h3{font-size:1.2rem;margin:1.5rem 0 .5rem;color:var(--accent2);}
+  h4{font-size:1.05rem;margin:1.1rem 0 .35rem;color:#333;}
+  p,ul,ol{margin:.5rem 0;}
+  ul,ol{padding-left:1.3rem;}
+  li{margin:.18rem 0;}
+  code{background:var(--code-bg);padding:.1rem .35rem;border-radius:3px;font-size:.92em;}
+  pre{background:var(--code-bg);padding:.75rem 1rem;border-radius:6px;overflow:auto;font-size:.9rem;line-height:1.4;}
+  table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.92rem;}
+  th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top;}
+  th{background:#eef3f9;color:#1f3a5f;}
+  tbody tr:nth-child(even){background:#fbfcfe;}
+  .subtitle{color:var(--muted);font-style:italic;margin:0 0 1.5rem;}
+  .toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.3rem;margin:1.25rem 0 2.5rem;}
+  .toc strong{display:block;margin-bottom:.3rem;font-size:1.05rem;color:var(--accent);}
+  .toc ol{margin:.3rem 0;padding-left:1.3rem;}
+  .toc ol ol{padding-left:1.2rem;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:.75rem 1rem;margin:.8rem 0;}
+  .synthesis{background:#fff8e6;border-left:4px solid var(--accent2);border-radius:6px;padding:.85rem 1.1rem;margin:1.2rem 0;}
+  .synthesis h3, .synthesis h4{margin-top:0;color:var(--accent2);}
+  .callout{background:#eef9ef;border-left:4px solid var(--accent3);border-radius:6px;padding:.7rem 1rem;margin:.8rem 0;}
+  .warn{background:#fdecea;border-left:4px solid #c53030;border-radius:6px;padding:.7rem 1rem;margin:.8rem 0;}
+  .formula{background:#f0f4f8;border-left:3px solid var(--accent);border-radius:4px;padding:.5rem .9rem;margin:.6rem 0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92rem;}
+  .tag{display:inline-block;font-size:.78rem;background:#e5edf7;color:#1f3a5f;border-radius:3px;padding:.08rem .5rem;margin-right:.25rem;}
+  .src-cols{columns:2;column-gap:2rem;}
+  .src-cols ul{margin:0;break-inside:avoid;}
+  .src-cols li{break-inside:avoid;}
+  @media (max-width:720px){ .src-cols{columns:1;} }
+  footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--muted);font-size:.88rem;}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Aérodynamique du parachutisme</h1>
+<p class="subtitle">Vitesses de chute par discipline, finesse sous voile, caractéristiques d'ouverture et rentrée du long — compilation technique pour le projet DZ Drop Planner.</p>
+
+<div class="card">
+Recherche approfondie sur (1) comment la position du corps et la discipline pratiquée influent sur la vitesse du parachutiste dans l'air, (2) les finesses mesurées des voiles sport modernes à partir des données constructeurs et des rapports de vol, (3) les caractéristiques d'ouverture des parachutes (séquence, efforts, durées), et (4) l'aérodynamique et la technique pour rentrer d'un largage long. Les unités sont données en métrique et impérial lorsque la source les fournit.
+</div>
+
+<nav class="toc" aria-label="Sommaire">
+  <strong>Sommaire</strong>
+  <ol>
+    <li><a href="#m1">Comment la vitesse du parachutiste est mesurée</a></li>
+    <li><a href="#m2">Vitesse en chute libre selon la discipline</a>
+      <ol>
+        <li><a href="#m2-phys">Physique sous-jacente</a></li>
+        <li><a href="#m2-work">Rôle du « travail » effectué</a></li>
+      </ol>
+    </li>
+    <li><a href="#m3">Vol sous voile — chiffres de référence</a></li>
+    <li><a href="#m4">Finesse par classe de voile</a>
+      <ol>
+        <li><a href="#m4-table">Voiles sport</a></li>
+        <li><a href="#m4-ws">Wingsuits pour comparaison</a></li>
+      </ol>
+    </li>
+    <li><a href="#m5">Caractéristiques d'ouverture</a>
+      <ol>
+        <li><a href="#m5-seq">Séquence</a></li>
+        <li><a href="#m5-force">Efforts</a></li>
+        <li><a href="#m5-slider">Reefing — le coulisseau</a></li>
+        <li><a href="#m5-alt">Altitudes</a></li>
+        <li><a href="#m5-head">Ouverture dans l'axe</a></li>
+      </ol>
+    </li>
+    <li><a href="#m6">Rentrer d'un largage long</a>
+      <ol>
+        <li><a href="#m6-phys">La physique</a></li>
+        <li><a href="#m6-what">Quoi faire concrètement</a></li>
+        <li><a href="#m6-rear">La règle des 2–3 cm d'élévateur arrière</a></li>
+        <li><a href="#m6-num">Exemple numérique</a></li>
+        <li><a href="#m6-heur">Heuristiques de décision</a></li>
+        <li><a href="#m6-wl">Effet de la charge alaire</a></li>
+      </ol>
+    </li>
+    <li><a href="#m7">Glossaire français–anglais</a></li>
+    <li><a href="#m8">Sources</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<h2 id="m1">1. Comment la vitesse du parachutiste est mesurée</h2>
+
+<p>Un parachutiste possède <strong>trois vecteurs de vitesse distincts</strong> et les confondre est la première source de confusion dans la littérature :</p>
+
+<table>
+<thead>
+<tr><th>Grandeur</th><th>Symbole</th><th>Définition</th><th>Mesure</th></tr>
+</thead>
+<tbody>
+<tr><td>Vitesse verticale (vitesse de chute)</td><td><code>Vz</code></td><td>Taux de descente dans la masse d'air</td><td>Altimètre barométrique Δh/Δt ; vitesse verticale GPS (FlySight, FlySight 2). Le speed skydiving score la moyenne sur la meilleure fenêtre de 3 s dans le créneau de compétition.</td></tr>
+<tr><td>Vitesse horizontale air</td><td><code>Vh</code></td><td>Vitesse par rapport à la masse d'air (vent retiré)</td><td>Vitesse sol GPS <em>moins</em> le vecteur vent à l'altitude ; ou Pitot sur un rig wingsuit</td></tr>
+<tr><td>Vitesse sol</td><td><code>Vg</code></td><td>Vitesse par rapport au sol</td><td>Sortie GPS directe</td></tr>
+<tr><td>Finesse</td><td><code>GR = Vh / Vz</code></td><td>Mètres horizontaux par mètre vertical</td><td>Le FlySight la diffuse en tonalité audio en temps réel ; égale à <code>L/D</code> à vitesse stabilisée</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<strong>Deux conséquences importantes.</strong>
+<ul>
+  <li><strong>La finesse GPS est polluée par le vent.</strong> Une wingsuit à 3:1 volée face à 30 kt de vent affiche un GR GPS de 1,5:1 alors que son <code>L/D</code> aérodynamique est inchangé. Les analyses sérieuses corrigent donc des vents en altitude.</li>
+  <li><strong>La finesse maximale ne dépend pas du poids.</strong> Un pilote lourd atteint le même <code>L/D</code> max, mais à une vitesse plus élevée — une voile chargée ne pénètre pas automatiquement mieux face au vent qu'une voile peu chargée (voir §6).</li>
+</ul>
+</div>
+
+<p>La discipline FAI <strong>speed skydiving</strong> formalise la mesure de la vitesse de chute : FlySight monté sur le casque, fenêtre de compétition de 7 400 ft sous le point de sortie entre 13 000 et 14 000 ft, et le score est la vitesse verticale moyenne sur les trois meilleures secondes consécutives dans cette fenêtre.</p>
+
+<!-- ============================================================ -->
+<h2 id="m2">2. Vitesse en chute libre selon la discipline</h2>
+
+<p>Toutes les valeurs sont des <strong>vitesses verticales terminales</strong> au niveau de la mer en atmosphère standard sauf indication contraire, avec la vitesse horizontale air typique dans la même ligne. « Typique » correspond à ce qu'un compétiteur actuel voit sur son logger ; la dispersion individuelle est importante.</p>
+
+<table>
+<thead>
+<tr><th>Discipline / position</th><th>Vitesse verticale</th><th>Vitesse horizontale air</th><th>Finesse (air)</th><th>Remarques</th></tr>
+</thead>
+<tbody>
+<tr><td>Tandem sous drogue</td><td>~190 km/h / 120 mph</td><td>0</td><td>0</td><td>Le drogue restaure l'équilibre de Cd ; le binôme tombe comme un ventral solo.</td></tr>
+<tr><td><strong>Ventral (RW, FS)</strong></td><td><strong>190–220 km/h / 115–135 mph</strong></td><td>~0</td><td>~0</td><td>Référence classique. Arch = plus rapide ; dos creusé / boxman = plus lent.</td></tr>
+<tr><td><strong>Sit-fly (tête en haut)</strong></td><td><strong>240–290 km/h / 150–180 mph</strong></td><td>0–40 km/h</td><td>0–0,2</td><td>Surface frontale effective plus faible qu'en ventral.</td></tr>
+<tr><td><strong>Tête en bas (freefly)</strong></td><td><strong>240–300 km/h / 150–190 mph</strong></td><td>0–40 km/h</td><td>0–0,2</td><td>Vitesse VFS standard ; les top pilotes dépassent 300 km/h en position « stand ».</td></tr>
+<tr><td>Angle flying (atmonauti)</td><td>~220–260 km/h / 135–160 mph</td><td>40–100 km/h</td><td>0,4–0,8</td><td>Incidence ~45° ; entre dérive et tête en bas.</td></tr>
+<tr><td><strong>Dérive (tracking, sans combi)</strong></td><td><strong>~145–175 km/h / 90–110 mph</strong></td><td>jusqu'à ~130 km/h</td><td>0,6–0,9</td><td>Dos creusé, jambes tendues, bras au corps.</td></tr>
+<tr><td>Dérive en combi (Squirrel Sumo 2)</td><td>140–165 km/h / 85–100 mph</td><td>jusqu'à ~160 km/h / 100 mph</td><td><strong>~1:1</strong></td><td>Les meilleurs dériveurs parcourent autant au sol qu'ils ne descendent.</td></tr>
+<tr><td>Wingsuit — débutant (Swift)</td><td>120–170 km/h / 75–105 mph</td><td>110–150 km/h / 70–95 mph</td><td>~2:1</td><td>Petite combi, pardonne les erreurs.</td></tr>
+<tr><td>Wingsuit — intermédiaire</td><td>90–150 km/h / 55–95 mph</td><td>130–180 km/h / 80–110 mph</td><td>2,5:1</td><td>Pilote sport typique.</td></tr>
+<tr><td><strong>Wingsuit — haute performance</strong></td><td>65–130 km/h / 40–80 mph</td><td>180–260 km/h / 110–160 mph</td><td><strong>3:1+ (4:1 élite)</strong></td><td>Classe Aura, Colugo, Phoenix, Intrusion.</td></tr>
+<tr><td><strong>Speed skydiving (position tuck)</strong></td><td><strong>480–540 km/h / 300–335 mph</strong></td><td>0</td><td>0</td><td>Combi profilée, mains au-dessus de la tête, sortie &gt; 13 000 ft. Record masculin FAI : Marco Hepp 529,77 km/h (2022) ; Sebastian Garcia crédité de 539,51 km/h à la Coupe du Monde FAI d'août 2025.</td></tr>
+<tr><td>Stratosphérique (Baumgartner, Eustace)</td><td>jusqu'à <strong>1 357,6 km/h / 843,6 mph (Mach 1,25)</strong></td><td>0</td><td>0</td><td>Référence uniquement — supersonique car ρ est quasi nul à 39 km.</td></tr>
+</tbody>
+</table>
+
+<h3 id="m2-phys">2.1 Physique sous-jacente</h3>
+
+<div class="formula">V<sub>z,∞</sub>² = 2·m·g / (ρ · C<sub>d</sub> · A)</div>
+<ul>
+  <li>La vitesse terminale dépend du produit <code>C<sub>d</sub>·A</code> et de la masse volumique locale <code>ρ</code>.</li>
+  <li>En tête en bas, la surface frontale passe de ≈ 0,6 m² (ventral) à ≈ 0,15 m² — d'où l'augmentation de ~50 % de la vitesse.</li>
+  <li>Une wingsuit augmente <code>A</code> <em>et</em> génère une composante de portance, convertissant une partie de l'énergie cinétique verticale en énergie horizontale.</li>
+  <li>La masse volumique de l'air est divisée par deux tous les ~7 km d'altitude. Les speed skydivers cherchent donc les hautes sorties : <code>V<sub>term</sub> ∝ 1/√ρ</code>.</li>
+  <li>Il faut ~10–12 s pour atteindre la terminale ventrale (~450 m de chute) ; en tête en bas, on continue à accélérer plusieurs secondes de plus.</li>
+</ul>
+
+<h3 id="m2-work">2.2 Rôle du « travail » effectué par le parachutiste</h3>
+
+<p>La discipline — le <em>travail</em> que le flyer exécute — change le rôle aérodynamique du corps :</p>
+
+<table>
+<thead><tr><th>Mode de travail</th><th>Comportement aérodynamique dominant</th></tr></thead>
+<tbody>
+<tr><td>Ventral, tête en bas, sit</td><td>Pur <strong>corps de traînée</strong>. Vertical seul. <code>V<sub>z</sub> = √(2mg / (ρ C<sub>d</sub> A))</code>.</td></tr>
+<tr><td>Dérive (tracking)</td><td><strong>Corps portant à faible L/D</strong>. Jambes et torse jouent le rôle d'une plaque cambrée ; <code>C<sub>l</sub>/C<sub>d</sub> ≈ 0,6–1,0</code>.</td></tr>
+<tr><td>Wingsuit</td><td><strong>Aile ram-air cambrée</strong> avec bras et jambes à grand allongement. <code>C<sub>l</sub>/C<sub>d</sub></code> atteint 3–4. La performance dépend de la pression interne et de la coupe.</td></tr>
+<tr><td>Speed skydiving</td><td><strong>Corps axisymétrique profilé</strong> minimisant <code>C<sub>d</sub>·A</code>. Tissus lisses, casque rigide, mains au-dessus de la tête.</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="m3">3. Vol sous voile — chiffres de référence</h2>
+
+<p>Sur les voiles sport modernes, les <strong>chiffres du premier ordre</strong> sont remarquablement similaires une fois normalisés par la charge alaire.</p>
+
+<ul>
+  <li>Vitesse horizontale en plein vol : <strong>~40–55 km/h / 22–30 kt</strong> à WL ~1,0, évolution en √WL.</li>
+  <li>Taux de chute en plein vol : <strong>~4–6 m/s / 800–1 200 ft/min</strong> à WL ~1,0.</li>
+  <li>Finesse en plein vol : <strong>≈ 2,5:1 à 3:1</strong> (≈ 3 ft d'avance pour 1 ft de descente).</li>
+  <li>Taux de chute minimum : <strong>~50 % de freins</strong>. Un 9-caissons docile tient ~2 m/s ; un cross-braced est proche du décrochage.</li>
+  <li>Décrochage : dépend de la voile, généralement en dessous de ~50 % de la vitesse plein vol. <strong>La vitesse de décrochage croît en √WL</strong>, donc les voiles chargées décrochent à une vitesse sol plus élevée.</li>
+  <li>Arrondi : un arrondi bien exécuté produit 1 à 1,5 G de cabré et ramène le taux de chute à zéro depuis ~5 m/s en ~2 s. Les voiles modernes tirent l'essentiel de leur puissance d'arrondi du changement d'incidence, donc <strong>le meilleur arrondi part du plein vol</strong>.</li>
+</ul>
+
+<div class="synthesis">
+<h4>Règle empirique (Brian Germain / skydive-safety.com)</h4>
+<em>« La plupart des parachutes volent plus plat, et à peu près aussi vite, avec quelques centimètres d'élévateurs arrière ou environ un tiers de freins. »</em> C'est la base de la technique de rentrée du long en §6.
+</div>
+
+<h3>Vitesse de décrochage vs. charge alaire</h3>
+<div class="formula">V<sub>s</sub> = √(2·WL / (ρ · C<sub>l,max</sub>))</div>
+<p>Le coefficient de portance max <code>C<sub>l,max</sub></code> est fixé par le profil. Doubler la charge alaire augmente la vitesse de décrochage de √2 ≈ +41 %. Cela <strong>réduit aussi la marge d'avertissement</strong>.</p>
+
+<!-- ============================================================ -->
+<h2 id="m4">4. Finesse par classe de voile</h2>
+
+<p>Les constructeurs de voiles sport publient rarement une finesse chiffrée : elle dépend de la charge alaire, de l'état des suspentes (usure), de la densité de l'air et des entrées pilote. Les formulations <em>qualitatives</em> publiées, combinées aux rapports d'essai et au consensus communautaire, donnent l'image suivante.</p>
+
+<h3 id="m4-table">4.1 Voiles sport</h3>
+
+<table>
+<thead>
+<tr><th>Classe de voile</th><th>WL typique (lb/ft²)</th><th>Finesse plein vol (vent nul)</th><th>Exemples</th></tr>
+</thead>
+<tbody>
+<tr><td>Précision / successeur du Para-Commander (7-caissons, F-111)</td><td>0,6–0,8</td><td>2,3–2,8</td><td>PD Navigator, Precision Falcon</td></tr>
+<tr><td>9-caissons docile, ZP square</td><td>0,8–1,1</td><td><strong>≈ 2,8–3,1</strong></td><td>PD Silhouette, Aerodyne Pilot, NZ Safire 3, PD Spectre</td></tr>
+<tr><td>9-caissons intermédiaire / semi-elliptique</td><td>1,0–1,4</td><td>3,0–3,2</td><td>PD Sabre 2 / Sabre 3, NZ Safire 3 à WL haute</td></tr>
+<tr><td>9-caissons pleinement elliptique</td><td>1,2–1,6</td><td>3,1–3,3</td><td>NZ Crossfire 3, PD Katana (WL modérée)</td></tr>
+<tr><td>Voile cross-braced (swoop)</td><td>1,8–2,5+</td><td>3,0–3,4</td><td>PD Velocity / Comp Velocity, JFX 2, Leia, JPX Petra</td></tr>
+<tr><td>Secours (7-caissons, F-111 ou ZP faible volume)</td><td>calée sur la principale</td><td>2,0–2,8</td><td>PD Reserve, Icarus Nano</td></tr>
+<tr><td>Principale tandem (avec drogue)</td><td>0,6–0,9 (poids tandem)</td><td>2,5–2,8</td><td>Sigma, Icarus Tandem</td></tr>
+<tr><td>Voile BASE (7-caissons, F-111, hybride ZP)</td><td>0,6–1,1</td><td>2,8–3,3</td><td>Squirrel EPICENE, Apex FLiK</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<h4 style="margin-top:0">Lecture pratique</h4>
+Un vol de 1 000 ft / 300 m sous voile donne ~900 m de plané à 3:1, moins la composante vent de face. Soit ~35–45 s de vol à 7–9 m/s de descente. Avec 15 kt (≈7,7 m/s) de vent de face, l'essentiel de la vitesse avant est annulé et le pilote descend presque à la verticale — c'est le mécanisme qui transforme un « long dans le vent » en « DZ inatteignable ».
+</div>
+
+<h4>9-caissons vs. 7-caissons</h4>
+<p>À surface égale, un 9-caissons a un allongement plus élevé (≈ 2,4 vs ≈ 2,1), donc finesse plus plate et arrondi plus long. Un 7-caissons s'ouvre plus souvent dans l'axe, se plie plus petit, est moins exposé aux line-over et récupère du décrochage de manière plus prévisible.</p>
+
+<h4>Elliptique vs. rectangulaire</h4>
+<p>Le plan elliptique réduit la traînée induite aux extrémités et ajoute un peu de vitesse. Contrepartie : réponse en roulis plus vive, virages plus rapides, arc de récupération plus long, décrochage plus dur.</p>
+
+<h4>Cross-bracing</h4>
+<p>Le cross-bracing maintient le profil rigide sous facteur de charge. Il n'augmente pas significativement la finesse en vol stabilisé, mais permet au profil de conserver sa forme dans un virage serré, préservant le <code>L/D</code> dans la récupération et produisant le swoop long et peu traîné. Les pilotes de compétition atteignent ~95 mph (≈ 42 m/s) en entrée de gate (Greg Windmiller, 2,404 s sur 70 m, 2012).</p>
+
+<h3 id="m4-ws">4.2 Wingsuits pour comparaison</h3>
+
+<table>
+<thead><tr><th>Classe de wingsuit</th><th>Finesse typique soutenue</th></tr></thead>
+<tbody>
+<tr><td>Débutant (Swift, Squirrel Corvid)</td><td>1,8–2,2</td></tr>
+<tr><td>Intermédiaire (Colugo 3, Funk)</td><td>2,3–2,7</td></tr>
+<tr><td>Performance / compétition (Aura 3, Freak 4, Intrusion)</td><td>2,8–3,3</td></tr>
+<tr><td>Pilote élite, conditions optimales</td><td>3,5–4,0+ (niveau record)</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="m5">5. Caractéristiques d'ouverture</h2>
+
+<h3 id="m5-seq">5.1 Séquence</h3>
+
+<ol>
+  <li><strong>Wave-off + jet du pilote-chute</strong> — 0,2–0,4 s.</li>
+  <li><strong>Gonflage du pilote-chute + extraction de la drisse</strong> — 0,3–0,5 s.</li>
+  <li><strong>Arrachement du sac (d-bag), tension des suspentes</strong> — 0,6–1,0 s.</li>
+  <li><strong>Snatch</strong> — la voile est brusquement accélérée à la vitesse du sauteur. &lt;1 s. Pic d'effort.</li>
+  <li><strong>Snivel</strong> — le coulisseau freine le gonflage ; l'air entre par les bouches du bord d'attaque, la voile se gonfle à moitié. <strong>3 à 6 s sur une voile sport moderne</strong>, ~4 s en tandem, jusqu'à 10 s sur une voile BASE en brake-set.</li>
+  <li><strong>Gonflement complet</strong> — le coulisseau descend, les caissons de bout se pressurisent, le pilote se rassoit dans le harnais. 0,5–1 s.</li>
+</ol>
+
+<p>Durée totale : <strong>3 à 5 s, soit 200 à 300 m d'altitude perdus</strong> entre le jet du pilote-chute et la voile pilotable.</p>
+
+<h3 id="m5-force">5.2 Efforts</h3>
+
+<p>L'ingénierie parachute distingue deux pics de force :</p>
+
+<table>
+<thead><tr><th>Pic</th><th>Origine</th><th>Ordre de grandeur</th></tr></thead>
+<tbody>
+<tr><td><strong>Snatch force (pic de tension-lignes)</strong></td><td>Les suspentes passent en tension ; la voile est accélérée du repos à la vitesse du sauteur. Impulsion très brève.</td><td>3 à 6 G sur une voile sport moderne bien pliée (essais PCPRG sur Stiletto 150) ; jusqu'à 15 G lors d'une ouverture rapide ou mal pliée.</td></tr>
+<tr><td><strong>Choc d'ouverture</strong></td><td>La voile se gonfle et décélère le sauteur depuis la terminale jusqu'à la vitesse sous voile. Étalé sur plusieurs secondes.</td><td>Généralement ≤ au snatch, mais sur 2–4 s. Systèmes militaires à 400 lb : jusqu'à ~15 G.</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+<strong>Ouvertures dures — facteurs à éviter.</strong> Vitesse de déploiement élevée (ouverture en tête en bas ; la force varie en V²), tours de suspentes, pliage asymétrique, grommets de coulisseau usés, voile poreuse. PD annonce ≈ 3 G pour une ouverture propre et ≈ 6 G pour une ouverture plus dure que la moyenne à vitesse normale.
+</div>
+
+<h3 id="m5-slider">5.3 Reefing — le coulisseau</h3>
+
+<p>Le coulisseau est un dispositif de freinage du gonflement : un panneau rectangulaire percé de quatre grommets, enfilé sur les suspentes, qui repose contre le dessous de la voile jusqu'au début du gonflage. Au fur et à mesure que les caissons s'ouvrent, le flux envergure fait descendre le coulisseau ; le frottement entre grommets et suspentes limite la vitesse d'étalement et répartit le choc sur plusieurs secondes.</p>
+
+<ul>
+  <li><strong>Suspentes Dacron</strong> → plus de friction qu'avec <strong>Spectra (HMA)</strong> → impulsion plus douce, mais rig plus lourd et durée de vie réduite.</li>
+  <li>Délais &lt; 3–4 s → souvent <em>slider-down</em> (en BASE) ; au-delà, le coulisseau est indispensable.</li>
+  <li>Les pilotes de swoop de compétition utilisent un <em>slider-off pack + sac à stows lents + grand slider</em> pour régler l'ouverture.</li>
+</ul>
+
+<h3 id="m5-alt">5.4 Altitudes</h3>
+
+<p>Altitudes minimales d'ouverture USPA (sol) :</p>
+
+<table>
+<thead><tr><th>Brevet</th><th>Ouverture minimale</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>3 000 ft / 914 m</td></tr>
+<tr><td>B</td><td>2 500 ft / 762 m</td></tr>
+<tr><td>C, D</td><td>2 000 ft / 610 m</td></tr>
+</tbody>
+</table>
+
+<p>Séparation USPA : ≥ 1 500 ft au-dessus de la plus haute ouverture planifiée pour des groupes ≤ 5, ≥ 2 000 ft pour les groupes de 6 et plus. En wingsuit / tracking, séparation typiquement 4 500–5 500 ft sol car la séparation horizontale demande des marges plus grandes.</p>
+
+<h3 id="m5-head">5.5 Ouverture dans l'axe</h3>
+
+<p>Empiriquement, un 7-caissons s'ouvre plus souvent dans l'axe qu'un 9-caissons (moins d'affaissements des coins du bord d'attaque), et un plan rectangulaire plus souvent qu'un elliptique. <strong>La symétrie du corps au moment de l'ouverture</strong> est le principal facteur contrôlable — une position d'épaules asymétrique génère des tours de suspentes plus sûrement que le pliage lui-même.</p>
+
+<!-- ============================================================ -->
+<h2 id="m6">6. Rentrer d'un largage long</h2>
+
+<p>Cette section combine l'aérodynamique du §3 et la technique terrain publiée (Pete Lubrano, Brian Germain, skydivemag, skydive-safety).</p>
+
+<h3 id="m6-phys">6.1 La physique</h3>
+
+<p>Soient <code>Vh</code> la vitesse horizontale air de la voile et <code>Vw</code> la composante vent le long de la trajectoire (positif = vent arrière). Vitesse sol <code>Vg = Vh + Vw</code> ; taux de chute <code>Vz</code> ; temps de vol depuis l'altitude <code>h</code> : <code>t = h / Vz</code>. Distance sol :</p>
+
+<div class="formula">D = t · V<sub>g</sub> = (h / V<sub>z</sub>) · (V<sub>h</sub> + V<sub>w</sub>) = h · GR<sub>air</sub> + h · (V<sub>w</sub> / V<sub>z</sub>)</div>
+
+<p>Deux configurations différentes maximisent <code>D</code> :</p>
+
+<ol>
+  <li><strong>Vent de face (<code>V<sub>w</sub> &lt; 0</code>).</strong> Il faut <code>V<sub>h</sub>/V<sub>z</sub></code> élevé <em>et</em> <code>V<sub>h</sub></code> élevé en valeur absolue pour pénétrer. C'est le régime <strong>plein vol / léger élévateur arrière</strong>.</li>
+  <li><strong>Vent arrière (<code>V<sub>w</sub> &gt; 0</code>).</strong> Rester le plus longtemps possible en l'air — taux de chute minimum, même au prix de <code>V<sub>h</sub></code>. C'est le régime <strong>freins profonds / min-sink</strong>.</li>
+</ol>
+
+<p>La plupart des cas « long » sport sont des cas vent de face (le sauteur s'est fait pousser sous le vent de la DZ). Donc le régime élévateurs arrière est la réponse usuelle.</p>
+
+<h3 id="m6-what">6.2 Quoi faire concrètement</h3>
+
+<table>
+<thead><tr><th>Scénario</th><th>Configuration</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr><td>Long, sous le vent de la DZ, vent de face pour rentrer</td><td><strong>Freins hauts + 2–3 cm d'élévateur arrière</strong> <em>ou</em> ~1/3 de freins, selon ce qui immobilise la cible sol</td><td>Maximise <code>V<sub>h</sub>/V<sub>z</sub></code> ; les élévateurs arrière changent l'incidence sans coûter de vitesse. Au-delà de ~2–3 cm, on décroche la voile et la portée <em>chute</em>.</td></tr>
+<tr><td>Long, au vent de la DZ, vent arrière pour rentrer</td><td>Freins hauts, éventuellement léger élévateur arrière</td><td>Vous n'êtes pas limité en distance, mais en temps — tout régime à haut L/D convient.</td></tr>
+<tr><td>Spot très profond, peu d'air, vent fort</td><td><strong>~50 % de freins</strong></td><td>Min-sink. Achète du temps pour que le vent vous porte — ne marche que si <code>|V<sub>w</sub>| &gt; V<sub>h</sub></code>.</td></tr>
+<tr><td>Vent de face fort, cas limite</td><td>Plein vol, <strong>corps en boule</strong> (jambes serrées, bras rentrés)</td><td>Réduit la traînée parasite ; +5 à 10 % de vitesse avant.</td></tr>
+</tbody>
+</table>
+
+<h3 id="m6-rear">6.3 La règle des 2–3 cm d'élévateur arrière</h3>
+
+<p>Les élévateurs arrière augmentent l'angle d'incidence sans bouger le bord de fuite. Dans la plage linéaire, cela aplatit la finesse <strong>sans coût en vitesse air</strong> ; au-delà de l'incidence de décrochage, la voile « parachute » et la portée s'effondre. Les recommandations publiées (skydive-safety.com, skydivemag) sont de tirer <strong>2 à 3 cm par main</strong>, pas plus.</p>
+
+<div class="warn">
+Le décrochage aux élévateurs arrière n'a pas l'avertissement du décrochage aux freins (pas de progression de commande à ressentir). Une fois dépassé, vous descendez à la verticale. Sur une elliptique fortement chargée, la marge est de quelques centimètres.
+</div>
+
+<h3 id="m6-num">6.4 Exemple numérique</h3>
+
+<p>Voile 9-caissons à WL 1,1, plein vol :</p>
+<ul>
+  <li><code>V<sub>h</sub> ≈ 13 m/s</code> (25 kt)</li>
+  <li><code>V<sub>z</sub> ≈ 5 m/s</code> (1 000 ft/min)</li>
+  <li><code>GR = 2,6</code></li>
+  <li>Ouverture à 800 m sol.</li>
+</ul>
+
+<table>
+<thead><tr><th>Cas</th><th>Configuration</th><th>Temps de vol</th><th>Vitesse sol</th><th>Distance sol</th></tr></thead>
+<tbody>
+<tr><td>A — sans vent</td><td>Plein vol</td><td>160 s</td><td>13 m/s</td><td><strong>2 080 m</strong> (≈ 1,12 NM)</td></tr>
+<tr><td>B — 10 kt de face</td><td>Plein vol</td><td>160 s</td><td>7,9 m/s</td><td>1 264 m (≈ 0,68 NM) — <strong>−40 % vs A</strong></td></tr>
+<tr><td>C — 10 kt de face</td><td>2 cm d'élévateur arrière (V<sub>z</sub>↓15 %)</td><td>186 s</td><td>7,9 m/s</td><td><strong>1 469 m</strong> (≈ 0,79 NM) — <strong>+16 % vs B</strong></td></tr>
+<tr><td>D — 20 kt de face</td><td>Plein vol</td><td>160 s</td><td>2,7 m/s</td><td>432 m — <strong>quasi surplace ; posée extérieure</strong></td></tr>
+</tbody>
+</table>
+
+<h3 id="m6-heur">6.5 Heuristiques de décision</h3>
+
+<ul>
+  <li><strong>Choisir un repère sol et le surveiller.</strong> Le point qui ne bouge pas par rapport à votre voile est celui où vous allez atterrir si rien ne change. S'il est au-delà de la DZ, vous êtes long — restituez. S'il est en-deçà, appliquez le plané maximum et <em>n'y touchez plus</em>. L'erreur la plus fréquente en long spot : enchaîner des entrées et perdre le repère.</li>
+  <li><strong>L'altitude, c'est de l'argent ; dépensez-la proprement.</strong> Chaque virage en S face au vent coûte ~50–100 m de portée avant.</li>
+  <li><strong>Engager une posée extérieure à 1 000 ft sol.</strong> Sous 1 000 ft, vous devez être aligné sur une posée propre, pas en train de chasser la DZ.</li>
+  <li><strong>Arrondir depuis le plein vol, pas depuis les freins.</strong> Si vous finissez le plané à 50 % de freins, relâchez les freins vers 100 ft pour reconstruire la vitesse d'arrondi.</li>
+</ul>
+
+<h3 id="m6-wl">6.6 Effet de la charge alaire sur le long spot</h3>
+
+<p>Contre-intuitivement, une charge alaire plus élevée n'aide <strong>pas</strong> automatiquement à pénétrer. Le <code>L/D</code> max est inchangé ; seule la vitesse à laquelle il est atteint augmente en <code>√WL</code>. Une voile chargée bat donc une voile peu chargée face à un vent fort (plus de vitesse air à soustraire) — mais la vitesse de décrochage à la fin est plus élevée, et une posée extérieure se fait beaucoup plus vite. La règle empirique de Brian Germain : <strong>au-delà de WL ≈ 1,4 on ne gagne plus de portée, on gagne seulement en taux de chute</strong>.</p>
+
+<!-- ============================================================ -->
+<h2 id="m7">7. Glossaire français–anglais</h2>
+
+<table>
+<thead><tr><th>Français</th><th>English</th></tr></thead>
+<tbody>
+<tr><td>Vitesse verticale, vitesse de chute</td><td>Fall rate / vertical speed</td></tr>
+<tr><td>Finesse (de la voile), rapport plané</td><td>Glide ratio</td></tr>
+<tr><td>Charge alaire</td><td>Wing loading</td></tr>
+<tr><td>Ouverture douce (extraction progressive)</td><td>Snivel</td></tr>
+<tr><td>Pic de tension-lignes</td><td>Snatch force</td></tr>
+<tr><td>Choc d'ouverture</td><td>Opening shock</td></tr>
+<tr><td>Coulisseau</td><td>Slider</td></tr>
+<tr><td>Séparation</td><td>Break-off</td></tr>
+<tr><td>Ouverture</td><td>Pull / deployment</td></tr>
+<tr><td>Largage long, « rentrer du long »</td><td>Long spot</td></tr>
+<tr><td>Élévateurs arrière</td><td>Rear risers</td></tr>
+<tr><td>Freins / commandes</td><td>Brakes / toggles</td></tr>
+<tr><td>Plein vol, bras hauts</td><td>Full flight</td></tr>
+<tr><td>Taux de chute minimum</td><td>Min-sink</td></tr>
+<tr><td>Plané maximum</td><td>Best glide</td></tr>
+<tr><td>Dérive à plat</td><td>Track / tracking</td></tr>
+<tr><td>Combinaison ailée</td><td>Wingsuit</td></tr>
+<tr><td>Swoop / arrondi long</td><td>Swoop</td></tr>
+<tr><td>Décrochage</td><td>Stall</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="m8">8. Sources</h2>
+
+<div class="src-cols">
+
+<h4>FAI / fédérations</h4>
+<ul>
+  <li><a href="https://fai.org/page/isc-speed-skydiving">FAI — Speed Skydiving</a></li>
+  <li><a href="https://www.guinnessworldrecords.com/world-records/675979-fastest-speed-in-speed-skydiving-fai-approved-male">Guinness — Record de vitesse FAI (hommes)</a></li>
+  <li><a href="https://www.fai.org/page/isc-records">FAI — Index des records</a></li>
+  <li><a href="https://www.fai.org/news/speed-skydiving-research-600kmh">FAI news — recherche speed skydiving</a></li>
+  <li><a href="https://www.uspa.org/uspa-news/head-up-breakoff">USPA — Head-Up Break-off</a></li>
+  <li><a href="https://www.uspa.org/skydiveschool/h">USPA Skydive School — CAT H (altitudes d'ouverture)</a></li>
+  <li><a href="https://www.uspa.org/collapsing-a-slider">USPA — Collapsing a slider</a></li>
+</ul>
+
+<h4>Wikipédia</h4>
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Tracking_(skydiving)">Tracking (skydiving)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Wingsuit_flying">Wingsuit flying</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Speed_skydiving">Speed skydiving</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Canopy_piloting">Canopy piloting</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Slider_(parachuting)">Slider (parachuting)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Lift-to-drag_ratio">Lift-to-drag ratio</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Felix_Baumgartner">Felix Baumgartner</a></li>
+</ul>
+
+<h4>Constructeurs / spécifications voiles</h4>
+<ul>
+  <li><a href="https://www.performancedesigns.com/silhouette">PD — Silhouette</a></li>
+  <li><a href="https://www.performancedesigns.com/navigator">PD — Navigator</a></li>
+  <li><a href="https://www.performancedesigns.com/compare4">PD — Compare4</a></li>
+  <li><a href="https://www.performancedesigns.com/docs/Sabre2-Flight.pdf">PD — Sabre2 Flight Characteristics (PDF)</a></li>
+  <li><a href="https://blog.performancedesigns.com/determining-your-minimum-opening-altitude/">PD blog — Minimum opening altitude</a></li>
+  <li><a href="https://www.flyaerodyne.com/canopies/pilot/pilot-specs/">Aerodyne — Pilot specs</a></li>
+  <li><a href="http://atools.flyaerodyne.com/triathlon.asp">Aerodyne — Triathlon</a></li>
+  <li><a href="https://www.jyro.com/product/safire-3/">NZ Aerosports / JYRO — Safire 3</a></li>
+  <li><a href="https://www.jyro.com/product/crossfire-3/">NZ Aerosports / JYRO — Crossfire 3</a></li>
+  <li><a href="https://help.jyro.com/helpcentre/10545931798681-What-are-the-Different-Canopy-Types">JYRO — Typologie des voiles</a></li>
+  <li><a href="https://squirrel.ws/trackingsuits/sumo2/">Squirrel — Sumo 2 (combi de tracking)</a></li>
+</ul>
+
+<h4>Aérodynamique (Germain, skydive-safety, PCPRG)</h4>
+<ul>
+  <li><a href="https://www.skydive-safety.com/Articles-Basic-Aerodynamics.htm">Basic aerodynamics of a ram-air parachute</a></li>
+  <li><a href="http://www.skydive-safety.com/Articles-Ram-Air-Flight.htm">Ram-air flight</a></li>
+  <li><a href="http://www.skydive-safety.com/Articles-Design-Parameters.htm">Ram-air design parameters</a></li>
+  <li><a href="http://www.skydive-safety.com/Articles-Getting-The-Most-Out-of-Your-Parachute.htm">Getting the most out of your parachute</a></li>
+  <li><a href="http://skydive-safety.com/Articles-Survival-Skills.htm">Survival skills for canopy control</a></li>
+  <li><a href="https://www.skydivemag.com/new/2018-04-27-wing-loading-and-high-performance/">John LeBlanc — charge alaire et haute performance</a></li>
+  <li><a href="https://www.pcprg.com/g-forces.htm">PCPRG — Canopy opening G-forces</a></li>
+  <li><a href="https://www.pcprg.com/sym01out.htm">PCPRG — Opening symposium output</a></li>
+</ul>
+
+<h4>Technique « rentrer du long »</h4>
+<ul>
+  <li><a href="https://www.skydivemag.com/new/youre-long-now-what/">Skydivemag — You're long; now what?</a></li>
+  <li><a href="https://skydivetemple.com/Safety/Making-It-Back-To-The-DropZone.php">Skydive Temple — Making it back to the DZ</a></li>
+  <li><a href="https://skydiveparacletexp.com/2020/05/26/proper-way-steer-parachute/">Skydive Paraclete XP — Proper way to steer a parachute</a></li>
+  <li><a href="https://www.skydivemag.com/new/2018-03-21-20131106-body-language/">Skydivemag — Body language and deployment</a></li>
+</ul>
+
+<h4>Technique wingsuit</h4>
+<ul>
+  <li><a href="https://humanbirdwings.net/wingsuit-glide-ratio/">Human Bird Wings — Wingsuit glide ratio</a></li>
+  <li><a href="https://humanbirdwings.net/how-fast-do-wingsuits-go/">Human Bird Wings — How fast do wingsuits go?</a></li>
+  <li><a href="http://wingsuitwiki.wikidot.com/performance-flying">Wingsuit Wiki — Performance flying</a></li>
+  <li><a href="https://www.jafmonline.net/article_2307_fcf4c420950f2b8f7638cd6ce8f7e671.pdf">JAFM — Analyse aérodynamique wingsuit (PDF)</a></li>
+</ul>
+
+<h4>FlySight / mesure</h4>
+<ul>
+  <li><a href="https://flysight.ca/wiki/index.php/Configuring_FlySight">FlySight — Configuring FlySight</a></li>
+  <li><a href="https://apexbase.com/product/fly-sight-2-gps-for-base-and-skydiving/">Apex BASE — FlySight 2</a></li>
+</ul>
+
+<h4>Vulgarisation DZ (vitesses et terminale)</h4>
+<ul>
+  <li><a href="https://skydiveperris.com/blog/terminal-velocity-in-skydiving-explained/">Skydive Perris — Terminal velocity</a></li>
+  <li><a href="https://skydivecalifornia.com/blog/terminal-velocity-skydiving/">Skydive California — Terminal velocity</a></li>
+  <li><a href="https://skydivemonroe.com/blog/skydiving-velocity-freefall-speed/">Skydive Monroe — Skydiving velocity</a></li>
+  <li><a href="https://www.skydivecarolina.com/blog/how-fast-is-skydiving/">Skydive Carolina — How fast is skydiving?</a></li>
+  <li><a href="https://wisconsinskydivingcenter.com/blog/how-fast-do-you-fall-when-skydiving/">Wisconsin Skydiving Center — How fast do you fall?</a></li>
+  <li><a href="https://skydiveperris.com/blog/what-is-angle-flying/">Skydive Perris — What is angle flying?</a></li>
+  <li><a href="https://www.skydivecarolina.com/blog/what-is-angle-flying/">Skydive Carolina — What is angle flying?</a></li>
+  <li><a href="https://www.skydiveaz.com/wp-content/uploads/2024/07/tracking-or-angle-flying-jumps.pdf">Skydive Arizona — Tracking / angle flying (PDF)</a></li>
+  <li><a href="https://www.uspa.org/foundations-of-flight-angle-flyinghead-first-on-belly">USPA — Foundations of Flight: Angle Flying</a></li>
+</ul>
+
+</div>
+
+<footer>
+Compilé le 2026-04-24 pour le projet DZ Drop Planner. Les valeurs numériques sont représentatives d'une population ; l'équipement individuel, la morphologie et les conditions atmosphériques décalent chaque ligne de ±10 à 20 %.
+</footer>
+
+</main>
+</body>
+</html>

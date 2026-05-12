@@ -1,0 +1,30 @@
+{
+  "name": "dz-drop-planner",
+  "version": "0.1.0",
+  "description": "Simulateur et optimiseur de passages de largage pour parachutisme (Cessna Caravan C208B). Application statique HTML + JS vanilla, sans build, sans framework.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/",
+    "test:watch": "node --test --watch tests/",
+    "test:coverage": "node --test --experimental-test-coverage tests/",
+    "serve": "python3 -m http.server 8000"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juleshumbert/dz-drop-planner.git"
+  },
+  "keywords": [
+    "parachutisme",
+    "skydiving",
+    "simulator",
+    "optimizer",
+    "monte-carlo",
+    "drop-pass",
+    "vanilla-js"
+  ],
+  "author": "Jules Humbert <jules.humbert@gmail.com>"
+}

@@ -1,0 +1,2171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Largages parachutistes — techniques, procédures, calculs (recap v5)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --fg:#1a1a1a; --muted:#555; --bg:#fafafa; --accent:#0b5394; --accent2:#b45309;
+    --accent3:#2f855a; --card:#fff; --border:#e5e5e5; --code-bg:#f3f4f6;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  main{max-width:1040px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+  h1{font-size:2rem;margin:0 0 .25rem;color:var(--accent);}
+  h2{font-size:1.5rem;margin:2.5rem 0 .75rem;padding-bottom:.3rem;border-bottom:3px solid var(--accent);color:var(--accent);}
+  h3{font-size:1.2rem;margin:1.5rem 0 .5rem;color:var(--accent2);}
+  h4{font-size:1.05rem;margin:1.1rem 0 .35rem;color:#333;}
+  p,ul,ol{margin:.5rem 0;}
+  ul,ol{padding-left:1.3rem;}
+  li{margin:.18rem 0;}
+  code{background:var(--code-bg);padding:.1rem .35rem;border-radius:3px;font-size:.92em;}
+  pre{background:var(--code-bg);padding:.75rem 1rem;border-radius:6px;overflow:auto;font-size:.9rem;line-height:1.4;}
+  table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.92rem;}
+  th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top;}
+  th{background:#eef3f9;color:#1f3a5f;}
+  .subtitle{color:var(--muted);font-style:italic;margin:0 0 1.5rem;}
+  .toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.3rem;margin:1.25rem 0 2.5rem;}
+  .toc strong{display:block;margin-bottom:.3rem;font-size:1.05rem;color:var(--accent);}
+  .toc ol{margin:.3rem 0;padding-left:1.3rem;}
+  .toc ol ol{padding-left:1.2rem;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:.75rem 1rem;margin:.8rem 0;}
+  .country-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.85rem 1.1rem;margin:1rem 0;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .country-card h4{margin-top:0;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.25rem;}
+  .synthesis{background:#fff8e6;border-left:4px solid var(--accent2);border-radius:6px;padding:.85rem 1.1rem;margin:1.2rem 0;}
+  .synthesis h3, .synthesis h4{margin-top:0;color:var(--accent2);}
+  .callout{background:#eef9ef;border-left:4px solid var(--accent3);border-radius:6px;padding:.7rem 1rem;margin:.8rem 0;}
+  .warn{background:#fdecea;border-left:4px solid #c53030;border-radius:6px;padding:.7rem 1rem;margin:.8rem 0;}
+  .formula{background:#f0f4f8;border-left:3px solid var(--accent);border-radius:4px;padding:.5rem .9rem;margin:.6rem 0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92rem;}
+  .badge{display:inline-block;padding:.08rem .45rem;border-radius:10px;background:var(--accent);color:#fff;font-size:.75rem;margin-right:.35rem;vertical-align:middle;}
+  .badge.mil{background:#5a3b8a;}
+  .badge.civ{background:var(--accent3);}
+  .sources{font-size:.9rem;}
+  .sources ul{padding-left:1.1rem;}
+  .sources a{color:var(--accent);word-break:break-all;}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  @media (max-width:720px){.twocol{grid-template-columns:1fr;}}
+  nav.top{background:var(--card);border-bottom:1px solid var(--border);padding:.5rem 1rem;font-size:.88rem;position:sticky;top:0;z-index:10;}
+  nav.top a{color:var(--accent);margin-right:1rem;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<main>
+
+<h1>Largages parachutistes&nbsp;: techniques, procédures et calculs</h1>
+<p class="subtitle">Recap v5 — Synthèse détaillée des méthodes civiles (focus) et militaires (cadrage) pour&nbsp;: (1) détermination de l'axe et du point de largage à partir des vents en altitude et de la géométrie de la DZ, (2) procédures cabine et pilote (top vert, top rouge, multi-passes), (3) ordonnancement des groupes en fonction de la discipline, du travail effectué et de la taille des groupes, (4) <strong>étendue du largage&nbsp;: longueur du jump run, nombre de groupes par passe, choix multi-passes</strong>, théorie et pratique par pays. Tableaux, formules et règles de pouce par pays.</p>
+
+<div class="toc">
+<strong>Sommaire</strong>
+<ol>
+  <li><a href="#s1">Mission de largage&nbsp;: acteurs, phases, objectifs</a></li>
+  <li><a href="#s2">Calcul du jump run — axe et offset</a>
+    <ol>
+      <li><a href="#s2-1">Entrées</a></li>
+      <li><a href="#s2-2">Axe (direction)</a></li>
+      <li><a href="#s2-3">Offset (dérive chute, forward throw, dérive sous voile)</a></li>
+      <li><a href="#s2-4">Règles de pouce par pays</a></li>
+      <li><a href="#s2-5">Géométrie de la DZ&nbsp;: crosswind, hook, big-ways, obstacles</a></li>
+      <li><a href="#s2-6">Outils de calcul et GPS cockpit</a></li>
+    </ol>
+  </li>
+  <li><a href="#s3">Top vert et top rouge — détermination et procédures</a>
+    <ol>
+      <li><a href="#s3-1">Top vert (premier largage)</a></li>
+      <li><a href="#s3-2">Top rouge (fin de largage)</a></li>
+      <li><a href="#s3-3">Multi-passes et racetrack</a></li>
+    </ol>
+  </li>
+  <li><a href="#s4">Ordonnancement des groupes — discipline, travail, taille</a>
+    <ol>
+      <li><a href="#s4-1">Principe fondamental&nbsp;: slow first / fast last</a></li>
+      <li><a href="#s4-2">Classification des disciplines</a></li>
+      <li><a href="#s4-3">Ordre de sortie type</a></li>
+      <li><a href="#s4-4">Impact de la taille de groupe</a></li>
+      <li><a href="#s4-5">Break-off altitudes</a></li>
+      <li><a href="#s4-6">Séparation inter-groupes (groundspeed / temps)</a></li>
+      <li><a href="#s4-7">Méthodologie AXIS Exit Separation</a></li>
+      <li><a href="#s4-8">Perpendicular exits et angle de sortie</a></li>
+      <li><a href="#s4-9">Ordre de boarding (inverse)</a></li>
+    </ol>
+  </li>
+  <li><a href="#s5">Étendue du largage — longueur du jump run et nombre de groupes par passe</a>
+    <ol>
+      <li><a href="#s5-1">Théorie&nbsp;: longueur géométrique du jump run</a></li>
+      <li><a href="#s5-2">Dimensionnement du nombre de groupes par passe</a></li>
+      <li><a href="#s5-3">Contraintes pratiques qui réduisent le nombre de groupes</a></li>
+      <li><a href="#s5-4">Décision 1 passe vs 2 passes&nbsp;: critères</a></li>
+      <li><a href="#s5-5">Second pass&nbsp;: racetrack, inversion de spot, downwind/upwind</a></li>
+      <li><a href="#s5-6">Big-ways multi-avions — étendue &amp; coordination</a></li>
+      <li><a href="#s5-7">Militaire&nbsp;: dimensionnement CARP de la DZ</a></li>
+      <li><a href="#s5-8">Pratiques par pays et par DZ — chiffres et exemples</a></li>
+      <li><a href="#s5-9">Règle des 60 s vs raisonnement en distance — que retenir&nbsp;?</a></li>
+      <li><a href="#s5-10">Jump runs non-rectilignes — hook, crosswind, orbital</a></li>
+      <li><a href="#s5-11">Constitution d'une charge — précautions avec plafond de sorties</a></li>
+      <li><a href="#s5-12">Nombre de sauteurs par passage — Cessna Caravan &amp; comparatif multi-avions</a></li>
+      <li><a href="#s5-13">Axes, contre-axes, axes parallèles — typologie et pratiques par pays</a></li>
+      <li><a href="#s5-14">Décalage cross-track et placement des groupes de dérive en multi-passes</a></li>
+      <li><a href="#s5-15">Cadre australien APF — classification DZ, opérations, Exit Separation (thèse Geens)</a></li>
+      <li><a href="#s5-16">Manuels pilote comparés dans le monde — USA, UK, Canada, Finlande, Afrique du Sud, NZ, Allemagne</a></li>
+      <li><a href="#s5-17">Volume de parachutage au-dessus de la DZ — définitions règlementaires internationales</a></li>
+    </ol>
+  </li>
+  <li><a href="#s6">Procédures cabine — briefing, call-outs, commandes</a>
+    <ol>
+      <li><a href="#s6-1">Briefing pré-vol</a></li>
+      <li><a href="#s6-2">Call-outs pilote et ouverture porte</a></li>
+      <li><a href="#s6-3">Commandes militaires jumpmaster</a></li>
+    </ol>
+  </li>
+  <li><a href="#s7">Procédures par pays</a>
+    <ol>
+      <li><a href="#s7-usa">USA</a></li>
+      <li><a href="#s7-uk">Royaume-Uni</a></li>
+      <li><a href="#s7-fr">France</a></li>
+      <li><a href="#s7-de">Allemagne</a></li>
+      <li><a href="#s7-au">Australie</a></li>
+      <li><a href="#s7-ca">Canada</a></li>
+      <li><a href="#s7-it">Italie</a></li>
+      <li><a href="#s7-mil">Militaire (US/FR/OTAN)</a></li>
+    </ol>
+  </li>
+  <li><a href="#s8">Synthèse globale</a></li>
+  <li><a href="#sources">Sources</a></li>
+</ol>
+</div>
+
+<!-- ======================= 1. MISSION ======================= -->
+<h2 id="s1">1. Mission de largage — acteurs, phases, objectifs</h2>
+
+<h3>1.1 Objectifs</h3>
+<p>Un largage parachutiste poursuit quatre objectifs simultanés&nbsp;:</p>
+<ol>
+  <li><strong>Précision</strong>&nbsp;: chaque sauteur doit pouvoir ouvrir sa voilure au-dessus du PI (Point d'Impact théorique) ou à portée, et atterrir dans l'aire désignée, face au vent.</li>
+  <li><strong>Séparation</strong>&nbsp;: aucun groupe ne doit tomber dans la colonne d'air d'un autre&nbsp;; aucun sauteur ne doit croiser la trajectoire voile d'un autre.</li>
+  <li><strong>Sécurité espace aérien</strong>&nbsp;: pas de conflit avec aéronefs commerciaux, pas de traversée de nuage, pas de survol non autorisé.</li>
+  <li><strong>Efficacité</strong>&nbsp;: largage du maximum de sauteurs en un minimum de passes — ce qui contraint la longueur de la fenêtre de largage.</li>
+</ol>
+
+<h3>1.2 Acteurs</h3>
+<table>
+  <thead><tr><th>Rôle</th><th>Responsabilités</th><th>Équivalent par pays</th></tr></thead>
+  <tbody>
+    <tr><td>Pilote largueur (PIC)</td><td>Vol précis de l'axe, vitesse, altitude&nbsp;; autorité finale sur le largage&nbsp;; gestion espace aérien.</td><td>Jump pilot (USA/UK/AU), Absetzpilot (DE), pilote largueur (FR)</td></tr>
+    <tr><td>Chef largueur / spotter</td><td>Contrôle visuel du point de sortie par la porte, corrections au pilote avant l'ouverture.</td><td>Spotter (USA), JM (UK/CA), directeur de vol (FR)</td></tr>
+    <tr><td>Chef de centre / DZSO</td><td>Fixe les paramètres du largage au briefing&nbsp;: axe, altitude, ordre des groupes.</td><td>DZSO (USA), CCI (UK/AU), Fluglehrer (DE), chef de centre (FR)</td></tr>
+    <tr><td>Jumpmaster (militaire)</td><td>Donne les commandes aux paras, contrôle équipement, déclenche la sortie sur feu vert.</td><td>Jumpmaster (US), Larg. mil. (FR), <em>Fallschirmjäger-Absetzer</em> (DE)</td></tr>
+    <tr><td>Sauteur expérimenté (load organizer)</td><td>Composition des groupes, briefing du saut, break-off plan.</td><td>Load organizer, LJM (AU)</td></tr>
+  </tbody>
+</table>
+
+<h3>1.3 Phases d'une passe de largage</h3>
+<ol>
+  <li><strong>Pré-vol</strong>&nbsp;: briefing météo, calcul spot, répartition groupes, ordre de boarding.</li>
+  <li><strong>Montée</strong>&nbsp;: vitesse économique, approche de l'altitude de largage.</li>
+  <li><strong>Set-up (2 min avant)</strong>&nbsp;: prise de cap jump run, ajustement trim, call-out « 2 minutes ».</li>
+  <li><strong>Jump run (30–60 s avant spot)</strong>&nbsp;: porte ouverte, réduction puissance, vitesse de largage, call-out « 1 minute » puis « door ».</li>
+  <li><strong>Largage</strong>&nbsp;: top vert, sortie des groupes dans l'ordre pré-défini avec séparation inter-groupes.</li>
+  <li><strong>Fin de passe</strong>&nbsp;: top rouge (furthest exit ou tous sortis), fermeture porte.</li>
+  <li><strong>Descente</strong>&nbsp;: circuit défini, altitude conservée sur racetrack si 2ᵉ passe nécessaire, ou descente rapide pour libérer l'espace.</li>
+</ol>
+
+<!-- ======================= 2. CALCUL ======================= -->
+<h2 id="s2">2. Calcul du jump run — axe et offset</h2>
+
+<h3 id="s2-1">2.1 Entrées du calcul</h3>
+<table>
+  <thead><tr><th>Variable</th><th>Source</th><th>Unités</th><th>Usage</th></tr></thead>
+  <tbody>
+    <tr><td>Vent par couche (3k, 6k, 9k, 12k ft)</td><td>Winds-aloft forecast (FSS, Météo-France, DWD, BoM…)</td><td>°/kt</td><td>Axe + dérive chute libre</td></tr>
+    <tr><td>Vent sol + basse altitude</td><td>METAR, manche à air, anémomètre DZ</td><td>°/kt</td><td>Dérive sous voile, face au vent à l'atterrissage</td></tr>
+    <tr><td>Altitude largage / ouverture / sol</td><td>QNH corrigé + hauteur terrain</td><td>ft / m</td><td>Temps de chute, temps sous voile</td></tr>
+    <tr><td>TAS au jump run</td><td>POH / pratique DZ</td><td>kt</td><td>Forward throw, groundspeed</td></tr>
+    <tr><td>Performances voiles (finesse, vitesse)</td><td>Manuel voile</td><td>— / kt</td><td>Portée sous voile</td></tr>
+    <tr><td>Géométrie DZ + obstacles + NFZ</td><td>Photo, carte, SUP AIP</td><td>—</td><td>Axe viable, fenêtre latérale</td></tr>
+  </tbody>
+</table>
+
+<h3 id="s2-2">2.2 Détermination de l'axe</h3>
+<p><strong>Méthode standard (USPA, British Skydiving, CSPA, FFP)</strong>&nbsp;:</p>
+<ol>
+  <li>Récupérer les directions du vent pour chaque couche (3k / 6k / 9k / 12k ft) + vent sol.</li>
+  <li>Calculer une <strong>moyenne directionnelle</strong> (non pondérée ou pondérée par la masse d'air traversée).</li>
+  <li>Prendre cette moyenne comme <strong>ligne de vol</strong>&nbsp;; le cap avion est 180° opposé (face au vent moyen).</li>
+  <li>Si la DZ est <strong>longue et étroite</strong>, privilégier le grand axe pour maximiser la fenêtre de largage.</li>
+  <li>Si le vent moyen mène sur obstacle ou NFZ, décaler l'axe jusqu'à compromis acceptable (crosswind ou hook).</li>
+</ol>
+
+<div class="card">
+<strong>Exemple chiffré (Skydive the Ranch, USA)</strong><br>
+Vents mesurés&nbsp;: 3k/240°&nbsp;·&nbsp;6k/260°&nbsp;·&nbsp;9k/270°&nbsp;·&nbsp;12k/270°&nbsp;·&nbsp;13k/290°.<br>
+Moyenne = (240+260+270+270+290)/5 = <strong>266°</strong>. Ligne de vol au <strong>086°</strong> (face au vent).
+</div>
+
+<h3 id="s2-3">2.3 Détermination de l'offset</h3>
+
+<h4>A. Dérive chute libre</h4>
+<div class="formula">Drift<sub>FF</sub> = V<sub>wind_avg</sub> × T<sub>chute</sub></div>
+<ul>
+  <li>Conversion usuelle&nbsp;: <code>V (kt) × T (s) / 3600 × 6076 = Drift (ft)</code>.</li>
+  <li>Règle mnémotechnique&nbsp;: <strong>60 kt pendant 60 s ≈ 1 NM</strong> (≈ 1 852 m, ≈ 6 076 ft).</li>
+  <li>30 kt / 60 s ≈ 0,5 NM&nbsp;;&nbsp; 15 kt / 60 s ≈ 0,25 NM (≈ 1 320 ft).</li>
+</ul>
+
+<div class="card">
+<strong>Exemple complet USPA-style</strong><br>
+Winds-aloft&nbsp;: 3k/40 kt&nbsp;·&nbsp;6k/45 kt&nbsp;·&nbsp;9k/30 kt&nbsp;·&nbsp;12k/50 kt.<br>
+Moyenne vitesse = (40+45+30+50)/4 = 41,25 kt.<br>
+Conversion mph&nbsp;: 41,25 × 1,15 = <strong>47,4 mph</strong>.<br>
+Dérive&nbsp;: 47,4 / 60 = <strong>0,79 mi</strong> (pour 60 s de chute).<br>
+Forward throw&nbsp;: −0,2 mi → <strong>offset utile 0,59 mi</strong>.
+</div>
+
+<h4>B. Forward throw (inertie avion)</h4>
+<ul>
+  <li>≈ 45 m à 90 kt sur une sortie <em>belly</em> stable.</li>
+  <li>≈ 0,2 mi (~320 m) cumulé en rule of thumb USPA.</li>
+  <li>À soustraire du cumul dérive dans le sens d'avance de l'avion.</li>
+</ul>
+
+<h4>C. Dérive sous voile</h4>
+<ul>
+  <li>Finesse typique&nbsp;: 2,5:1 élève, 3:1 voile moderne, 3:1 wingsuit performante.</li>
+  <li>Taux de descente&nbsp;: ≈ 1 000 ft/min élève, 500–800 ft/min pilotage confirmé.</li>
+  <li>Vitesse horizontale voile en air calme&nbsp;: 15–30 mph (13–26 kt).</li>
+  <li>Temps sous voile = altitude ouverture / taux descente.</li>
+  <li>Dérive = vent aux couches basses × T<sub>voile</sub> − pénétration de la voile face au vent.</li>
+</ul>
+
+<div class="card">
+<strong>Exemple DFV (Allemagne, métrique)</strong><br>
+Vent moyen 10 kt = 5 m/s, 3 min sous voile = 180 s.<br>
+Dérive voile = 5 × 180 = <strong>900 m</strong>.<br>
+Cumul avec dérive chute (1 200 m dans l'exemple DFV)&nbsp;: <strong>2 100 m totaux</strong> à remonter contre le vent.
+</div>
+
+<h4>D. Offset total</h4>
+<div class="formula">Offset<sub>total</sub> = Drift<sub>FF</sub> + Drift<sub>voile</sub> − Forward_throw</div>
+<p>Le <strong>point de sortie</strong> est placé en amont du PI à cette distance, le long de l'axe.</p>
+
+<h3 id="s2-4">2.4 Règles de pouce par pays</h3>
+<table>
+  <thead><tr><th>Pays</th><th>Règle</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge">FR</span> France</td><td><strong>0,3 NM d'offset par 10 kt de vent</strong>, fenêtre centrée sur ce point</td><td>aeroVFR PC-6&nbsp;/&nbsp;pratique largueur</td></tr>
+    <tr><td><span class="badge">US</span> USA</td><td>60 kt / 60 s = 1 NM (dérive chute pure), forward throw 0,2 mi à retrancher</td><td>USPA SIM 4-7, DiverDriver</td></tr>
+    <tr><td><span class="badge">DE</span> Allemagne</td><td>Calcul métrique explicite (m/s × s), sans simplification</td><td>DFV Handbuch Absetzbetrieb</td></tr>
+    <tr><td><span class="badge">UK</span> UK</td><td>Calcul graphique sur photo DZ par CCI, pas de règle chiffrée nationale</td><td>British Skydiving Ops Manual</td></tr>
+    <tr><td><span class="badge">AU</span> Australie</td><td>Délégué à l'expérience du CCI, APF Jump Pilot Manual ne chiffre pas</td><td>APF JPM V01-2024</td></tr>
+    <tr><td><span class="badge">CA</span> Canada</td><td>« Gained by experience, a jump-by-jump assessment »</td><td>CSPA PIM 2C / JM Ref Manual</td></tr>
+  </tbody>
+</table>
+
+<h3 id="s2-5">2.5 Géométrie de la DZ — variantes de jump run</h3>
+
+<h4>Jump run standard (<em>into-wind</em>)</h4>
+<p>Axe face au vent moyen. Utilisé par défaut quand la DZ le permet. Avantage&nbsp;: voile ouvre naturellement face au vent, dérive sous voile minimisée.</p>
+
+<h4>Crosswind jump run</h4>
+<p>Axe <strong>perpendiculaire</strong> au vent avec offset latéral constant. Utilisé quand&nbsp;:</p>
+<ul>
+  <li>DZ longue et étroite dont le grand axe est ~perpendiculaire au vent.</li>
+  <li>Obstacle hazardeux (route, rivière, immeubles) d'un côté du vent.</li>
+</ul>
+<p>Avantage&nbsp;: on utilise le grand axe de la DZ pour loger une longue fenêtre de largage, et un cutaway reste dans l'enveloppe aéroport au lieu de finir dans l'obstacle. Offset latéral&nbsp;: faible pour un 4-way, large pour un 40-way (break-off spread).</p>
+
+<h4>Hook pattern</h4>
+<p>L'avion entre <strong>offset côté downwind</strong>, incline et maintient un virage constant autour de la DZ&nbsp;; les sauteurs sortent pendant l'arc. Utile quand la configuration vent/DZ interdit un axe direct. Principalement testé sur <strong>Twin Otter</strong>. <em>Exige que les sauteurs soient briefés&nbsp;: sur certaines DZ, ils apprennent à attendre la fin du virage avant de sortir.</em></p>
+
+<h4>Big-ways et formations de plus de 40 sauteurs</h4>
+<p>La dispersion au break-off peut atteindre plusieurs centaines de mètres en rayon. L'offset est élargi du côté opposé à la zone d'atterrissage pour éviter que des voiles ne se posent sur l'autoroute ou sur la piste active. Jump run <strong>90–95 kt, ≈ 150 ft/s</strong> typique sur Otter/Skyvan.</p>
+
+<h4>Angle flying / tracking / wingsuit</h4>
+<p>Groupes à forte composante horizontale&nbsp;: l'axe de sortie est décalé de <strong>30–45°</strong> ou jusqu'à <strong>90°</strong> du jump run principal pour dégager la trajectoire des autres groupes. Sur les DZ qui acceptent plusieurs groupes tracking&nbsp;: un sort en premier, l'autre en dernier, chacun sur une ligne de vol différente.</p>
+
+<h3 id="s2-6">2.6 Outils de calcul et GPS cockpit</h3>
+<ul>
+  <li><strong>GPS cockpit avec waypoint « release »</strong> — dominant aujourd'hui&nbsp;: le pilote prépare la ligne de vol au briefing et hit l'approche du waypoint. Remplace le WDI papier.</li>
+  <li><strong>AXIS Exit Separation</strong> (Skydive Arizona) — web tool pour calculer la séparation inter-groupes. Voir §4.7.</li>
+  <li><strong>Spot Assist</strong> — app mobile plottant le spot sur une carte Google.</li>
+  <li><strong>Skydive Academy Virtual Spot</strong> — overlay du spot calculé sur satellite.</li>
+  <li><strong>Calcul manuel sur photo DZ</strong> — méthode historique USPA/UK/CSPA&nbsp;: traçage à la règle du segment <em>nearest/furthest exit</em>.</li>
+</ul>
+
+<div class="synthesis">
+<h3>Synthèse — calcul du jump run</h3>
+<p>La méthode réellement appliquée en civil est un <strong>algorithme à deux étapes</strong>&nbsp;: (1) calcul théorique <code>axe = moyenne des winds / offset = Σ dérives − forward throw</code>, (2) ajustement géométrique à la forme de la DZ et aux obstacles (crosswind, hook, offset big-ways). Les règles de pouce diffèrent par pays&nbsp;: FR métrique <strong>0,3 NM / 10 kt</strong>&nbsp;; US règle <strong>60 kt / 60 s / 1 NM</strong> + forward throw séparé&nbsp;; DE formule explicite en SI. Le <strong>GPS avec waypoint release</strong> est l'outil unifié, le spotter garde la vérification visuelle finale.</p>
+</div>
+
+<!-- ======================= 3. TOP VERT / TOP ROUGE ======================= -->
+<h2 id="s3">3. Top vert et top rouge — détermination et procédures</h2>
+
+<h3 id="s3-1">3.1 Top vert (premier largage)</h3>
+<p>Le top vert est donné <strong>lorsque l'avion atteint le point de sortie le plus en amont de la fenêtre de largage</strong> (<em>nearest exit</em>) et que les conditions sont réunies&nbsp;:</p>
+<ul>
+  <li>Alignement axe correct (cap GPS &lt; 5° d'écart).</li>
+  <li>Vitesse et altitude prescrites.</li>
+  <li>Espace aérien clair (ATC informé, pas de trafic, pas de nuage).</li>
+  <li>Porte opérée, spotter ou JM a confirmé.</li>
+</ul>
+
+<p><strong>Logique</strong>&nbsp;: le premier groupe est typiquement le plus lent à tomber (belly ou hop-and-pop) — il dérive donc le plus sous vent. Le <em>nearest exit</em> doit lui laisser un peu de marge avant le PI&nbsp;; le <em>furthest exit</em> correspond au groupe le plus rapide (freefly, wingsuit), qui dérive moins.</p>
+
+<h3 id="s3-2">3.2 Top rouge (fin de largage)</h3>
+<p>Top rouge déclenché par <strong>l'une de ces quatre conditions</strong>&nbsp;:</p>
+<ol>
+  <li><strong>Tous les groupes ont sauté</strong> → le pilote ferme la porte et pique vers le circuit de descente.</li>
+  <li><strong>Avion dépasse le point de sortie aval</strong> (<em>furthest exit</em>) — au-delà, les voiles ne rejoignent plus la cible.</li>
+  <li><strong>Problème de sécurité</strong>&nbsp;: trafic en dessous, nuage sous la trajectoire, intrusion NFZ, panne avion, chute d'équipement.</li>
+  <li><strong>Annulation sol</strong>&nbsp;: le DZSO appelle la radio (obstacle sur aire d'atterrissage, autre avion en finale, changement brusque de vent).</li>
+</ol>
+
+<h4>Calcul du <em>furthest exit</em> (portée voile)</h4>
+<div class="formula">Portée_voile = (V<sub>voile_air</sub> − V<sub>vent_face</sub>) × T<sub>sous_voile</sub></div>
+<div class="warn">Si <code>V<sub>vent</sub> ≥ V<sub>voile</sub></code>, la voile <strong>ne rentre pas</strong>. Exemple&nbsp;: voile 20 kt vs vent 25 kt à l'ouverture → V_rel négatif → le <em>furthest exit</em> passe <strong>côté amont du PI</strong>&nbsp;: la fenêtre est très courte, parfois impossible à exploiter.</div>
+
+<h3 id="s3-3">3.3 Multi-passes et racetrack</h3>
+<p>Si des groupes n'ont pas sauté à la fin de la passe (top rouge avant que tous soient sortis), le pilote exécute un <strong>hippodrome</strong> (racetrack)&nbsp;:</p>
+<ul>
+  <li>Virage standard <strong>dans le sens briefing DZ</strong> (évite les conflits avec autres trajectoires).</li>
+  <li>Altitude <strong>maintenue</strong> pendant le virage (évite une nouvelle montée).</li>
+  <li>Mise à jour GPS si besoin (nouvelle moyenne winds si le vent a tourné).</li>
+  <li>Call-out « 2 minutes » renouvelé, porte ouverte à nouveau, top vert pour la suite.</li>
+</ul>
+
+<div class="synthesis">
+<h3>Synthèse — top vert / top rouge</h3>
+<p>Le <strong>top vert</strong> est partout la conjonction « avion sur nearest exit + clair espace aérien ». Le <strong>top rouge</strong> est le dépassement d'une limite (furthest exit, sécurité, fin). <strong>Qui déclenche</strong> diffère par pays&nbsp;: pilote avec feu/voix (USA, AU, DE), cockpit verbal (« C'est OK ! », FR), jumpmaster (UK, CA petits avions, gros avions en formation). <strong>Racetrack standardisé</strong> partout pour 2ᵉ passe. Sortie sur top rouge = <strong>violation majeure</strong> en civil et militaire.</p>
+</div>
+
+<!-- ======================= 4. ORDONNANCEMENT ======================= -->
+<h2 id="s4">4. Ordonnancement des groupes — discipline, travail, taille</h2>
+
+<h3 id="s4-1">4.1 Principe fondamental&nbsp;: slow first / fast last</h3>
+<div class="callout">
+<strong>Règle universelle (USPA, British Skydiving, APF, CSPA)</strong>&nbsp;:<br>
+<em>Les sauteurs qui tombent lentement sortent en premier. Les sauteurs qui tombent vite sortent en dernier.</em>
+</div>
+
+<p><strong>Raison physique</strong>&nbsp;: un sauteur qui tombe lentement reste plus longtemps dans la masse d'air soumise au vent en altitude&nbsp;; il dérive donc <strong>plus loin</strong> sous l'action des winds-aloft. En le faisant sortir en premier, on lui laisse la place de dériver <em>avant</em> que le groupe suivant (plus rapide, moins dérivé) ne soit largué au-dessus de la même colonne d'air.</p>
+
+<p><strong>Formalisation</strong>&nbsp;: pour deux groupes successifs séparés d'un intervalle de sortie ΔT, la séparation horizontale obtenue est&nbsp;:</p>
+<div class="formula">Δx = V<sub>groundspeed</sub> × ΔT − (V<sub>wind</sub> × ΔT<sub>résidus</sub>)</div>
+<p>L'<em>exit separation</em> permet de maintenir Δx ≥ 1 000 ft entre deux colonnes de sauteurs.</p>
+
+<h3 id="s4-2">4.2 Classification des disciplines</h3>
+<table>
+  <thead><tr><th>Discipline</th><th>Vitesse chute typique</th><th>Déplacement horizontal</th><th>Temps de chute</th><th>Ouverture</th></tr></thead>
+  <tbody>
+    <tr><td>Belly (FS, relative work)</td><td>110–130 mph</td><td>Faible</td><td>50–60 s depuis 13 500 ft</td><td>2 500–3 500 ft</td></tr>
+    <tr><td>Freefly (sit/head-down)</td><td>140–180 mph</td><td>Faible à modéré</td><td>40–50 s</td><td>2 500–3 500 ft</td></tr>
+    <tr><td>Tracking</td><td>120–140 mph</td><td>Forte (lignes droites)</td><td>45–55 s</td><td>3 000 ft ou plus</td></tr>
+    <tr><td>Angle flying</td><td>130–160 mph</td><td>Très forte (pente)</td><td>40–50 s</td><td>3 500–5 000 ft</td></tr>
+    <tr><td>Wingsuit</td><td>50–80 mph (vertical)</td><td>Très forte (finesse 2:1–3:1)</td><td>90–120+ s</td><td>3 500–5 500 ft</td></tr>
+    <tr><td>Canopy Formation (CRW/CF)</td><td>Ouverture immédiate</td><td>Selon voile sous vent</td><td>~0 s chute</td><td>≤ 5 s après exit</td></tr>
+    <tr><td>Hop &amp; Pop</td><td>Ouverture quasi immédiate</td><td>Minime</td><td>3–5 s</td><td>Altitude de sortie 3 000–5 500 ft</td></tr>
+    <tr><td>Tandem</td><td>100–120 mph (avec drogue)</td><td>Faible</td><td>≈ 60 s depuis 13 500 ft</td><td>4 500–5 500 ft (plus haut)</td></tr>
+    <tr><td>AFF (élève)</td><td>110–130 mph</td><td>Faible</td><td>50–60 s</td><td>4 000–5 000 ft</td></tr>
+    <tr><td>High-pull</td><td>Ouverture immédiate à haute alt.</td><td>Selon voile</td><td>~0 s chute</td><td>≥ 10 000 ft</td></tr>
+  </tbody>
+</table>
+
+<h3 id="s4-3">4.3 Ordre de sortie type (USPA / Skydive Carolina)</h3>
+<ol>
+  <li><strong>Hop &amp; Pops basse altitude</strong> — ouverture immédiate, dérivent comme CF.</li>
+  <li><strong>CRW / Canopy Formation</strong> — ouverture immédiate, besoin d'un spot adapté (<em>deep</em> ou <em>short</em> selon vent).</li>
+  <li><strong>Groupes belly / relative work</strong> (du plus gros au plus petit).</li>
+  <li><strong>Groupes freefly</strong> (du plus gros au plus petit).</li>
+  <li><strong>Angle / tracking</strong> (perpendiculaires au jump run).</li>
+  <li><strong>AFF</strong> (élèves sous supervision).</li>
+  <li><strong>Tandems</strong> (ouvrent plus haut, dérivent moins sous voile).</li>
+  <li><strong>Wingsuits</strong> (du plus gros au plus petit).</li>
+  <li><strong>High-pulls</strong> (ouvrent haut, restent longtemps sous voile).</li>
+</ol>
+
+<div class="card">
+<strong>Variante fréquente</strong>&nbsp;: certains DZ mettent les groupes <strong>tracking/angle en premier</strong> (avant les belly) pour éviter qu'ils « traversent » les parachutes déjà ouverts des tandems/élèves descendus plus tôt. Sur un avion avec deux groupes tracking&nbsp;: <em>un devant, un derrière</em>, le reste entre les deux.
+</div>
+
+<h3 id="s4-4">4.4 Impact de la taille du groupe</h3>
+<p>La taille du groupe influe sur <strong>trois</strong> paramètres&nbsp;:</p>
+<ol>
+  <li><strong>Dispersion au break-off</strong>&nbsp;: un 40-way se « range » sur un rayon de 150–200 m, un solo sur 0 m. La séparation inter-groupes doit augmenter à proportion.</li>
+  <li><strong>Altitude de break-off</strong>&nbsp;: plus haut pour les gros groupes (voir §4.5).</li>
+  <li><strong>Temps d'embarquement et de sortie</strong>&nbsp;: un 20-way en Otter peut prendre 15 s à sortir, donc il occupe <em>deux fois plus</em> de fenêtre de largage qu'un duo.</li>
+</ol>
+
+<p><strong>Règle AXIS</strong>&nbsp;: <em>« Two seconds are added if a group consists of more than 5 jumpers. »</em></p>
+
+<p><strong>Distances horizontales cibles (Skydive Spaceland, USA)</strong>&nbsp;:</p>
+<ul>
+  <li>Solos&nbsp;: ≈ 200 m de séparation.</li>
+  <li>Petits groupes (2–5)&nbsp;: ≈ 300 m.</li>
+  <li>Gros groupes (&gt; 6)&nbsp;: ≈ 500 m.</li>
+</ul>
+
+<h3 id="s4-5">4.5 Break-off altitudes</h3>
+<table>
+  <thead><tr><th>Configuration</th><th>Altitude break-off min.</th><th>Altitude deployment</th></tr></thead>
+  <tbody>
+    <tr><td>Groupes ≤ 5 sauteurs</td><td><strong>≥ 1 500 ft</strong> au-dessus du deployment</td><td>2 500–3 500 ft</td></tr>
+    <tr><td>Groupes ≥ 6 sauteurs (big-way)</td><td><strong>≥ 2 000 ft</strong> au-dessus du deployment</td><td>2 500–3 500 ft</td></tr>
+    <tr><td>Big-way avec waves (plusieurs vagues)</td><td>Jusqu'à <strong>4 500+ ft</strong> pour la première vague</td><td>2 500–3 500 ft</td></tr>
+    <tr><td>Angle flying</td><td>3 500–5 000 ft</td><td>2 500–3 500 ft</td></tr>
+    <tr><td>Wingsuit</td><td>5 000–5 500 ft</td><td>3 500–5 500 ft</td></tr>
+  </tbody>
+</table>
+
+<h3 id="s4-6">4.6 Séparation inter-groupes (groundspeed / temps)</h3>
+<p>La séparation horizontale entre les colonnes d'air des groupes successifs est donnée par&nbsp;:</p>
+<div class="formula">Δx_horizontal = V<sub>groundspeed</sub> × ΔT_exit</div>
+<p>Avec <code>1 kt ≈ 1,7 ft/s</code> (soit <code>100 kt ≈ 170 ft/s</code>, arrondi couramment à 150 ft/s), et objectif Δx ≥ 1 000 ft&nbsp;:</p>
+
+<table>
+  <thead><tr><th>Groundspeed</th><th>ΔT minimum (pour 1 000 ft)</th><th>Note pratique</th></tr></thead>
+  <tbody>
+    <tr><td>60 kt (fort vent de face)</td><td><strong>~10 s</strong></td><td>Jump run très court, risque fenêtre réduite</td></tr>
+    <tr><td>90 kt</td><td><strong>7 s</strong></td><td>Jump run standard Otter/PC-6</td></tr>
+    <tr><td>100 kt</td><td>~6 s</td><td>Caravan, Super Otter</td></tr>
+    <tr><td>120 kt</td><td><strong>5 s</strong></td><td>Jump run rapide (fort vent arrière)</td></tr>
+    <tr><td>150 kt</td><td>~4 s</td><td>Exceptionnel, avions militaires / turbo</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+<strong>Corollaire important</strong>&nbsp;: si <code>V<sub>groundspeed</sub> → 0</code> (vent de face ≈ vitesse avion), Δx → 0 quelle que soit ΔT. On doit alors <strong>décaler l'axe</strong> ou annuler le largage.
+</div>
+
+<h3 id="s4-7">4.7 Méthodologie AXIS Exit Separation</h3>
+<p><a href="https://axis.tools/tool_Exit.php">AXIS Exit Separation</a> (Skydive Arizona, Brianne Thompson &amp; Niklas Daniel) est l'outil de référence civil.</p>
+<h4>Inputs</h4>
+<ul>
+  <li><strong>Group Size</strong>&nbsp;: +2 s si le groupe dépasse 5 sauteurs.</li>
+  <li><strong>Ground Speed</strong>&nbsp;: en kt, fournie par le pilote.</li>
+  <li><strong>Intended Group Separation</strong>&nbsp;: distance horizontale visée (baseline 1 000 ft).</li>
+</ul>
+<h4>Baseline</h4>
+<ul>
+  <li><strong>Séparation minimale&nbsp;: 6 s</strong>.</li>
+  <li><strong>Add-on gros groupes&nbsp;: +2 s</strong>.</li>
+  <li>Réglages fins&nbsp;: séparation ±200 ft par rapport aux 1 000 ft, groundspeed ±20 kt par rapport aux 80 kt.</li>
+</ul>
+<h4>Règles associées</h4>
+<ul>
+  <li>« Belly formations should jump before freefly formations. »</li>
+  <li>« Face perpendicular to the line of flight when tracking / angle flying, and/or attempting new free-fly maneuvers. »</li>
+</ul>
+
+<h3 id="s4-8">4.8 Perpendicular exits et angle de sortie</h3>
+<p>Pour les disciplines mouvantes&nbsp;:</p>
+<ul>
+  <li><strong>Belly / freefly stables</strong>&nbsp;: face au cap de vol, sortie vers l'avant.</li>
+  <li><strong>Tracking / angle</strong>&nbsp;: sortie à <strong>90° du jump run</strong>, avec déplacement latéral immédiat. <strong>10 s</strong> de séparation avant le groupe suivant en moyenne.</li>
+  <li><strong>Wingsuits</strong>&nbsp;: volent à <strong>30–45° du jump run</strong> dès la sortie pour dégager l'espace sous la porte.</li>
+  <li><strong>Break-off dans une formation</strong>&nbsp;: <em>« jamais plus de 90° off line of flight »</em>. Les sauteurs en bord de formation virent de 60° (jamais plus de 90°)&nbsp;; ceux du centre de 45°.</li>
+</ul>
+
+<h3 id="s4-9">4.9 Ordre de boarding — inverse de l'ordre de sortie</h3>
+<div class="callout"><strong>Règle universelle</strong>&nbsp;: <em>« We board the plane in the reverse of the proper skydiving exit order, with the last person to jump being the first person on the plane. »</em></div>
+<p>Le dernier à sortir (high-pull, wingsuit solo) monte en premier et s'installe au fond&nbsp;; le premier à sortir (hop &amp; pop, CRW) embarque en dernier et reste près de la porte. Ça évite les <em>shuffles</em> dangereux en vol.</p>
+
+<div class="synthesis">
+<h3>Synthèse — ordonnancement</h3>
+<p>L'ordre de sortie est une <strong>construction à 4 critères</strong>&nbsp;:</p>
+<ol>
+  <li><strong>Vitesse de chute</strong> (pilier) — slow first / fast last.</li>
+  <li><strong>Mouvement horizontal</strong> — tracking / angle / wingsuit isolés aux extrémités de la séquence pour éviter les croisements.</li>
+  <li><strong>Altitude d'ouverture</strong> — les hop &amp; pop et CRW sortent en premier, les high-pulls et wingsuits (haute ouverture) en dernier.</li>
+  <li><strong>Taille de groupe</strong> — gros groupes d'abord dans chaque catégorie (plus de dispersion, plus de marge à donner aux suivants).</li>
+</ol>
+<p>L'<strong>AXIS Exit Separation</strong> formalise la règle&nbsp;: <strong>base 6 s + 2 s si groupe &gt; 5</strong>, ajusté par groundspeed. Les distances horizontales cibles sont <strong>1 000 ft minimum entre groupes</strong>, <strong>300–500 m entre gros groupes</strong>. Le boarding se fait en <strong>ordre inverse de sortie</strong>.</p>
+</div>
+
+<!-- ======================= 5. ETENDUE DU LARGAGE ======================= -->
+<h2 id="s5">5. Étendue du largage — longueur du jump run et nombre de groupes par passe</h2>
+
+<p>Combien de sauteurs / de groupes peut-on larguer en <em>une</em> passe&nbsp;? Sur quelle distance s'étend la fenêtre de largage&nbsp;? Ces deux questions ne sont pas indépendantes&nbsp;: elles dérivent toutes deux du produit <strong>groundspeed × temps total d'exit</strong>, plafonné par les contraintes DZ (obstacles, airspace, voile rentrant ou non).</p>
+
+<h3 id="s5-1">5.1 Théorie&nbsp;: longueur géométrique du jump run</h3>
+<p>La longueur totale survolée au cap de largage se décompose en trois segments&nbsp;:</p>
+<div class="formula">L<sub>jump_run</sub> = L<sub>lead-in</sub> + L<sub>fenêtre</sub> + L<sub>lead-out</sub></div>
+<ul>
+  <li><strong>Lead-in</strong>&nbsp;: distance entre le call-out « door&nbsp;! » et le <em>nearest exit</em> (1er top vert). Pilote stabilise trim et vitesse. Typique&nbsp;: 0,2–0,5 NM.</li>
+  <li><strong>Fenêtre de largage utile</strong>&nbsp;: distance entre <em>nearest exit</em> et <em>furthest exit</em>. C'est le segment où des sauteurs peuvent sortir en arrivant sur le PI sous voile.</li>
+  <li><strong>Lead-out</strong>&nbsp;: distance après le <em>furthest exit</em> avant dégagement (porte fermée, virage). 0,3–0,6 NM typique.</li>
+</ul>
+<p>La fenêtre utile dépend du produit <strong>vitesse sol × temps sortie</strong>&nbsp;:</p>
+<div class="formula">L<sub>fenêtre</sub> = V<sub>groundspeed</sub> × T<sub>exit_total</sub></div>
+<p>Avec <code>T<sub>exit_total</sub> = T<sub>first_climbout</sub> + Σ<sub>i=2..n</sub> ΔT<sub>sep</sub>(i)</code>&nbsp;:</p>
+<ul>
+  <li><strong>T<sub>first_climbout</sub></strong> ≈ 15–20 s pour un <em>gros groupe</em> qui se positionne sur la rampe (8-way Otter), 5–10 s pour un solo.</li>
+  <li><strong>ΔT<sub>sep</sub></strong> = séparation inter-groupes (voir §4.6), typiquement 5–10 s.</li>
+</ul>
+
+<div class="card">
+<strong>Exemple chiffré — fenêtre utile</strong><br>
+Otter à V<sub>ground</sub> = 80 kt (vent moyen, jump run cap amont)&nbsp;:<br>
+80 kt × 60 s = 4 800 ft ≈ <strong>0,8 NM</strong> de fenêtre utile.<br>
+Avec lead-in 0,4 mi et lead-out 0,6 mi (Skydive Chicago)&nbsp;: longueur totale survolée ≈ <strong>1,8–2 mi</strong>.<br>
+Skydive the Ranch cite <strong>2,5 mi upwind du PI</strong> pour le 1er sauteur par vent 25 kt — cohérent avec cette échelle.
+</div>
+
+<div class="callout">
+<strong>Règle des 60 secondes</strong> (USPA / Skydive Spaceland)&nbsp;:<br>
+<em>« On a calm day, no more than 60 seconds can elapse from when the first jumpers leave the airplane to when the last jumper exits. »</em><br>
+C'est la <strong>borne haute empirique</strong> de la fenêtre utile&nbsp;: au-delà, les 1ers à sortir se posent dans la zone d'atterrissage pendant que les derniers ne sont pas encore en final, ce qui conflicte les axes voile.
+</div>
+
+<h3 id="s5-2">5.2 Dimensionnement du nombre de groupes par passe</h3>
+<p>Combien de groupes tiennent dans la fenêtre&nbsp;? Inversion de la formule du §5.1&nbsp;:</p>
+<div class="formula">n<sub>groupes_max</sub> = (T<sub>fenêtre_max</sub> − T<sub>first_climbout</sub>) / ΔT<sub>sep</sub>  + 1</div>
+
+<p>Avec <code>T<sub>fenêtre_max</sub></code> ≈ 60 s (jour calme), <code>T<sub>first_climbout</sub></code> ≈ 15–20 s&nbsp;:</p>
+
+<table>
+  <thead><tr><th>Scénario</th><th>V<sub>ground</sub></th><th>ΔT<sub>sep</sub></th><th>Premier climbout</th><th>n<sub>groupes</sub> max (1 passe)</th></tr></thead>
+  <tbody>
+    <tr><td>Vent de face fort, gros groupes</td><td>60 kt</td><td>10 s</td><td>20 s</td><td>(60−20)/10 + 1 = <strong>5 groupes</strong></td></tr>
+    <tr><td>Jump run standard Otter</td><td>90 kt</td><td>7 s</td><td>15 s</td><td>(60−15)/7 + 1 ≈ <strong>7–8 groupes</strong></td></tr>
+    <tr><td>Vent arrière, petits groupes</td><td>120 kt</td><td>5 s</td><td>10 s</td><td>(60−10)/5 + 1 = <strong>11 groupes</strong></td></tr>
+    <tr><td>Gros groupe seul (8-way) + petits</td><td>90 kt</td><td>7 s (après 8w 9 s)</td><td>20 s</td><td>≈ <strong>6 groupes</strong></td></tr>
+  </tbody>
+</table>
+
+<div class="card">
+<strong>Cas d'école publié</strong> (Skydive Carolina / SDZ)&nbsp;:<br>
+Load = 1 × 8-way + 2 × 4-ways + 2 × 2-ways + 1 solo + 1 AFF → total 7 groupes.<br>
+Cumul temps&nbsp;: premier climbout 8-way ≈ 20 s + 6 transitions × (7 à 10 s) ≈ <strong>70–80 s</strong>.<br>
+<strong>Au-delà des 60 s canoniques</strong>&nbsp;: la charge <em>passe</em> en une seule passe <strong>à condition</strong> que le 8-way parte en tête (son climbout de 15–20 s est consommé <em>avant</em> le top vert), ramenant l'ensemble à 60 s après 1er exit.<br>
+Marge&nbsp;: mince. Un retard de 5 s sur un groupe déclenche une 2ᵉ passe.
+</div>
+
+<div class="warn">
+<strong>Plafond pratique confirmé par plusieurs DZ</strong>&nbsp;: <em>« there are very few DZs on Earth where more than three groups can exit and fly safely back to the DZ »</em>. Sur DZ à deux « lanes » d'approche voile (deux zones d'ouverture définies) → <strong>max 2 groupes par passe</strong>. Le chiffre théorique (5–11) de la table ci-dessus n'est atteignable que sur <strong>grandes DZ type Spaceland / Perris / Skydive Arizona / Eloy</strong>.
+</div>
+
+<h3 id="s5-3">5.3 Contraintes pratiques qui réduisent le nombre de groupes</h3>
+<ul>
+  <li><strong>Multi-altitudes de sortie</strong>&nbsp;: si la charge comprend hop&amp;pop (5 000 ft), AFF (9 000 ft), fun jumpers (14 000 ft), la fenêtre est « étirée » par l'avion qui monte entre les altitudes — chaque palier consomme lead-in + fenêtre propre. Résultat&nbsp;: les <strong>derniers jumpers atterrissent parfois en dehors</strong> (<em>para-hike</em>).</li>
+  <li><strong>Lanes voile</strong>&nbsp;: DZ à corridors d'approche voile multiples (ex&nbsp;: 2 lanes de part et d'autre du grand axe) forcent max <strong>2 groupes par passe</strong> pour garantir non-chevauchement des cônes de dérive.</li>
+  <li><strong>Groupes « movement » (tracking, angle)</strong>&nbsp;: Skydive Chicago fixe <strong>max 2 movement groups par load</strong>&nbsp;; au-delà, les trajectoires divergentes saturent la fenêtre latérale.</li>
+  <li><strong>High-pull + second avion</strong>&nbsp;: interdit à Skydive Chicago <em>« when 2 planes are flying »</em>&nbsp;; les voiles hautes restent longtemps dans la couche traversée par le 2ᵉ avion.</li>
+  <li><strong>Vent fort (&gt; 30 kt en altitude)</strong>&nbsp;: allonge ΔT<sub>sep</sub> à 10 s ou plus → plafonne à 4–5 groupes par passe. <em>« On a windy day, that could increase to 10 seconds or more »</em> (Skydive Palm Beach).</li>
+  <li><strong>Règle des 45°</strong>&nbsp;: groupe suivant attend que le précédent soit à ≈ 45° sous l'avion → équivaut à ~7–10 s selon vent. Historiquement inutile si groundspeed constant, encore utilisée comme <em>sanity check</em> visuel.</li>
+</ul>
+
+<h3 id="s5-4">5.4 Décision 1 passe vs 2 passes&nbsp;: critères</h3>
+<table>
+  <thead><tr><th>Critère</th><th>1 passe suffisante si…</th><th>2 passes nécessaires si…</th></tr></thead>
+  <tbody>
+    <tr><td>Temps total exit</td><td>≤ 60 s après 1er top vert</td><td>&gt; 60 s</td></tr>
+    <tr><td>Nombre de groupes</td><td>≤ 5–7 selon V<sub>ground</sub></td><td>&gt; 7 gros groupes ou &gt; 10 petits</td></tr>
+    <tr><td>Altitudes exit</td><td>Identique pour tous les groupes</td><td>≥ 2 paliers différents (H&amp;P + full alt)</td></tr>
+    <tr><td>Vent</td><td>Stable, &lt; 30 kt</td><td>Variable ou fort (&gt; 30 kt)</td></tr>
+    <tr><td>Trafic DZ</td><td>Avion seul</td><td>2 avions ou plus en opérations simultanées</td></tr>
+    <tr><td>Spot</td><td>Atteint en 1 approche</td><td>Spot manqué → go-around</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+<strong>Heuristique de DZSO</strong>&nbsp;:
+<ol>
+  <li>Compter les groupes, estimer ΔT<sub>sep</sub> par groundspeed annoncé.</li>
+  <li>Si T<sub>total</sub> ≤ 60 s (climbout 1er inclus) → <strong>1 passe</strong>.</li>
+  <li>Si 60 s &lt; T<sub>total</sub> ≤ 75 s → <strong>1 passe si 1er groupe est le plus gros (absorbe climbout)</strong>.</li>
+  <li>Sinon → <strong>split en 2 passes</strong> (généralement gros groupes sur passe 1, petits sur passe 2, ou split par altitude).</li>
+</ol>
+</div>
+
+<h3 id="s5-5">5.5 Seconde passe&nbsp;: racetrack, inversion de spot, downwind/upwind</h3>
+
+<h4>Racetrack (hippodrome) standard</h4>
+<p>Pattern le plus fréquent&nbsp;:</p>
+<ol>
+  <li>Top rouge après le dernier groupe sorti de la passe 1 → porte fermée.</li>
+  <li>Virage standard (sens briefing DZ, typiquement côté opposé à l'aire d'atterrissage) maintenant altitude.</li>
+  <li>Downwind leg + base + final sur l'axe, longueur totale ≈ 5–7 min selon avion.</li>
+  <li>Nouveau call-out « 2 minutes », ouverture porte, top vert.</li>
+</ol>
+
+<h4>Inversion downwind/upwind (vent faible/variable)</h4>
+<div class="card">
+<em>« When winds are light and variable at the surface as well as opening altitude, aircraft will sometimes exit downwind and upwind of the target, which is done to reduce the number of passes and reduce the possibility of dropping skydivers onto skydivers that exited on the previous pass. »</em> — <strong>Skydive Chicago</strong>
+</div>
+<p>Concrètement&nbsp;: par vent &lt; 10 kt aux couches basses, la dérive sous voile est quasi nulle dans les deux sens. Le pilote peut alors sortir une partie des groupes en arrivant sur la DZ <strong>au vent</strong>, et le reste sur le retour <strong>sous le vent</strong>. Cela&nbsp;:</p>
+<ul>
+  <li>Économise une passe (pas de racetrack de 5–7 min).</li>
+  <li>Découple spatialement les groupes de la passe 1 et de la passe 2 (sorties en directions opposées).</li>
+  <li>Nécessite un briefing très clair&nbsp;: l'ordre de sortie <em>dépend</em> de la direction de passe.</li>
+</ul>
+
+<h4>Split par altitude</h4>
+<p>Passe 1&nbsp;: hop&amp;pop à 5 000 ft, AFF à 9 000 ft, puis avion continue la montée. Passe 2&nbsp;: full-altitude à 13 500 / 14 000 ft. Avantage&nbsp;: chaque passe a une fenêtre propre et séparée, pas de conflits voile. Inconvénient&nbsp;: double briefing et temps avion augmenté.</p>
+
+<h3 id="s5-6">5.6 Big-ways multi-avions — étendue &amp; coordination</h3>
+<p>Pour des formations ≥ 40 sauteurs, le dimensionnement passe de « 1 avion, N groupes » à « N avions, sortie quasi simultanée ». L'étendue du largage devient alors l'étendue <em>spatiale</em> de la formation d'avions, pas l'étendue temporelle du jump run.</p>
+
+<table>
+  <thead><tr><th>Formation</th><th>Avions</th><th>Altitude</th><th>Sauteurs / exit</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>400-way belly (Udon Thani 2006)</td><td>5 × C-130 Hercules</td><td>25 400 ft</td><td>80/avion</td><td>Record mondial historique</td></tr>
+    <tr><td>250-way belly (Skydive Chicago 2025)</td><td>11 avions&nbsp;: 1 Sherpa + 2 Skyvans + 2 Casas + 6 Twin Otters</td><td>~19 000 ft (go-around à 19k dû aux nuages)</td><td>~22/avion</td><td>Working time ≈ 60 s</td></tr>
+    <tr><td>174-way vertical (record 2025)</td><td>9 avions&nbsp;: 2 Skyvans + 2 Casas + 5 Twin Otters</td><td>~18 000 ft</td><td>~19/avion</td><td>40 s build, 60 s total</td></tr>
+    <tr><td>100-way (P3 Camp)</td><td>4–5 Otters</td><td>18 000 ft</td><td>20–25/avion</td><td>Training standard</td></tr>
+  </tbody>
+</table>
+
+<h4>Paramètres opérationnels big-way</h4>
+<ul>
+  <li><strong>Séparation inter-avions</strong> en formation de largage&nbsp;: <strong>130 ft de décalage latéral</strong> pour éviter le <em>wake turbulence</em>, 2 000 ft / 7 s séparation verticale-temporelle pour les largages séquentiels.</li>
+  <li><strong>Working time</strong>&nbsp;: ≈ <strong>60 s exit → deployment</strong>, dont <strong>~40 s pour construire</strong> la formation après exit.</li>
+  <li><strong>Base et radiaux</strong>&nbsp;: la formation est décomposée en <em>base</em> (centre), <em>stadium</em> (couronnes concentriques), <em>radiaux</em> (angles), <em>quadrants</em>&nbsp;; chaque sauteur a un slot précis avec approche briefée (exit-frame → quadrant → stadium → radial → slot).</li>
+  <li><strong>Oxygène</strong>&nbsp;: obligatoire au-dessus de 15 000 ft (FAA) et utilisé systématiquement en big-way dès 18 000 ft pour préserver la lucidité 10–15 min avant exit.</li>
+</ul>
+
+<h3 id="s5-7">5.7 Militaire&nbsp;: dimensionnement CARP de la DZ</h3>
+<p>Le militaire tire l'extension <em>de la DZ elle-même</em>, pas du jump run&nbsp;: c'est la DZ qu'on dimensionne pour absorber un <em>stick</em> complet en une passe (doctrine US Army FM 3-21.38 / AFMAN 11-231).</p>
+
+<div class="formula">L<sub>DZ_min</sub> (yd) = 600 + 75 × (n<sub>paras</sub> − 1) + corrections altitude + nuit/jour</div>
+
+<ul>
+  <li><strong>1 parachutiste</strong>&nbsp;: DZ minimum 600 × 600 yd (≈ 549 × 549 m).</li>
+  <li><strong>+75 yd de longueur par para additionnel</strong>.</li>
+  <li><strong>Correction altitude</strong>&nbsp;: +30 yd longueur et largeur par tranche de 100 ft au-dessus de 1 000 ft AGL.</li>
+  <li><strong>Correction nuit</strong>&nbsp;: +100 yd largeur.</li>
+  <li><strong>Correction entraînement</strong>&nbsp;: +100 yd en longueur et largeur (50 yd chaque côté, 50 yd chaque extrémité).</li>
+  <li><strong>Point of Impact (PI)</strong>&nbsp;: au moins <strong>300 yd du leading edge</strong> (350 yd de nuit).</li>
+</ul>
+
+<div class="card">
+<strong>Exemples chiffrés</strong>&nbsp;:<br>
+<strong>30 paras</strong> à 1 000 ft AGL de jour&nbsp;: 600 + 75 × 29 = <strong>2 775 yd ≈ 1,4 NM</strong> de longueur minimale.<br>
+<strong>100 paras</strong> à 1 000 ft AGL de jour&nbsp;: 600 + 75 × 99 = <strong>8 025 yd ≈ 4,0 NM</strong>.<br>
+<strong>100 paras à 1 500 ft AGL de nuit</strong>&nbsp;: 8 025 + 5 × 30 = <strong>8 175 yd longueur</strong>, 600 + 5 × 30 + 100 = <strong>850 yd largeur</strong>.
+</div>
+
+<h4>Chalks, sticks et multi-passes militaires</h4>
+<ul>
+  <li><strong>Chalk</strong>&nbsp;: groupe de paras embarqués dans <em>un</em> avion (30–40 paras C-130, plus sur C-141 / C-17). Un chalk largue généralement en <em>une</em> passe.</li>
+  <li><strong>Stick</strong>&nbsp;: sous-groupe sortant d'<em>une</em> porte. Sur C-130&nbsp;: 2 sticks par passe (portes gauche / droite), cadence 1 para/s/porte.</li>
+  <li><strong>Serials</strong>&nbsp;: vagues d'avions successives sur la même DZ — <strong>6 min de séparation</strong> entre serials.</li>
+  <li><strong>Heavy drop avant personnel</strong>&nbsp;: équipement lourd largué 30 s à 1 min <em>avant</em> les paras (jour), ou <strong>30 min après</strong> (nuit, pour éviter les chutes sur le matériel).</li>
+  <li><strong>Sequential loads</strong>&nbsp;: plusieurs charges dans un même avion exigent une DZ <strong>≥ 0,5 mi (0,8 km)</strong>, sinon multi-passes obligatoires.</li>
+  <li><strong>Block time</strong> sur la DZ&nbsp;: 20 min (C-130), 30 min (C-141) pour une opération complète.</li>
+</ul>
+
+<h3 id="s5-8">5.8 Pratiques par pays et par DZ — chiffres et exemples</h3>
+
+<table>
+  <thead><tr><th>Pays / DZ</th><th>Longueur jump run typique</th><th>Groupes / passe (pratique)</th><th>Règle ΔT<sub>sep</sub></th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge civ">CIV</span> USA — Skydive Chicago</td><td>~2 mi (lead-in 0,4 mi + fenêtre 0,8 mi + hook 0,6 mi)</td><td>5–8 (dont max 2 movement, max 1 high-pull si 1 avion)</td><td>6 s fixe annoncée</td><td>SDC Info &amp; weather</td></tr>
+    <tr><td><span class="badge civ">CIV</span> USA — Skydive Spaceland</td><td>Fenêtre ≤ 60 s</td><td>4–7, soft cap si &gt; 70 s total</td><td>7 s @ 90 kt, 5 s @ 120 kt</td><td>Spaceland Houston</td></tr>
+    <tr><td><span class="badge civ">CIV</span> USA — Skydive the Ranch</td><td>~2,5 mi upwind du PI pour 1er sauteur</td><td>Non chiffré, typiquement 5–8</td><td>Calcul <code>V × T</code></td><td>Ranch Exit Point</td></tr>
+    <tr><td><span class="badge civ">CIV</span> UK — British Skydiving</td><td>CCI-dependent, souvent court (DZ compactes)</td><td>3–6</td><td>Tableaux CCI par DZ</td><td>BS Ops Manual</td></tr>
+    <tr><td><span class="badge civ">CIV</span> France — FFP</td><td>Fenêtre ~0,3 NM / 10 kt vent (règle offset)</td><td>4–6, rarement plus (DZs PC-6 compactes)</td><td>Marquée par le chef largueur, &gt; 5 s</td><td>aeroVFR PC-6, DT 49</td></tr>
+    <tr><td><span class="badge civ">CIV</span> Allemagne — DFV</td><td>Variable, calcul métrique explicite</td><td>4–8</td><td>Formule V(m/s) × ΔT(s) × 1000 ft target</td><td>DFV Handbuch Absetzbetrieb</td></tr>
+    <tr><td><span class="badge civ">CIV</span> Australie — APF</td><td>300–500 m entre groupes, ~1–2 NM total</td><td>5–8</td><td>Steven Geens thesis → AXIS-like</td><td>APF Exit Separation</td></tr>
+    <tr><td><span class="badge civ">CIV</span> Big-way (Arizona, Chicago, Perris)</td><td>Multi-avions en formation latérale</td><td>1 formation = 1 exit quasi simultané sur 9–11 avions</td><td>Séparation spatiale 130 ft latérale</td><td>P3 / Skydive Mag</td></tr>
+    <tr><td><span class="badge mil">MIL</span> US Army / USAF CARP</td><td>DZ 600 + 75 × (n−1) yd</td><td>30–40 paras / chalk / avion en 1 passe</td><td>1 para/s/porte (2 portes C-130)</td><td>FM 3-21.38, AFI 13-217</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+<strong>Chiffres remarquables à retenir</strong>&nbsp;:
+<ul>
+  <li>Fenêtre civile&nbsp;: <strong>≤ 60 s</strong> (jour calme) → <strong>0,8–1 NM</strong> à 80 kt groundspeed.</li>
+  <li>Jump run total civile&nbsp;: <strong>~2 NM</strong> avec lead-in et hook.</li>
+  <li>Plafond pratique&nbsp;: <strong>5–8 groupes / passe</strong> sur grandes DZ (Spaceland, Chicago)&nbsp;; <strong>2 groupes / passe</strong> sur DZ à lanes.</li>
+  <li>Big-way&nbsp;: <strong>1 exit = 1 passe</strong>, coordination multi-avions 130 ft latéral.</li>
+  <li>Militaire CARP&nbsp;: DZ = <strong>600 yd + 75 yd / para</strong> → 30 paras = 2,8 km, 100 paras = 7,3 km.</li>
+</ul>
+</div>
+
+<h3 id="s5-9">5.9 Règle des 60 s vs raisonnement en distance — que retenir&nbsp;?</h3>
+
+<p>La règle des « 60 secondes max de fenêtre » circule dans beaucoup de documents DZ, mais elle est <strong>dérivée d'un objectif de distance, pas l'inverse</strong>. Le vrai paramètre physique est la <strong>séparation horizontale</strong> entre deux colonnes de sauteurs successifs, cible ≥ 1 000 ft (≈ 300 m). Le temps n'est qu'une traduction via la groundspeed.</p>
+
+<h4>Pourquoi raisonner en distance est plus exact</h4>
+<ul>
+  <li><strong>La « fenêtre de 60 s » suppose un régime&nbsp;de vent&nbsp;modéré</strong>. En vent fort (40–50 kt aux couches basses), la règle Start Skydiving <em>headwind/2</em> impose ΔT<sub>sep</sub> jusqu'à <strong>25 s</strong> — soit 2 à 3 groupes max dans la fameuse fenêtre de 60 s. Le plafond de 60 s devient sans objet&nbsp;; le plafond réel est <strong>Δx ≥ 1 000 ft entre groupes</strong>.</li>
+  <li><strong>Les call-outs pilote sont en distance, pas en temps</strong>. Skydive Spaceland San Marcos, Skydive Orange, Start Skydiving annoncent&nbsp;: <em>« Green light… 0.2 past… half mile past… one mile past »</em>. Ces marqueurs sont <em>parlés en miles</em>, jamais en secondes.</li>
+  <li><strong>Les DZ définissent leur jump run en miles</strong>. Skydive Chicago publie littéralement&nbsp;: <em>« Green Light: 0.4 miles prior to DZ&nbsp;·&nbsp;Offset: South 0.2 miles&nbsp;·&nbsp;Hook: 0.6 miles past left »</em>. La longueur totale survolée est <strong>~1,8–2 mi</strong> = <strong>1,6–1,7 NM</strong>, peu importe la vitesse.</li>
+  <li><strong>La notion d'exit point est spatiale</strong>. Skydive the Ranch chiffre <strong>2,5 mi upwind du PI</strong> pour le 1er sauteur par vent 25 kt&nbsp;: c'est une <em>position</em>, pas un temps.</li>
+</ul>
+
+<h4>Formule distance-first (plus générale que celle en temps)</h4>
+<div class="formula">L<sub>fenêtre</sub> = (n<sub>groupes</sub> − 1) × Δx<sub>cible</sub> + L<sub>premier_exit_spread</sub></div>
+<p>Avec Δx<sub>cible</sub> = 1 000 ft (300 m) et <code>L<sub>premier_exit_spread</sub></code> = 0 pour solo, ~500 ft pour un 8-way qui s'étire sur rampe.</p>
+
+<div class="card">
+<strong>Exemple — 5 groupes, règle distance</strong>&nbsp;:<br>
+4 séparations × 1 000 ft + étalement premier groupe 500 ft = <strong>4 500 ft ≈ 0,74 NM</strong> de fenêtre utile, <strong>quelle que soit la groundspeed</strong>.<br>
+À 80 kt (135 ft/s), ça prend 33 s. À 120 kt (203 ft/s), 22 s. À 60 kt (101 ft/s), 45 s. La <em>distance est constante</em>&nbsp;; le temps suit la vitesse.
+</div>
+
+<h4>Peut-on larguer sur 2 NM&nbsp;?</h4>
+<div class="callout">
+<strong>Oui, régulièrement — mais la fenêtre <em>utile</em> reste ≤ 1 NM dans la plupart des cas.</strong>
+<ul>
+  <li>Les <strong>2 NM évoqués sont le jump run total</strong> survolé par l'avion (lead-in 0,3–0,5 NM + fenêtre 0,5–1 NM + lead-out/hook 0,3–0,6 NM).</li>
+  <li>La <strong>fenêtre utile</strong> (nearest → furthest exit) qui <em>contient les sorties</em> est de l'ordre de <strong>0,5 à 1 NM</strong>, rarement plus. Au-delà, le 1er sauteur ne rentre plus sous voile.</li>
+  <li>Exception&nbsp;: <strong>DZ militaires CARP avec 100 paras</strong>&nbsp;: la DZ dimensionnée fait 4 NM, et la fenêtre de largage peut effectivement s'étendre sur 2–3 NM à cadence 1 para/s/porte en vol lent.</li>
+  <li>Exception&nbsp;: <strong>vent nul + voiles performantes + grande DZ</strong> (Arizona, Eloy, Z-Hills) → fenêtre utile jusqu'à 1,5 NM car toutes les voiles sont symétriquement récupérables.</li>
+</ul>
+</div>
+
+<div class="warn">
+<strong>Ce qui limite réellement la longueur</strong> (par ordre décroissant d'impact en civil)&nbsp;:
+<ol>
+  <li><strong>Portée voile face au vent</strong>&nbsp;: si V<sub>vent_low</sub> &gt; V<sub>voile_pénétration</sub>, la fenêtre utile <em>s'écrase</em> et peut passer en dessous de 0,3 NM. Voir §3.2 (furthest exit).</li>
+  <li><strong>Traffic</strong>&nbsp;: plus la fenêtre est longue, plus la ballet voile est dispersé, plus les cônes de descente se croisent. 2 lanes max sur DZ moyennes.</li>
+  <li><strong>Airspace</strong>&nbsp;: LOA ATC limite souvent la fenêtre à un rayon NM autour du centre DZ. Skydive Chicago&nbsp;: 0,4 mi prior + 0,6 mi past ⇒ rayon ~0,8 mi.</li>
+  <li>Le <strong>temps</strong> (la fameuse « 60 s ») arrive <em>après</em> ces trois critères.</li>
+</ol>
+</div>
+
+<h3 id="s5-10">5.10 Jump runs non-rectilignes — hook, crosswind, orbital</h3>
+
+<p>Le jump run <strong>rectiligne face au vent</strong> est le <em>défaut absolu</em>&nbsp;: plus de 90&nbsp;% des largages civils en région tempérée sont effectués en ligne droite. Les jump runs courbes existent mais restent des <strong>cas particuliers</strong>, réservés à des configurations DZ ou météo spécifiques, <strong>toujours briefés à part</strong>.</p>
+
+<table>
+  <thead><tr><th>Type</th><th>Fréquence</th><th>Quand l'utiliser</th><th>Contraintes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Rectiligne into-wind</strong></td><td>&gt; 90&nbsp;% civil</td><td>Défaut&nbsp;; DZ circulaire ou carrée, vent stable</td><td>Aucune spécifique</td></tr>
+    <tr><td><strong>Crosswind (perpendiculaire)</strong></td><td>~5&nbsp;%</td><td>DZ longue-étroite perpendiculaire au vent&nbsp;; obstacle hazardeux côté vent</td><td>Offset latéral calculé par CCI/pilote&nbsp;; cutaway doit rester dans la DZ</td></tr>
+    <tr><td><strong>Hook (virage continu)</strong></td><td>&lt; 2&nbsp;%</td><td>Crosswind qui devient trop long&nbsp;; airspace circulaire&nbsp;; Twin Otter avec technique « right engine drags »</td><td>Jumpers <strong>doivent être briefés</strong> qu'il est OK de sortir en virage&nbsp;; dans d'autres DZ le brief est <em>inverse</em> — ne jamais sortir en virage</td></tr>
+    <tr><td><strong>Orbital (racetrack continu)</strong></td><td>&lt; 1&nbsp;% civil, standard big-way</td><td>2ᵉ passe, récupération après go-around</td><td>Altitude maintenue&nbsp;; coordination ATC</td></tr>
+    <tr><td><strong>Downwind / running</strong></td><td>Très rare civil, fréquent militaire</td><td>Vent faible + passe combinée upwind/downwind (économie de passe)&nbsp;; drops CARP spécifiques</td><td>Forward throw dans le sens du PI&nbsp;; calcul offset différent</td></tr>
+  </tbody>
+</table>
+
+<h4>Choix du type de jump run — critères décisionnels</h4>
+<ol>
+  <li><strong>Forme de la DZ</strong>. DZ ronde ou carrée → rectiligne face au vent. DZ longue et étroite (ex. le grand axe de la piste) → rectiligne <strong>le long du grand axe</strong>, même si ça devient crosswind.</li>
+  <li><strong>Direction du vent</strong>. Si le vent d'altitude et le vent sol sont alignés → rectiligne into-wind classique. Si divergence &gt; 30° → calculer un axe moyen pondéré (voir §2.2), reste rectiligne.</li>
+  <li><strong>Obstacles et NFZ</strong>. Autoroute, rivière, zone bâtie, NFZ ATC, airport actif du côté de la dérive voile → crosswind ou hook pour offset latéral constant.</li>
+  <li><strong>Longueur nécessaire</strong>. Si la fenêtre calculée dépasse la géométrie autorisée en rectiligne → hook (prolonge la fenêtre par courbe) ou split en 2 passes (plus sûr).</li>
+  <li><strong>Type d'avion</strong>. Twin Otter supporte bien le hook avec technique « right engine drag ». PC-6 / Cessna Caravan : hook possible mais bank inconfortable en cabine. C-130 / Skyvan&nbsp;: quasi toujours rectiligne, virage rendant le stick ingérable.</li>
+  <li><strong>Expérience sauteurs</strong>. Load d'élèves AFF / tandems → exclusivement rectiligne, briefing simplifié. Load fun jumpers expérimentés → tolère hook si briefé.</li>
+</ol>
+
+<div class="card">
+<strong>Technique hook Twin Otter</strong> (DiverDriver)&nbsp;:<br>
+1. Entrée offset côté <em>downwind</em> ou <em>au-dessus</em> de la zone d'atterrissage.<br>
+2. Au passage abeam du centre DZ, <strong>léger bank maintenu</strong> (typiquement 10–15°, pas plus).<br>
+3. L'avion pivote autour de la DZ en <em>virage non coordonné</em> (moteur droit traîne l'avion dans la courbe).<br>
+4. Les sauteurs sortent pendant l'arc, <strong>côté haut du bank</strong>.<br>
+5. <strong>Communication impérative</strong>&nbsp;: « Il est OK de sortir en virage » — <em>certaines DZ enseignent l'inverse</em> (« ne jamais sortir en bank »). Le brief doit lever l'ambiguïté.
+</div>
+
+<h4>Pourquoi le rectiligne reste le défaut</h4>
+<ul>
+  <li>Calcul simple et déterministe&nbsp;: spot + offset + forward throw, tous sur une ligne.</li>
+  <li>Pas de surprise pour les sauteurs&nbsp;: la sortie porte-propre est conforme à l'entraînement AFF.</li>
+  <li>Spot GPS waypoint unique&nbsp;: l'avion se cale et tient le cap automatiquement.</li>
+  <li>Séparation inter-groupes linéaire&nbsp;: Δx = V × ΔT est exact. En courbe, Δx dépend de la corde et du rayon de virage, plus délicat.</li>
+  <li>Conformité avec le briefing standard USPA / BS / FFP / APF&nbsp;: tous enseignent le rectiligne par défaut.</li>
+</ul>
+
+<h3 id="s5-11">5.11 Constitution d'une charge — précautions avec plafond de sorties</h3>
+
+<p>Quand un DZSO ou un load organizer construit une charge (« load ») <strong>plafonnée à N sorties</strong> (ex. 10 sauteurs ou 10 groupes), les règles suivantes s'appliquent <em>en plus</em> du raisonnement nombre-de-groupes-par-passe du §5.2.</p>
+
+<h4>A. Distinguer&nbsp;: N sauteurs, N groupes, N sorties</h4>
+<div class="callout">
+<strong>« 10 max » peut signifier trois choses très différentes</strong>&nbsp;:
+<ul>
+  <li><strong>10 sauteurs dans l'avion</strong>&nbsp;: c'est une contrainte d'emport avion (Cessna Caravan, PC-6). Ils peuvent constituer de <strong>1</strong> groupe (10-way) à <strong>10</strong> groupes (10 solos).</li>
+  <li><strong>10 groupes sur la passe</strong>&nbsp;: c'est une contrainte de fenêtre de largage (voir §5.2). Chaque groupe peut faire 1 à 20 sauteurs. Total potentiel&nbsp;: 10 à 200 sauteurs, selon taille groupes.</li>
+  <li><strong>10 sorties (exits) comptées</strong>&nbsp;: 10 événements-de-porte. 1 solo = 1 exit. 1 groupe de 20-way = 1 exit (sortie groupée coordonnée). Un tandem + videographer = 2 exits.</li>
+</ul>
+Clarifier laquelle des trois avant d'optimiser la charge.
+</div>
+
+<h4>B. Tri obligatoire — ordre USPA + taille + altitude de déploiement</h4>
+<p>Avec une contrainte de 10 sorties, le choix des groupes doit respecter simultanément&nbsp;:</p>
+<ol>
+  <li><strong>Discipline</strong> selon §4.3 (slow first / fast last).</li>
+  <li><strong>Taille</strong> au sein de chaque discipline&nbsp;: du plus gros au plus petit (belly et freefly) <em>ou</em> du plus petit au plus gros selon DZ (Spaceland Houston boarding list).</li>
+  <li><strong>Altitude de déploiement</strong> au sein de chaque taille-discipline&nbsp;: le plus <em>bas</em> déploiement en premier, le plus haut en dernier.</li>
+  <li><strong>Niveau des sauteurs</strong>&nbsp;: AFF students séparés des expérimentés pour raisons de supervision.</li>
+</ol>
+
+<h4>C. Plafonds par catégorie (pratique DZ moderne)</h4>
+<table>
+  <thead><tr><th>Catégorie</th><th>Plafond par load</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td>Movement groups (tracking, angle, wingsuit)</td><td><strong>2</strong> groupes / discipline / load</td><td>Spaceland, Start Skydiving, SDC</td></tr>
+    <tr><td>High-pullers / CRW</td><td><strong>0</strong> si 2 avions en opérations, <strong>1</strong> sinon</td><td>Skydive Chicago</td></tr>
+    <tr><td>Tandems</td><td>Limité par places harnais (Otter typiquement 4)</td><td>Policy DZ</td></tr>
+    <tr><td>AFF students</td><td>1 élève par coach présent sur le load</td><td>USPA SIM / BPA</td></tr>
+    <tr><td>Wingsuit solo</td><td>Derniers à sortir&nbsp;; <strong>1 groupe max</strong> avec séparation 10+ s</td><td>Squirrel WS progression</td></tr>
+  </tbody>
+</table>
+
+<h4>D. Compatibilité fall-rate DANS un groupe</h4>
+<ul>
+  <li>Mélanger belly (110–130 mph) et freefly (140–180 mph) dans un <strong>même groupe</strong> est impossible — se rompent en chute.</li>
+  <li>Au sein d'un groupe, écart de fall-rate max ≈ <strong>±15 mph</strong>. Au-delà, fall-rate discipline impose de <em>changer de discipline</em> ou de <em>diviser le groupe</em>.</li>
+  <li>Gros groupe (&gt; 8) = fall-rate plus lente que solo (plus de surface par unité masse)&nbsp;: confirmation du slow-first.</li>
+  <li>Pour un <em>gros groupe</em> composite, <strong>désigner un base</strong> (fall-rate référence) et chaque sauteur se cale dessus à la sortie.</li>
+</ul>
+
+<h4>E. Contraintes d'expérience (Spaceland movement policies — exemple US)</h4>
+<table>
+  <thead><tr><th>Rôle</th><th>Minimum sauts</th></tr></thead>
+  <tbody>
+    <tr><td>Follower movement avec coach</td><td>100</td></tr>
+    <tr><td>Solo movement (tracking / angle / WS)</td><td>200</td></tr>
+    <tr><td>Petit groupe movement (max 3, follower)</td><td>100</td></tr>
+    <tr><td>Group leader 4+</td><td>200</td></tr>
+    <tr><td>Lead organizer</td><td>750</td></tr>
+  </tbody>
+</table>
+
+<h4>F. Précautions opérationnelles pré-load</h4>
+<ol>
+  <li><strong>Manifester en avance</strong>&nbsp;: les groupes mouvement doivent être déclarés au manifest pour être comptés contre le plafond du load.</li>
+  <li><strong>Équipement obligatoire</strong>&nbsp;: AAD et altimètre sonore <em>hautement recommandés</em> (Spaceland) voire <em>exigés</em> (movement, big-way).</li>
+  <li><strong>Tracé des flight paths au tableau</strong>&nbsp;: sur tableau blanc du loading area, chaque groupe mouvement dessine sa trajectoire pour visualisation collective avant boarding (Spaceland).</li>
+  <li><strong>Identifier des alternate landing areas</strong> après ouverture&nbsp;: si la voile ne rentre pas, avoir une aire secondaire connue.</li>
+  <li><strong>Plan straight-down de secours</strong>&nbsp;: chaque groupe mouvement doit pouvoir <em>annuler</em> la trajectoire prévue et se contenter d'un break-off vertical si conditions changent.</li>
+  <li><strong>Respect du 5-minute call</strong>&nbsp;: tous sauteurs gearés-up à T−5 min, au chargeur à T−5 min.</li>
+  <li><strong>Briefing de groupe cohérent</strong>&nbsp;: chaque groupe a sa base, sa séquence, son altitude break-off, son plan d'ouverture. Incohérence → sauteur placé sur un autre load.</li>
+</ol>
+
+<h4>G. Exemple concret de constitution — charge plafonnée à 10 sorties, Otter 23 slots</h4>
+<div class="card">
+<strong>Scénario</strong>&nbsp;: load Otter 23 places, DZSO fixe plafond de <strong>10 sorties</strong> pour gérer la fenêtre.<br>
+<br>
+<strong>Candidats disponibles</strong>&nbsp;:
+<ul>
+  <li>1 × groupe 8-way belly (8 sauteurs)</li>
+  <li>2 × 4-way belly (8 sauteurs)</li>
+  <li>1 × 4-way freefly head-down (4)</li>
+  <li>1 × 2-way angle (2)</li>
+  <li>2 × tandems + 2 vidéos (4)</li>
+  <li>1 × AFF élève + 2 coaches (3)</li>
+  <li>3 × wingsuit solos (3)</li>
+  <li>1 × high-puller CRW (1)</li>
+</ul>
+<br>
+<strong>Total candidats</strong>&nbsp;: 33 sauteurs / 12 sorties → dépasse plafond.<br>
+<br>
+<strong>Sélection DZSO selon §5.2 + tri §4.3</strong>&nbsp;:
+<ol>
+  <li>High-puller CRW (ouverture haute, sort en 1ᵉʳ) — 1 sortie, 1 sauteur.</li>
+  <li>Groupe 8-way belly (plus gros belly) — 1 sortie, 8 sauteurs.</li>
+  <li>1 × 4-way belly (drop l'autre 4-way sur load suivant) — 1 sortie, 4 sauteurs.</li>
+  <li>4-way freefly head-down — 1 sortie, 4 sauteurs.</li>
+  <li>2-way angle (discipline movement, plafond 2/load respecté) — 1 sortie, 2 sauteurs.</li>
+  <li>AFF élève + 2 coaches — 1 sortie, 3 sauteurs (1 exit coordonné).</li>
+  <li>Tandem 1 + video — 2 sorties, 2 sauteurs.</li>
+  <li>Tandem 2 + video — 2 sorties, 2 sauteurs.</li>
+  <li>1 × wingsuit solo — 1 sortie. (Les 2 autres wingsuit solos vont au load suivant.)</li>
+</ol>
+<strong>Résultat</strong>&nbsp;: 9 sorties sur 10, 26 sauteurs — dépasse slots Otter (23)&nbsp;; ajuster en sortant 3 sauteurs (les 2 tandems peut-être, selon priorités commerciales).<br>
+<strong>Load final</strong>&nbsp;: 10 sorties OU 23 sauteurs, la <em>première</em> des deux contraintes arrivée à saturation.
+</div>
+
+<h4>H. Check-list DZSO avant validation du load</h4>
+<ul>
+  <li>☐ Plafond sorties respecté (≤ 10 dans l'exemple).</li>
+  <li>☐ Plafond mouvement respecté (≤ 2 trackers/angles/WS).</li>
+  <li>☐ Plafond high-pull respecté (0 ou 1 selon ops avion).</li>
+  <li>☐ Ordre de sortie conforme §4.3.</li>
+  <li>☐ Fall-rate compatible <em>au sein</em> de chaque groupe.</li>
+  <li>☐ Expérience des leaders ≥ seuils.</li>
+  <li>☐ Altitudes de déploiement triées.</li>
+  <li>☐ Briefings alignés entre groupes (break-off, tracking direction).</li>
+  <li>☐ Flight paths movement tracés au tableau.</li>
+  <li>☐ Équipement AAD/audible vérifié.</li>
+  <li>☐ 5-minute call entendu et tous géraés-up.</li>
+</ul>
+
+<h3 id="s5-12">5.12 Nombre de sauteurs par passage — Cessna Caravan et comparaison multi-avions</h3>
+<p>Le <strong>Cessna 208B Grand Caravan</strong> est l'avion parachutiste le plus diffusé dans le monde civil (DiverDriver&nbsp;: "world's most popular skydiving jump aircraft"). Ses paramètres fixent de facto le plafond par passage sur une majorité de DZ petites-moyennes.</p>
+
+<h4>A. Fiche Caravan — capacité &amp; jump run</h4>
+<table>
+  <thead><tr><th>Paramètre</th><th>Valeur</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td>Places sauteurs (soute)</td><td>15 à 21 (typique&nbsp;: 17 en 208B)</td><td>DiverDriver, Long Island Skydiving, Caravan Nation</td></tr>
+    <tr><td>Vitesse jump run</td><td>85 KIAS, flaps 10°, torque 600–900 ft-lbs, prop 1850 RPM</td><td>Caravan Nation (2014)</td></tr>
+    <tr><td>Taux de montée</td><td>1 000 à 1 300 ft/min ; Super Caravan conversion ≤ 1 500 ft/min</td><td>DiverDriver, Long Island</td></tr>
+    <tr><td>Temps de montée 13 000–14 000 ft</td><td>10 à 15 min (8–10 min Super Caravan)</td><td>Long Island, DiverDriver</td></tr>
+    <tr><td>Turnaround (atterrir ↔ décoller)</td><td>4 à 8 min</td><td>Pratique US / SDC, Eloy</td></tr>
+    <tr><td>Nombre de passages / load</td><td><strong>1 par défaut</strong> — 17 sauteurs / 8–10 exits tiennent sur 1 fenêtre ≤ 1 NM</td><td>Pratique universelle</td></tr>
+  </tbody>
+</table>
+
+<h4>B. Fenêtre utile Caravan — calcul concret</h4>
+<div class="card">
+Jump run à 85 KIAS à 13 000 ft ISA ≈ <strong>TAS 100–110 kt</strong>, vent relatif 20–30 kt de face ⇒ <strong>groundspeed typique 70–90 kt</strong>.<br>
+<br>
+Avec 9 intervalles inter-groupes (10 groupes sur la passe), à 8 s chacun&nbsp;: <strong>9 × 8 × 41 m/s = 2 950 m ≈ 1,6 NM</strong> de fenêtre utile.<br>
+En pratique, un load Caravan sature autour de <strong>7 à 10 exits / passage</strong> ; au-delà, une 2ᵉ passe est planifiée.
+</div>
+
+<h4>C. Répartition type d'un Caravan 17 places en 1 passe</h4>
+<table>
+  <thead><tr><th>Groupe</th><th>Sauteurs</th><th>Exits</th><th>Ordre</th></tr></thead>
+  <tbody>
+    <tr><td>High-puller CRW (5 500 ft)</td><td>1</td><td>1</td><td>0 (hop-and-pop bas, sort en 1ᵉʳ ou largué en remontée)</td></tr>
+    <tr><td>4-way RW belly</td><td>4</td><td>1</td><td>1</td></tr>
+    <tr><td>2-way belly</td><td>2</td><td>1</td><td>2</td></tr>
+    <tr><td>Tandem + vidéo</td><td>2</td><td>1</td><td>3</td></tr>
+    <tr><td>AFF élève + 2 coaches</td><td>3</td><td>1</td><td>4</td></tr>
+    <tr><td>Tandem + vidéo</td><td>2</td><td>1</td><td>5</td></tr>
+    <tr><td>Solo belly</td><td>1</td><td>1</td><td>6</td></tr>
+    <tr><td>4-way freefly</td><td>4</td><td>1</td><td>7</td></tr>
+    <tr><td>2-way angle (movement, plafond 2/load)</td><td>2</td><td>1</td><td>8</td></tr>
+    <tr><td>Solo wingsuit</td><td>1</td><td>1</td><td>9 (dernier)</td></tr>
+    <tr><td><strong>TOTAL</strong></td><td><strong>22 (dépasse 17)</strong></td><td><strong>10 exits</strong></td><td>—</td></tr>
+  </tbody>
+</table>
+<p>L'exemple ci-dessus dépasse les 17 slots&nbsp;: DZSO coupe 1 tandem + 4-way freefly ou bien fait 2 passes. En pratique <strong>un Caravan 17 places ≈ 7–9 exits ≈ ≤ 17 sauteurs sur 1 passage</strong>.</p>
+
+<h4>D. Plafonds par passage — comparatif avions civils &amp; militaires</h4>
+<table>
+  <thead><tr><th>Avion</th><th>Slots</th><th>Plafond pratique / passage (civil)</th><th>Militaire (SOA)</th></tr></thead>
+  <tbody>
+    <tr><td>Cessna 182</td><td>4</td><td>4 sauteurs / 2–3 exits</td><td>—</td></tr>
+    <tr><td>Cessna Caravan 208B</td><td>15–21</td><td>17 / 7–9 exits</td><td>—</td></tr>
+    <tr><td>PAC 750XL</td><td>17</td><td>17 / 8–10 exits</td><td>—</td></tr>
+    <tr><td>Pilatus PC-12</td><td>10–14</td><td>14 / 6–8 exits</td><td>—</td></tr>
+    <tr><td>Twin Otter DHC-6</td><td>20–23</td><td>22 / 9–11 exits</td><td>—</td></tr>
+    <tr><td>Skyvan SC-7</td><td>22</td><td>22 / 10–11 exits (rampe)</td><td>—</td></tr>
+    <tr><td>Dornier 228</td><td>19</td><td>19 / 8–10 exits</td><td>—</td></tr>
+    <tr><td>Noratlas N2501 (FR)</td><td>14+3</td><td>—</td><td><strong>14 / passage</strong> (2 portes 7+7)&nbsp;; <strong>&gt; 15 paras ⇒ ≥ 2 passages</strong></td></tr>
+    <tr><td>C-130 Hercules</td><td>64+</td><td>—</td><td>60 paras = 2 sticks × 30, DZ ≥ 2 km</td></tr>
+  </tbody>
+</table>
+
+<h4>D bis. Paramètres de jump run par type d'avion — corpus DiverDriver</h4>
+<p>Le site de référence <strong>DiverDriver.com</strong> (Chris Schindler, ancien chief pilot Skydive Chicago, avec contributions de Neal Alders, George Merle, Philip Esdaile, Chris Rosenfelt) publie des fiches aircraft détaillées avec les vitesses, flaps, puissance, taux de montée et contraintes spécifiques de chaque type d'avion parachutiste. Ces valeurs sont directement réutilisables pour calibrer un simulateur de largage ou pour un briefing pilote&nbsp;:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Avion</th>
+      <th>Vitesse jump run (KIAS)</th>
+      <th>Flaps sortie</th>
+      <th>Puissance jump run</th>
+      <th>Temps de montée à 13 000 ft</th>
+      <th>Pt de vigilance spécifique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cessna 182</strong></td>
+      <td>75–80</td>
+      <td>—</td>
+      <td>≈ 15" MP, <strong>NO CUT</strong> (shock cooling)</td>
+      <td>≈ 15 min à 10 k ft</td>
+      <td>CHT cible 300°F ; risk fuel-off jumper back-to-dash ; tandems interdits</td>
+    </tr>
+    <tr>
+      <td><strong>Cessna U-206</strong></td>
+      <td>80</td>
+      <td>—</td>
+      <td>Bas de l'arc vert MP, cowl flaps fermés après exit</td>
+      <td>—</td>
+      <td>CG shift forward (désiré) ; fuel selector L/R <em>sans</em> BOTH ; cowl flaps à gérer</td>
+    </tr>
+    <tr>
+      <td><strong>Cessna 208 Caravan 208B</strong></td>
+      <td><strong>85</strong></td>
+      <td><strong>10°</strong></td>
+      <td>600–900 ft-lb torque, prop 1 850 RPM</td>
+      <td>~15 min (stock) ; ~10 min (Supervan / Blackhawk)</td>
+      <td>Red door light 2 mi out ; Vmax porte ouverte 155 KIAS ; descent 5 000 ft/min</td>
+    </tr>
+    <tr>
+      <td><strong>Twin Otter DHC-6 (PT6A-27)</strong></td>
+      <td>80 (95 si &gt; 7 floaters)</td>
+      <td>—</td>
+      <td>20 lb torque, L engine cut à 10 lb ; <strong>aux 2 moteurs si large group</strong></td>
+      <td>~10 min à 14 k ft</td>
+      <td>Tiller bar nose steering (PIO risque) ; stable sous Vmc ; <strong>« right engine drag around in turn » = hook pattern natif</strong></td>
+    </tr>
+    <tr>
+      <td><strong>King Air 90 (PT6A-20)</strong></td>
+      <td>85–90 (entrée 90, sortie 85)</td>
+      <td><strong>25 % → 60 %</strong> juste avant spot</td>
+      <td>Right engine 600 lb / left idle (ou 400 lb both pour 8-way)</td>
+      <td>~10–15 min à 13 500 ft</td>
+      <td>Stab bas + porte étroite ⇒ flaps 60 % <strong>obligatoires</strong> avant sortie ; gear retraction high-cycle</td>
+    </tr>
+    <tr>
+      <td><strong>PAC 750XL</strong></td>
+      <td>70–80</td>
+      <td><strong>½ flaps</strong></td>
+      <td>30 lb torque arrivée → 15 lb pour exit ; prop 1 880 RPM</td>
+      <td>&lt; 13 min à 13 500 ft (2 000 ft/min initial)</td>
+      <td><strong>Stall recovery Ferrell</strong>&nbsp;: stick full fwd + left + full left rudder ⇒ roll + lift tail ; IPS (Inertia Separator) obligatoire au sol</td>
+    </tr>
+    <tr>
+      <td><strong>SC-7 Skyvan (tailgate)</strong></td>
+      <td>75–95 (décélération continue)</td>
+      <td>0 (pas de flaps nécessaire)</td>
+      <td>30 lb torque, RPM 90 %</td>
+      <td>—</td>
+      <td><strong>Max 10 paras en porte</strong> simultanés ; poids aft = C/G critique ; rampe élimine risque collision stab</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Observations pour un simulateur de largage</strong> :</p>
+<ul>
+  <li>La <strong>vitesse jump run varie peu entre 70 et 95 KIAS</strong> toutes plateformes confondues — c'est la <em>contrainte commune</em> de stall-margin + stab clearance. Le modèle peut raisonnablement caler <strong>v<sub>jumprun</sub> = 80 KIAS ±10</strong> en civil.</li>
+  <li>Les <strong>flaps sont systématiquement déployés</strong> sur les avions à <em>stab horizontal bas arrière porte</em> (C-182, C-206, Caravan, King Air 90, PAC 750XL) ET <strong>absents</strong> sur les <em>tailgate</em> (Skyvan, Twin Otter marginal). Cette dichotomie détermine la géométrie de sortie.</li>
+  <li>Le <strong>différentiel de torque entre moteurs</strong> est exploitable sur Twin Otter et King Air 90 pour maintenir altitude pendant que l'avion « pivote » : c'est la base physique du hook pattern.</li>
+  <li>Le <strong>taux de montée typique 13 000 ft</strong> est de 10–15 min sur turbine mono ou bi, qui est la borne basse du <em>turnaround complet</em> (load + climb + drop + descent + landing ≈ 20–25 min en standard).</li>
+  <li>Le Cessna 182 a la <strong>règle spécifique « NO CUT »</strong> sur jump run (shock cooling cylindres) — contrainte absente des turbines, où la réduction puissance est libre.</li>
+</ul>
+
+<h4>E. Formule Noratlas — réplicable à d'autres avions</h4>
+<div class="card">
+<strong>Noratlas de Provence, Consignes particulières 105.2 (mod. 2021)</strong>&nbsp;:
+<div class="math">N = (L − H) / V + 1</div>
+<ul>
+  <li>N = nombre de paras par <em>porte</em> par <em>passage</em></li>
+  <li>L = longueur ZS (m)</li>
+  <li>H = hauteur de largage (m)</li>
+  <li>V = vitesse de largage (m/s) ; Noratlas ≈ 50 m/s (100–110 kt)</li>
+</ul>
+<strong>Exemple</strong>&nbsp;: ZS = 1 500 m, H = 400 m, V = 50 m/s ⇒ N = (1500−400)/50 + 1 = <strong>23 paras/porte théoriques</strong>, plafonnés à 14 par contrainte physique de soute.<br>
+<em>Au-delà de 15 paras total, 2 passages obligatoires</em>.<br>
+<br>
+<strong>Transposition Caravan</strong> (V ≈ 41 m/s, L = 800 m, H = 3 000 m ⇒ H &gt; L ⇒ formule ne s'applique pas au cas civil haute altitude). Pour le civil, la contrainte dominante n'est pas la longueur de DZ mais la fenêtre utile de jump run (≤ 1 NM typique). En Caravan civil, <strong>plafond réel ≈ 7–9 exits</strong>, limité par fenêtre &amp; séparation inter-groupes.
+</div>
+
+<h4>F. Multi-avions big-way — « passage » redéfini</h4>
+<p>En formation big-way (rappel § 5.6), la notion de « sauteurs par passage » devient <strong>1 exit simultané de toute la flotte</strong>&nbsp;: 250-way Chicago = 11 avions × ~22 sauteurs = 242 sauteurs en 1 sortie quasi-simultanée, déclenchée par signal radio unique. Les avions volent en formation latérale décalée 130 ft pointes d'ailes, altitudes étagées 500 ft.</p>
+
+<h3 id="s5-13">5.13 Axes, contre-axes et axes parallèles — typologie et pratiques par pays</h3>
+
+<h4>A. Terminologie (FR / international)</h4>
+<ul>
+  <li><strong>Axe de largage</strong> (jump run, line of flight) — trajectoire rectiligne de l'avion pendant la fenêtre d'exit.</li>
+  <li><strong>Contre-axe</strong> (opposite direction, 180° jump run) — seconde passe à 180° de la première, dans le sens inverse.</li>
+  <li><strong>Axe parallèle</strong> (offset jump run, parallel pass) — seconde passe même cap, mais décalée latéralement.</li>
+  <li><strong>Axe crossant</strong> (crossing / perpendicular pass) — seconde passe à 90° de la première (rare civil, ~mil.).</li>
+  <li><strong>Racetrack</strong> — trajectoire oblongue de remontée/descente de l'avion entre passes (virage 180° à chaque bout).</li>
+</ul>
+
+<h4>B. Pourquoi un contre-axe ou une 2ᵉ passe ?</h4>
+<ol>
+  <li><strong>Trop de sauteurs / groupes</strong> pour 1 fenêtre (&gt; plafond 7–11 exits civil).</li>
+  <li><strong>Altitudes de sortie hétérogènes</strong> — hop-and-pop à 5 000 ft ET freefallers à 13 000 ft&nbsp;: on dépose les hauts, on descend, on dépose les bas sur 2ᵉ passe.</li>
+  <li><strong>Vent faible / nul</strong> — pour étaler les exits sans que tous atterrissent au même endroit (« downwind and upwind of target » — Skydive the Ranch).</li>
+  <li><strong>DZ courte</strong> — jump run rectiligne ne tient pas &gt; 6–8 groupes.</li>
+  <li><strong>Spécificités disciplinaires</strong> — wingsuiter solo en contre-axe pour éviter conflit aérien.</li>
+  <li><strong>Militaire</strong> — 2ᵉ serial de troupes en ré-approche de la DZ.</li>
+</ol>
+
+<h4>C. Tableau comparatif par pays</h4>
+<table>
+  <thead><tr><th>Pays / DZ</th><th>Pratique dominante</th><th>Spécificités &amp; source</th></tr></thead>
+  <tbody>
+    <tr><td><strong>USA — DZ moyennes</strong> (Carolina, Palm Beach, Spaceland)</td><td>Rectiligne face au vent, 1 passe ; 2 passes sur vent calme</td><td>« When winds are light and variable, exit downwind + upwind of target to reduce passes » — DiverDriver, Ranch</td></tr>
+    <tr><td><strong>USA — Skydive the Ranch</strong></td><td>2,5 mi upwind PI par vent 15 kt, rectiligne</td><td>Sortie downwind ET upwind quand vent &lt; 5 kt pour étaler</td></tr>
+    <tr><td><strong>USA — Skydive Chicago (SDC)</strong></td><td>Jump run 310°, lead-in 0,4 mi, offset 0,2 mi S, hook 0,6 mi</td><td>Max 2 movement groups/load ; pattern en X documenté publiquement</td></tr>
+    <tr><td><strong>USA — Skydive Arizona (Eloy)</strong></td><td>Rectiligne + offset jump runs multi-avions</td><td>AXIS&nbsp;: 1 000 ft (≈ 300 m) séparation H min, 6 s min, +2 s groupe gros</td></tr>
+    <tr><td><strong>UK — British Skydiving</strong> (Operations Manual 2024, §7)</td><td>Rectiligne upwind, 1 passe par défaut</td><td>Max 2 Category System Students / passage. Jumpmaster communique nb passes / altitudes au pilote avant décollage. Pas de règle chiffrée de contre-axe.</td></tr>
+    <tr><td><strong>France — FFP</strong> (DT-19, DT-49 2025, Wikipedia)</td><td>Rectiligne face au vent ; contre-axe opérationnel sur 2ᵉ passe</td><td>« Séparation horizontale ~ 300 m entre groupes » ; « travailler perpendiculairement à l'axe de largage » ; « après ouverture, s'orienter perpendiculairement à l'axe afin de dégager la trajectoire »</td></tr>
+    <tr><td><strong>France — Noratlas</strong> (Consignes 105.2)</td><td>Axe rectiligne ; 2 portes latérales simultanées / alternées</td><td>Formule N = (L−H)/V+1. <strong>&gt; 15 paras ⇒ ≥ 2 passages obligatoires</strong></td></tr>
+    <tr><td><strong>Allemagne — DFV</strong></td><td>Rectiligne upwind, 1 passe</td><td>Handbuch Sprungbetrieb&nbsp;: séparation temporelle par groundspeed, pas de règle contre-axe chiffrée</td></tr>
+    <tr><td><strong>Italie / Espagne</strong></td><td>Rectiligne, pratique US-based</td><td>Pas de règle nationale spécifique au contre-axe</td></tr>
+    <tr><td><strong>Militaire CARP</strong> (US/OTAN)</td><td>Axe rectiligne long (1,5–2 NM utiles), passage unique par serial</td><td>Serials espacés 6 min. Axes parallèles / à 90° selon configuration tactique</td></tr>
+  </tbody>
+</table>
+
+<h4>D. Contre-axe 180° — cas d'usage et précautions</h4>
+<p>Le contre-axe 180° reste <strong>rare en civil</strong> parce qu'il génère des trajectoires sous voile potentiellement convergentes. Il est utilisé dans trois cas précis&nbsp;:</p>
+<ul>
+  <li><strong>Wingsuit solo « opposite direction »</strong> — documenté par Skydive Carolina. Le wingsuiter sort seul, dernier de la passe, cap inverse pour sortir du trafic.</li>
+  <li><strong>Dépose de hop-and-pops en descente</strong> — USPA recommande&nbsp;: « drop the high hop and pops on the way down after the free fallers » pour éviter collision canopy sous avion. Souvent fait en contre-axe ou axe parallèle.</li>
+  <li><strong>Militaire</strong> — 2ᵉ serial de troupes à contre-cap pour saturer défense ennemie.</li>
+</ul>
+<p><strong>Précautions obligatoires en contre-axe civil</strong>&nbsp;:</p>
+<ol>
+  <li>Attendre ≥ 5 min après dernier exit 1ʳᵉ passe (tous sauteurs sous voile, hors axe).</li>
+  <li>Vérifier visuellement absence de voile active sur la trajectoire.</li>
+  <li>Radio contrôle sol&nbsp;: tous sauteurs en circuit, aucune voile en approche.</li>
+  <li>Pas de mélange de disciplines opposées (freefall + wingsuit) sur contre-axe.</li>
+  <li>Altitude d'ouverture haute (4 000–5 000 ft) pour la passe inverse, canopy phase séparée géographiquement.</li>
+</ol>
+
+<h3 id="s5-14">5.14 Décalage cross-track et placement des groupes de dérive en cas de passes multiples</h3>
+
+<h4>A. Ordre de grandeur de la dérive voile entre 2 passes</h4>
+<p>La contrainte dominante pour le décalage d'un axe parallèle (go-around) est la <strong>dérive sous voile</strong> des sauteurs de la 1ʳᵉ passe pendant que l'avion redescend / remonte pour la 2ᵉ. Budget temps typique Caravan&nbsp;:</p>
+<ul>
+  <li>Dernier exit 1ʳᵉ passe à 13 000 ft.</li>
+  <li>Descente 13 000 → 5 000 ft ≈ 3–5 min.</li>
+  <li>Remontée partielle éventuelle ≈ 0–2 min.</li>
+  <li><strong>Total&nbsp;: 3–7 min entre dernier exit 1ʳᵉ et premier exit 2ᵉ</strong>.</li>
+</ul>
+<p>Pendant 3–7 min, une voile ouverte à 3 500 ft dans un vent ouvert 10 kt (≈ 5 m/s) dérive de <strong>900 à 2 100 m (0,5 à 1,1 NM)</strong>. D'où la nécessité d'un décalage latéral non nul.</p>
+
+<h4>B. Matrice empirique de décalage cross-track</h4>
+<p>La littérature civile est prescriptive en principe mais <strong>pauvre en chiffres fermes</strong>. Synthèse opérationnelle des pratiques :</p>
+<table>
+  <thead><tr><th>Scénario</th><th>Décalage latéral mini</th><th>Justification</th></tr></thead>
+  <tbody>
+    <tr><td>Axe parallèle, même sens, vent aloft &lt; 10 kt, attente &lt; 3 min</td><td><strong>0,3 NM</strong> (~550 m)</td><td>Dérive voile 1ʳᵉ passe limitée</td></tr>
+    <tr><td>Axe parallèle, même sens, vent 10–20 kt, attente 3–5 min</td><td><strong>0,5–0,8 NM</strong> (~900–1 500 m)</td><td>Dérive voile significative, marge sécurité</td></tr>
+    <tr><td>Axe parallèle, même sens, vent 20–30 kt, attente 5–10 min</td><td><strong>0,8–1,5 NM</strong> (~1 500–2 800 m) — ou renoncer</td><td>Dérive sous voile dépasse fenêtre de sécurité</td></tr>
+    <tr><td>Contre-axe 180° (sens inverse)</td><td><strong>0 (axe inverse)</strong> + attente ≥ 5 min</td><td>Passer derrière les voiles ouvertes — pas de décalage nécessaire</td></tr>
+    <tr><td>Hop-and-pop bas après freefall (descente avion)</td><td><strong>0,3 NM</strong> typique</td><td>Descente directe, sauteurs hauts déjà loin</td></tr>
+    <tr><td>Axe 90° (crossing)</td><td><strong>1,0–2,0 NM</strong></td><td>Éviter recouvrement vertical des axes</td></tr>
+    <tr><td>Big-way multi-avions (formation unique)</td><td><strong>40 m</strong> (130 ft) pointes d'ailes</td><td>Formation aéronef physique, pas de décalage logique</td></tr>
+  </tbody>
+</table>
+<p><strong>Référence chiffrée Skydive Chicago</strong>&nbsp;: offset lead-in de <strong>0,2 mi (~370 m) sud de l'axe runway</strong>, hook 0,6 mi — pour un même jump run (pas pour 2 passes). Donne un <em>ordre de grandeur</em> des décalages civils.</p>
+<p><strong>USPA / Christy West ("Avoiding conflict in our airspace")</strong>&nbsp;: si deux groupes doivent sortir du même load avec même direction de dérive, <em>ne pas additionner des distances</em>, plutôt « <strong>divide the airspace with a prominent landmark</strong> » (route, rivière, piste) — chaque leader garde son groupe de son côté.</p>
+
+<h4>C. Placement des groupes de dérive (tracking / angle / wingsuit) en multi-passes</h4>
+
+<h5>C.1 — Règles universelles (Spaceland, Chicago, AXIS, USPA)</h5>
+<ul>
+  <li><strong>Max 2 groupes movement par load</strong> (toutes disciplines confondues) sans dérogation S&amp;TA.</li>
+  <li><strong>Flight paths briefed</strong> avant décollage, tracés au tableau.</li>
+  <li><strong>Ne jamais break-off vers la line of flight</strong> (Spaceland) — un tracker ne reflue jamais vers l'arrière de l'axe.</li>
+  <li><strong>Séparation verticale</strong> au break-off adaptée à la taille et à l'expérience (FFP&nbsp;: ≥ 1 500 m minimum pour saut track).</li>
+</ul>
+
+<h5>C.2 — Dispositions types</h5>
+<ol>
+  <li><strong>Disposition "V" — divergence depuis axe</strong>&nbsp;: les 2 groupes movement sortent consécutifs en fin de 1ʳᵉ passe et partent <strong>à 45–90° de chaque côté</strong> de l'axe (1ᵉʳ à gauche 45°, 2ᵉ à droite 45°). Flight paths divergent et ne se croisent jamais. Option la plus courante en DZ US 1 passe.</li>
+  <li><strong>Disposition "séparée par passe"</strong>&nbsp;: groupe movement 1 en fin de 1ʳᵉ passe (tracks perpendiculaire à l'axe), groupe movement 2 en fin de 2ᵉ passe (tracks perpendiculaire à l'axe inverse). Si 2ᵉ passe = contre-axe, les deux groupes trackent dans la <strong>même direction géographique</strong> (ex. tous vers l'est) — sécurité maximale car chaque groupe perpendiculaire à son propre axe.</li>
+  <li><strong>Disposition "landmark-divided"</strong>&nbsp;: deux groupes movement dans la même direction géographique, séparés par une limite géographique nette (route, lac, piste). Chaque leader garde son groupe de son côté. Recommandé USPA en cas de direction de dérive imposée par vent.</li>
+  <li><strong>Disposition "opposite tracking"</strong>&nbsp;: 2 groupes movement sortent de la même passe mais trackent dans des directions opposées (1 est, 1 ouest) à 90° de l'axe. Tactique valide « as long as it's planned and briefed » (Skydive Carolina, Skydive Long Island).</li>
+</ol>
+
+<h5>C.3 — Règle anti-remontée axe (FFP + USPA)</h5>
+<p>Commun aux pratiques FR et US&nbsp;:</p>
+<ul>
+  <li><strong>FFP DT-49 2025</strong>&nbsp;: « Après l'ouverture, s'orienter perpendiculairement à l'axe de largage afin de dégager la trajectoire de chute de ceux qui sont partis après. »</li>
+  <li><strong>Spaceland</strong>&nbsp;: « DO NOT break off towards the line of flight. »</li>
+</ul>
+<p>⇒ Le tracker et le freeflyer reflux-axe-arrière est <strong>universellement interdit</strong>, car recouvre la colonne d'air des groupes sortis après.</p>
+
+<h4>D. Cas du contre-axe sur wingsuit</h4>
+<p>Un wingsuiter <strong>solo</strong> peut sortir en sens inverse du jump run si&nbsp;:</p>
+<ul>
+  <li>Il est identifié « solo opposite direction » sur le load plan.</li>
+  <li>Il sort <strong>dernier</strong> de la passe (pas de sauteur derrière en freefall).</li>
+  <li>Son cap de vol est briefé avec le pilote et tracé au tableau.</li>
+  <li>Altitude d'ouverture haute (4 000–5 000 ft) pour canopy phase séparée.</li>
+  <li>Vent relatif wingsuit (glide 2:1, 50–60 mph horizontal) ne le ramène pas sur un groupe amont.</li>
+</ul>
+<p><strong>Formation wingsuit (2 WS ou +) en contre-axe&nbsp;: interdit</strong>. La distance parcourue en vol est telle (~ 2–3 NM en 60 s) que deux groupes en sens inverse se croiseraient à leur ouverture.</p>
+
+<h4>E. Exemple concret — Caravan 17 slots en 2 passes</h4>
+<div class="card">
+<strong>Scénario</strong>&nbsp;: 24 sauteurs à larguer, 13 000 ft, vent 15 kt au sol, 25 kt aloft du 270°.<br>
+<br>
+<strong>Passage 1</strong> (cap 270° upwind, 9 sauteurs)&nbsp;:
+<ol>
+  <li>4-way belly</li>
+  <li>2-way belly</li>
+  <li>Tandem + vidéo</li>
+  <li>Solo belly (x2 = 2 exits)</li>
+  <li>4-way freefly</li>
+</ol>
+Fenêtre&nbsp;: 8 intervalles × 7 s = 56 s à GS 85 kt ⇒ 2 480 m ≈ 1,3 NM. OK.<br>
+<br>
+<strong>Descente 13 000 → 5 000 ft</strong> (4 min) + remontée 14 000 ft (2 min) = 6 min entre dernier exit P1 et premier exit P2.<br>
+<br>
+<strong>Dérive voiles P1</strong> à 3 500 ft, vent 10 kt = 5 m/s × 360 s = 1 800 m ≈ 1 NM vers l'est.<br>
+<br>
+<strong>Passage 2</strong> — axe parallèle cap 270°, <strong>décalé 0,8 NM nord de l'axe P1</strong>&nbsp;:
+<ol>
+  <li>2 × AFF + coaches (6 sauteurs en 2 exits)</li>
+  <li>Tandem + vidéo</li>
+  <li>2-way angle (movement, break-off 90° sud vers landmark "piste")</li>
+  <li>1 × solo wingsuit (sort dernier, cap sud perpendiculaire)</li>
+</ol>
+<strong>Décalage 0,8 NM</strong> = 1 500 m. Dérive voile P1 = 1 000 m vers l'est ⇒ fenêtre canopy P1 est à 300 m sud de l'axe P2. Aucun recouvrement.<br>
+<br>
+<strong>Groupe movement P2</strong> (2-way angle) part cap sud, <em>perpendiculaire</em> à axe P2 ⇒ s'éloigne de toute voile P1 ouverte.<br>
+<strong>Wingsuit solo P2</strong> sort dernier cap sud 90° ⇒ pas de conflit.
+</div>
+
+<h3 id="s5-15">5.15 Cadre australien APF — classification des DZ, rôles opérationnels et Exit Separation (thèse Geens)</h3>
+
+<p>L'Australie a développé, via l'<strong>Australian Parachute Federation (APF)</strong>, un des cadres réglementaires civils les plus explicites et les plus quantitatifs au monde. L'APF est <em>Part 149 Approved Sport Aviation Administration Organisation</em> sous délégation CASA (Civil Aviation Safety Authority) depuis 2025&nbsp;: ses <em>Operational Regulations</em> et <em>Regulatory Schedules</em> ont valeur réglementaire équivalente à une AC américaine ou à un DT FFP français. Le corpus APF 2026 mérite d'être intégré au raisonnement de cet outil car il chiffre explicitement plusieurs aspects que les référentiels USPA / BSPA laissent implicites.</p>
+
+<h4>A. Classification APF des dropzones — RS 58 §10.2</h4>
+<p>Le <em>Regulatory Schedule 58</em> (2024, toujours en vigueur sous le RS 2026) codifie l'approbation et la géométrie minimale d'une DZ selon deux axes croisés&nbsp;: la <strong>licence du sauteur</strong> (Student → Class F) et la possession d'un <strong>display rating</strong>. Cette matrice est probablement la classification DZ la plus granulaire au niveau mondial&nbsp;:</p>
+
+<table>
+  <thead><tr><th>Classe sauteur</th><th>Sans display rating</th><th>Display General</th><th>Display Pro / Tandem Accuracy</th><th>Display Open</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Student (non-tandem)</strong></td><td>100 000 m² + 180 m du plus proche obstacle</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td><strong>Class A</strong> (≈ A-license USPA)</td><td>75 000 m² + 150 m</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td><strong>Class B</strong></td><td>50 000 m² + 100 m</td><td>40 000 m² + 50 m</td><td>—</td><td>—</td></tr>
+    <tr><td><strong>Class C</strong></td><td>30 000 m² + 100 m</td><td>20 000 m² + 50 m</td><td>—</td><td>—</td></tr>
+    <tr><td><strong>Class D</strong></td><td>20 000 m² + 75 m</td><td>7 500 m² + 25 m</td><td>3 000 m² + 15 m</td><td>—</td></tr>
+    <tr><td><strong>Class E</strong> (exp. élite)</td><td>10 000 m² + 50 m</td><td>5 000 m² + 25 m</td><td>2 500 m² + 15 m</td><td>—</td></tr>
+    <tr><td><strong>Class F</strong> (display seulement)</td><td>2 500 m² + 25 m</td><td>2 500 m² + 25 m</td><td>1 000 m² + 15 m</td><td>500 m² + 5 m</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Lecture</strong>&nbsp;: la surface minimale <em>diminue</em> avec le niveau du sauteur (10 ha pour un élève, 0,25 ha pour une démo F-class) tandis que la distance minimale aux obstacles (bâtiments, fils, arbres, eau) <em>suit</em> le même gradient. <strong>RS 58 note (i)</strong>&nbsp;: si un display rating est exigé, le «&nbsp;runway&nbsp;» d'atterrissage doit être prédominamment parallèle au vent ; un virement de vent supérieur à 30° doit permettre de replanifier sur la longueur de la DZ, sinon les dimensions non-display s'appliquent. Le RS 58 §12.3 impose en outre un <strong>buffer de 6 NM entre DZ actives</strong>&nbsp;: toute nouvelle DZ projetée à moins de 6 NM d'une DZ existante doit fournir un <em>risk management plan</em> + <em>letter of agreement</em> avec le Group Member voisin.</p>
+
+<h4>B. Rôles opérationnels sur DZ — quatre fonctions distinctes (OR 6.1)</h4>
+<p>Là où USPA regroupe souvent pilote + load organizer + spotter en deux personnes, l'APF sépare <strong>quatre rôles opérationnels distincts</strong>, chacun avec des responsabilités codifiées&nbsp;:</p>
+<ul>
+  <li><strong>DZSO</strong> (<em>Drop Zone Safety Officer</em>, OR 6.1.6)&nbsp;: responsable global de la sécurité sur la DZ ; approuve chaque sauteur pour la descente, vérifie équipement, nomme le GCA et le Loadmaster, fait le spot des conditions météo du jour, décide <em>tracking / angle lead</em> &gt; 3-way (OR 9.9.2).</li>
+  <li><strong>GCA</strong> (<em>Ground Control Assistant</em>, OR 6.1.8)&nbsp;: <em>« responsible for communicating the advisability of exiting the aircraft to the parachutists and pilot »</em>. Un GCA est <strong>nommé pour chaque load</strong>, doit être membre APF, ≥ 18 ans, formé selon le TOM. Il tient la radio sol↔avion (119,20 MHz) et peut bloquer la sortie.</li>
+  <li><strong>Loadmaster</strong> (OR 6.1.9)&nbsp;: nommé par le DZSO pour chaque load, assure le briefing pré-vol, vérifie l'absence de trafic conflictuel sous la DZ, confirme <em>« the integrity of the exit point »</em> — c'est le spotter à bord.</li>
+  <li><strong>Target Assistant</strong> (OR 6.1.10)&nbsp;: radio sol pour élève, licence instructor ou autorisation CCI ; guide en voile le student.</li>
+</ul>
+<p>Cette séparation explicite <strong>GCA/Loadmaster</strong> est caractéristique de l'Australie et absente du corpus USPA&nbsp;: le GCA est sol (fonction «&nbsp;air traffic clearance&nbsp;»), le Loadmaster est bord (fonction «&nbsp;spot + go »). Les deux doivent concorder pour que la sortie ait lieu.</p>
+
+<h4>C. Procédure jump run APF — Jump Pilot Manual 2026 §5.5, §5.7</h4>
+<p>Le <em>Jump Pilot Manual</em> APF (mandatoire CASA) codifie le déroulement&nbsp;:</p>
+<ul>
+  <li><strong>Établi sur axe + altitude ≥ 1 min avant exit point</strong> (§5.7.1 a)&nbsp;: permet au Loadmaster de vérifier visuellement le spot.</li>
+  <li><strong>Axe</strong>&nbsp;: <em>« generally on a track overhead the DZ and into the predominant wind »</em> + <em>« parachutists open up-wind of the proposed landing area »</em> (§5.5.1 et §5.7.1 b).</li>
+  <li><strong>Spot GPS</strong>&nbsp;: le pilote reçoit une consigne au format <code>« 270 degrees and 0.2 short »</code> (cap + profondeur en NM) ; setting GPS avec waypoint et track inverse, intercept downwind.</li>
+  <li><strong>Spot visuel</strong>&nbsp;: le Loadmaster ordonne «&nbsp;Five Left/Right&nbsp;» (corrections d'axe en degrés), «&nbsp;Power off&nbsp;», «&nbsp;Door&nbsp;», «&nbsp;Exit&nbsp;».</li>
+  <li><strong>Système de feux cabine</strong> (§5.6.3) — <em>identique au militaire</em>&nbsp;: rouge 3 min avant exit, orange 1 min avant (ouverture porte et préparation), vert = clearance obtenues + autorisation pilote. Note APF&nbsp;: <em>« The parachutist will make the final decision to exit »</em> — le pilote propose, le Loadmaster dispose.</li>
+  <li><strong>Vitesse jump run</strong>&nbsp;: <em>« Maintain a minimum speed, with a safe margin above the stall... High exit speeds can put parachutists, especially wingsuiters, in danger of striking the horizontal stabiliser »</em> (§5.7.2 b) — explicite sur le risque wingsuit → empennage à haute vitesse.</li>
+  <li><strong>Verbal groundspeed update</strong> (§5.7.2 c) obligatoire au Loadmaster pour calibrer la séparation inter-groupes.</li>
+  <li><strong>Passes multiples</strong> (§5.7.1 i)&nbsp;: <em>« If multiple jump runs are required, the aircraft bank angle should be limited to avoid parachutists disorientation »</em> — virage doux, <em>« orbits preferably flown in a direction to allow the loadmaster a continuous view of the despatched parachutists and the dropzone through the door »</em> (§5.7.1 j).</li>
+  <li><strong>Run-in étudiants</strong> (§5.7.1 g)&nbsp;: <em>« a longer, straight run-in is desirable to allow the students to orientate themselves »</em> — justification explicite du lead-in long pour AFF/SFF.</li>
+</ul>
+
+<h4>D. Exit Separation — DZSO Guide §11.6 et thèse Geens (référence APF officielle)</h4>
+<p>L'APF a adopté comme référence technique la thèse <em>Exit Separation</em> de Steven Geens (Instructor A Thesis), publiée sur le site APF et citée dans le <em>Jump Pilot Manual</em> §5.5.3. Elle fournit un cadre quantitatif complet rarement accessible aussi clairement ailleurs.</p>
+
+<p><strong>Règle condensée APF (DZSO Guide §11.6)</strong>&nbsp;:</p>
+<div class="formula">
+  <strong>Séparation cible</strong>&nbsp;: 350–400 m entre groupes ≈ <strong>0,2 NM</strong>.<br>
+  <strong>Temps correspondant</strong>&nbsp;: 7 s à 100 kt groundspeed, 10 s à 70 kt groundspeed.<br>
+  <strong>Base</strong>&nbsp;: 1 kt ≈ 0,5 m/s ⇒ t = D / v<sub>rel</sub>.
+</div>
+
+<p><strong>Formalisation Geens — jump run maximal.</strong> Avec voile moyenne airspeed 13 m/s (26 kt) et taux de descente 6,5 m/s, si ouverture à 2 500 ft et utile = 2 000 ft, le temps sous voile est de 92 s, soit 1 200 m de portée en nil wind. <strong>La longueur maximale utile d'un jump run est donc 2 × 1 200 m = 2 400 m ≈ 1,3 NM</strong>, fixe, qui se <em>décale</em> autour de la DZ selon le vent&nbsp;:</p>
+<ul>
+  <li>Nil wind&nbsp;: 1 200 m de part et d'autre de la DZ.</li>
+  <li>Vent 15 kt (7,5 m/s) de face&nbsp;: 1 900 m amont, 500 m aval (voir Figure 1 de la thèse).</li>
+</ul>
+<p>Ce chiffre <strong>2,4 km ≈ 1,3 NM</strong> convergent avec les &#x00AB; ≤ 1 NM fenêtre utile &#x00BB; de USPA / SDC (§5.9 ci-dessus)&nbsp;: au-delà, le dernier sauteur est trop loin pour rejoindre la DZ.</p>
+
+<p><strong>Formule Geens — temps inter-groupes.</strong></p>
+<div class="formula">
+  <code>t<sub>e</sub> = D / (v<sub>p</sub> − v<sub>c</sub>)</code> &nbsp; avec <em>v<sub>p</sub></em> = groundspeed avion, <em>v<sub>c</sub></em> = groundspeed voile G1 dans la direction du jump run.
+</div>
+<p>Cette formule intègre <strong>les deux groundspeeds</strong> (et non le seul groundspeed avion comme le font AXIS ou Skydive Chicago simplifiés). Exemple Geens&nbsp;: 8-way + 4-way, séparation requise 235 m, avion 100 kt airspeed, vent exit 25 kt de face, vent ouverture 10 kt de face&nbsp;: v<sub>p</sub> = 25 m/s, v<sub>c</sub> = 8 m/s, <strong>t<sub>e</sub> = 14 s</strong> — très au-dessus des «&nbsp;7 s standard&nbsp;» pour cette raison. Cas pathologique&nbsp;: vent exit 100 kt contre vent ouverture 20 kt même direction ⇒ v<sub>p</sub> = 30 m/s, v<sub>c</sub> = 23 m/s ⇒ <strong>t<sub>e</sub> = 34 s</strong>, manifestement infaisable. Solution Geens (§3 fin)&nbsp;: <em>« turn 90° to jump run and watch the next group open before flying back to the DZ »</em> — justification physique de la règle perpendiculaire FFP (DT-19).</p>
+
+<p><strong>Diamètres de groupe à l'ouverture (Geens Table 2)</strong> — base minimum 39 m (3 s réaction × 13 m/s voile) de chaque côté du centre ⇒ séparation canopy-to-canopy 78 m&nbsp;:</p>
+<table>
+  <thead><tr><th>Taille groupe</th><th>Distance de tracking (m)</th><th>Diamètre total à l'ouverture (m)</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>0</td><td>39</td></tr>
+    <tr><td>2</td><td>39</td><td>78</td></tr>
+    <tr><td>4</td><td>55</td><td>110</td></tr>
+    <tr><td>6</td><td>78</td><td>156</td></tr>
+    <tr><td>8</td><td>102</td><td>204</td></tr>
+    <tr><td>10</td><td>126</td><td>252</td></tr>
+    <tr><td>16</td><td>200</td><td>≈ 344 (waves)</td></tr>
+  </tbody>
+</table>
+<p>Ces <strong>diamètres de groupe</strong> doivent être ajoutés à la formule&nbsp;: D<sub>exit</sub> = D<sub>tracking G1</sub> + D<sub>tracking G2</sub> + 78 m + (v<sub>c</sub> × t<sub>e</sub>). Pour 8-way suivi de 4-way&nbsp;: 102 + 55 + 78 + 113 = <strong>348 m</strong>.</p>
+
+<p><strong>Freefall drift — Table 3 Geens.</strong> Pour un sauteur FS (tps chute 70 s) en vent moyen upper 20 kt, dérive = 70 × 10 = <strong>700 m</strong> ; en vent 60 kt (30 m/s), dérive = <strong>2 100 m</strong>. Comparaison <em>freefly</em> (50 s) / <em>FS</em> (70 s) en vent 30 kt (15 m/s)&nbsp;: FS dérive 1 050 m, FF dérive 750 m. Conclusion fondamentale&nbsp;: <em>« Putting slow fallers out before fast fallers on a day with reasonable upper winds will create extra separation »</em> — justification physique exacte de l'ordre de sortie slow-first / fast-last universel.</p>
+
+<h4>E. Disciplines avec mouvement horizontal (Geens §Disciplines)</h4>
+<p>Pour tracking, atmonauti, flocking, la thèse édicte deux règles opérationnelles&nbsp;:</p>
+<ol>
+  <li><strong>« Horizontal movement should always be planned 90° on jumprun unless there is only one group exiting »</strong> — les groupes mobiles partent <em>perpendiculaires</em> à l'axe, jamais dans la direction de la fenêtre de sortie.</li>
+  <li><strong>« If we have more than one group with horizontal movement, then one group should go 90° left and the next 90° right etc. »</strong> — disposition en <em>V divergente</em>, identique à la règle FFP mais ici avec fondement quantitatif (éviter collision après ouverture dans la fenêtre de sortie d'un groupe ultérieur).</li>
+</ol>
+
+<h4>F. Chiffres APF pour la planification du largage — synthèse opérationnelle</h4>
+<table>
+  <thead><tr><th>Paramètre</th><th>Valeur APF / Geens</th><th>Usage dans un simulateur de largage</th></tr></thead>
+  <tbody>
+    <tr><td>Airspeed voile (moyenne)</td><td>13 m/s (26 kt)</td><td>Constante pour portée voile et dérive canopy</td></tr>
+    <tr><td>Taux de descente voile</td><td>6,5 m/s</td><td>Temps utile = h<sub>open</sub> / 6,5</td></tr>
+    <tr><td>Temps utile (open 2 500 → utile 2 000 ft)</td><td>92 s</td><td>Borne max de l'horizon de planification voile</td></tr>
+    <tr><td>Portée voile nil wind</td><td>1 200 m (0,65 NM)</td><td>Rayon de zone atteignable</td></tr>
+    <tr><td>Jump run max utile</td><td>2 400 m (1,3 NM)</td><td>Plafond physique — si demandé &gt; 1,3 NM ⇒ 2 passes</td></tr>
+    <tr><td>Séparation canopy minimum</td><td>78 m (3 s réaction × 13 m/s)</td><td>Base du calcul Δt inter-groupes</td></tr>
+    <tr><td>Séparation groupe-à-groupe APF (cible)</td><td>350–400 m (0,2 NM)</td><td>Équivalent APF du «&nbsp;1 000 ft / 6 s&nbsp;» USPA</td></tr>
+    <tr><td>Δt à 100 kt GS</td><td>7 s</td><td>Call-out pilote</td></tr>
+    <tr><td>Δt à 70 kt GS</td><td>10 s</td><td>Call-out pilote (vent ou avion lent)</td></tr>
+    <tr><td>Forward throw fast faller (nil wind, 80 kt avion)</td><td>160 m ≈ 4 s × 40 m/s</td><td>Correction calibre pour freefly vs belly</td></tr>
+    <tr><td>Buffer inter-DZ (RS 58 §12.3)</td><td>6 NM</td><td>Contrainte de placement</td></tr>
+  </tbody>
+</table>
+
+<h4>G. Apports distinctifs de la doctrine australienne</h4>
+<ol>
+  <li><strong>Formule avec deux groundspeeds</strong> — t<sub>e</sub> = D / (v<sub>p</sub> − v<sub>c</sub>) — plus précise que les règles USPA «&nbsp;1 s par 5 kt de GS &#x00BB; qui ignorent la voile.</li>
+  <li><strong>Classification DZ par 7 niveaux × 4 display ratings</strong> (RS 58 §10.2) — permet à l'opérateur de dire clairement si sa DZ est «&nbsp;Class B + Display General&nbsp;» et d'avoir l'étendue minimale admissible.</li>
+  <li><strong>Justification quantitative de la règle slow-first</strong>&nbsp;: FS drifte +20 s = +300 m par 15 m/s de vent → ajoute la séparation, plutôt que de la réduire si FF était devant.</li>
+  <li><strong>Buffer 6 NM entre DZ</strong> — standard réglementaire explicite absent en USA (USPA laisse au DZSO + FAA).</li>
+  <li><strong>Séparation 4 rôles (DZSO/GCA/Loadmaster/TA)</strong> — modèle à 4 fonctions plus riche que le modèle 2 fonctions USPA.</li>
+  <li><strong>Max useful jump run = 2,4 km fixe</strong> — chiffré sans ambiguïté, convergent avec la pratique USPA et militaire mais assis sur un calcul physique.</li>
+</ol>
+
+<h3 id="s5-16">5.16 Manuels pilote comparés dans le monde — panorama international</h3>
+
+<p>La découverte du <em>Jump Pilot Manual</em> APF (§5.15) a motivé une revue complète des référentiels pilote parachutage civils équivalents dans les autres pays. Le résultat est un paysage très hétérogène&nbsp;: certains États ont un manuel dédié court et didactique, d'autres s'appuient sur des manuels plus larges (training+ops combinés), d'autres encore n'ont qu'une règle aviation générique + une délégation fédérative. Cette section cartographie ces cadres et met en évidence les convergences et divergences doctrinales.</p>
+
+<h4>A. USA — FAA AC 105-2E §8 + USPA Jump Pilot Training Syllabus</h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: AC 105-2E (<em>Sport Parachuting</em>, 2013, avec Ed Upd 2) est <strong>non contraignant mais fait référence</strong>&nbsp;; 14 CFR Part 105 (réglementaire) + Part 91 s'appliquent.</li>
+  <li><strong>§8 Pilot Responsibilities</strong>&nbsp;: 6 sous-sections — certification, jump pilot training, W&amp;B, computing W&amp;B, operational requirements, placards.</li>
+  <li><strong>§8b Jump Pilot Training</strong> (structure la plus copiée au monde) — 2 blocs&nbsp;:
+    <ul>
+      <li><strong>Ground Training</strong> (9 items)&nbsp;: preflight spécifique jump aircraft, limitations, W&amp;B (takeoff + weight shift + landing), low-speed operations jump run (manœuvre minimum-speed + ouverture porte + stall recognition), emergency procedures (standard + jump-induced + bailout), airworthiness, DZ & airspace familiarization, descent (best-glide + AAD considerations).</li>
+      <li><strong>Flight Training</strong> (5 items)&nbsp;: takeoff/landing avec loads représentatifs, CG shift jumper exit, stall-spin prevention/recovery, jump run config avec <em>tail strike avoidance</em>, formation flying per USPA 101.</li>
+    </ul>
+  </li>
+  <li><strong>USPA Jump Pilot Training Syllabus</strong>&nbsp;: document Word template fourni par USPA — les DZ le personnalisent, il n'y a <em>pas</em> de syllabus national monolithique aux USA. Philosophie&nbsp;: le FAA fixe le cadre réglementaire, l'USPA fournit le gabarit, chaque exploitant construit son programme.</li>
+  <li><strong>Qualification pilote</strong>&nbsp;: Commercial Pilot Certificate + rating adapté + Class 2 medical.</li>
+</ul>
+
+<h4>B. Royaume-Uni — British Skydiving Jump Pilots Manual + CAA CAP 660</h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: <em>British Skydiving Jump Pilots Manual</em> (juin 2008, toujours en vigueur)&nbsp;— issué individuellement à chaque club ou équipe de démo. <em>CAA CAP 660</em> (réglementaire, Civil Aviation Authority) définit le cadre aviation. <em>Operations Manual</em> British Skydiving a primauté en cas de conflit.</li>
+  <li><strong>Structure (13 sections, 60+ p.)</strong>&nbsp;:
+    <ul>
+      <li>§1 Regulation of Sport Parachuting — hiérarchie CAA / BS / club.</li>
+      <li>§2 Becoming a Jump Pilot — qualifications, <em>motives</em>, getting started.</li>
+      <li>§3 The Aircraft — types, doc, foreign reg, modifications, door removal, in-flight doors, seat/seat belt, restraints, static line strong point.</li>
+      <li>§4 Parachute Flight Procedures — cœur opérationnel&nbsp;:
+        <ul>
+          <li>§4.3 Pre-flight (ATSU notif, manifesting, W&amp;B awareness, briefing).</li>
+          <li>§4.4 Take-off and climb (incl. <em>mixture leaning</em>).</li>
+          <li><strong>§4.5 Calculation of exit and opening point</strong>&nbsp;: §4.5.1 spotting, §4.5.2 <em>pre-flight calculation</em>, §4.5.3 <em>in-flight calculation</em>, §4.5.4 <em>throwforward</em> (forward throw) — BS reconnaît explicitement que la formule existe mais qu'<em>«&nbsp;such calculations are virtually never used in practical parachuting&nbsp;»</em>.</li>
+          <li>§4.6 Run in, §4.7 Exit — <em>«&nbsp;correct exit point is entirely the jumpmaster's. It is not the pilot's responsibility&nbsp;»</em> (responsabilité formalisée sur JM).</li>
+          <li>§4.8 Descent — initial, engine mgmt (risque shock cooling), collision hazard, AADs on descending pilot.</li>
+          <li>§4.9 Landing.</li>
+        </ul>
+      </li>
+      <li>§5 W&amp;B, §6 Fuel management, §13 Static line spotting.</li>
+    </ul>
+  </li>
+  <li><strong>Trait caractéristique</strong>&nbsp;: focus explicite sur la <em>physique moteur</em> (shock cooling, engine management en descente) qu'aucun autre manuel ne détaille autant — héritage de l'instruction moteur britannique.</li>
+</ul>
+
+<h4>C. Canada — CSPA + CARs Part 603 (Transport Canada)</h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: pas de manuel pilote civil dédié équivalent APF/BS. Les <em>Canadian Aviation Regulations</em> Part 603 (SFOC — Special Flight Operations Certificate) imposent un cadre réglementaire. La <em>CSPA</em> (Canadian Sport Parachuting Association) publie des PIM (<em>Parachutist Information Manuals</em>) et <em>Coach Reference Manuals</em> où des éléments pilote apparaissent indirectement.</li>
+  <li><strong>CARs §603.37 &amp; §603.38</strong>&nbsp;:
+    <ul>
+      <li>Jump aircraft&nbsp;: minimum <strong>500 ft below + 2 000 ft horizontal from cloud</strong>, 5 miles de visibilité.</li>
+      <li>Descent altitude&nbsp;: <strong>≥ 2 200 ft AGL</strong> minimum.</li>
+      <li>PIC doit être briefé sur les conditions du SFOC, connaître ses devoirs, être capable de les exécuter.</li>
+    </ul>
+  </li>
+  <li><strong>Philosophie</strong>&nbsp;: délégation à l'opérateur et à l'expérience du pilote de montagne/brousse (faible densité trafic, DZ rurales). Connaissance pilote transférée par formation interne club.</li>
+</ul>
+
+<h4>D. Finlande — Traficom <em>Operations Manual for Parachuting Flight Operations</em> (2019, v3)</h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: publié par <em>Traficom</em> (régulateur aviation finlandais) en collaboration avec la <em>Finnish Aeronautical Association (SIL / Laskuvarjotoimikunta)</em>, 94 pages, version novembre 2019 (v1 2016, v2 2018). <strong>Explicitement fondé sur FAA AC 105-2E §8 b 8f</strong>&nbsp;: le document le cite comme base technique.</li>
+  <li><strong>Originalité</strong>&nbsp;: approche <em>risk-analysis driven</em> — le guide commence par inventorier les risques (CG shift exit, loading, stall, coordination pilote/sauteur) puis propose les mesures. C'est le seul cadre national à présenter <strong>une étude de risque justifiant le contenu du manuel</strong>.</li>
+  <li><strong>Contenu</strong>&nbsp;:
+    <ul>
+      <li>Rôle pilote et responsabilités (§1.4), formation requise (§1.5), capacité et périodes de repos (§1.7).</li>
+      <li>§3.5 Détermination du point de sortie, §3.6 Vol vers et sur le jump run.</li>
+      <li>Appendix 6&nbsp;: programme de formation type «&nbsp;Oulu Skydive Center&nbsp;» (modèle club).</li>
+      <li>Appendix 7&nbsp;: instructions vol en formation pilotes C-208 (modèle Skydiving Finland) — <em>rare document civil public sur formation multi-avion</em>.</li>
+    </ul>
+  </li>
+  <li><strong>Introduit</strong> le rôle explicite de <em>«&nbsp;chief pilot&nbsp;»</em> dans chaque club (distinct du CCI / DZSO). Safety team de 4 personnes&nbsp;: chief safety officer + chief pilot + head of training + chairperson.</li>
+  <li><strong>Flotte finlandaise typique</strong>&nbsp;: petits Cessna (4–6 sauteurs), 2 Pilatus Porter (10 sauteurs), 2 Cessna Caravan (15–18 sauteurs).</li>
+</ul>
+
+<h4>E. Afrique du Sud — PASA <em>Standard Operating Procedures</em> §19 «&nbsp;Handy Tips for New Jump Pilots&nbsp;»</h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: PASA est <em>Aviation Recreation Organisation</em> (ARO 004) sous Part 149 SA-CAR. Le manuel pilote est inclus comme <strong>§19 du PASA SOP</strong> (≈ 250 pages). SA-CAR Part 105 impose au pilote d'avoir reçu un briefing spécifique entré dans son logbook (ou Form 22 signé).</li>
+  <li><strong>Structure §19 (11 chapitres)</strong>&nbsp;:
+    <ol>
+      <li>General — communication pilote / load master, hand signals skydive.</li>
+      <li>Pre-flight inspection.</li>
+      <li>Cabin inspection (méthode mnémotechnique «&nbsp;AROW&nbsp;» — Airworthiness, Registration, Operating handbook, Weight &amp; balance).</li>
+      <li>Exterior inspection (29 items détaillés, checklist proche POH Cessna).</li>
+      <li>Loading, start-up, taxi — <em>warning explicite sur jumpers/spectators dans l'arc d'hélice</em>.</li>
+      <li>Take-off and climb out.</li>
+      <li>Climbing technique.</li>
+      <li>Descending technique.</li>
+      <li>Landings.</li>
+      <li><strong>Spotting basics</strong> — §10.1 à §10.4 (4 étapes), §10.5 crosswind jump run, §10.6 <strong>hook pattern jump run</strong> (seul manuel national à décrire explicitement le hook).</li>
+      <li>Speed and power control.</li>
+    </ol>
+  </li>
+  <li><strong>Trait caractéristique</strong>&nbsp;: le plus proche d'un «&nbsp;cookbook&nbsp;» praticien (inspection avion + checklist) ; moins réglementaire que plus technique. <em>«&nbsp;This information does NOT supersede the Pilot's Operating Handbook&nbsp;»</em> (disclaimer §19 intro).</li>
+</ul>
+
+<h4>F. Nouvelle-Zélande — NZPIA Drop Pilot Competency</h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: <em>New Zealand Parachute Industry Association</em> (NZPIA), sous CAA NZ. Le <em>NZPIA Documents, Standards and Procedures Manual</em> a été scindé en deux manuels au <strong>29 juillet 2022</strong>.</li>
+  <li><strong>Drop Pilot Proficiency</strong>&nbsp;: exige ≥ <strong>6 drops dans les 12 mois précédents</strong> OU certification continue par personne autorisée dans le logbook. Similaire au «&nbsp;JPA&nbsp;» APF mais avec un curriculum moins détaillé.</li>
+  <li><strong>Terminologie</strong>&nbsp;: NZ utilise «&nbsp;<em>drop pilot</em>&nbsp;» (héritage commercial industrie NZ) plutôt que «&nbsp;jump pilot&nbsp;» (convention USPA / BSPA / APF).</li>
+</ul>
+
+<h4>G. Allemagne — DFV / DAeC <em>Ausbildungshandbuch Teil II</em></h4>
+<ul>
+  <li><strong>Statut</strong>&nbsp;: <em>Deutscher Fallschirmsport Verband</em> (DFV, partenaire BMDV + DAeC). L'<em>AHB Teil II</em> (Ausbildungshandbuch, version 11, 2022, 76 pages) couvre organisation et administration du «&nbsp;Sprungbetrieb&nbsp;» incluant rôles <strong>Pilot / SBL (Sprungbetriebsleiter) / Sauteurs</strong>.</li>
+  <li><strong>Rôle central&nbsp;: le SBL</strong> (<em>Sprungbetriebsleiter</em> = chef de saut) — équivalent DZSO APF, il est le <em>« opérateur d'intégration sol »</em>. Manuel combine training + operations (pas de manuel pilote autonome).</li>
+  <li><strong>Philosophie</strong>&nbsp;: formation intégrée sauteur + pilote dans un même référentiel, privilégie la <em>formation conjointe</em>. Moins dédié pilote que le modèle anglo-saxon (APF/BS/PASA).</li>
+</ul>
+
+<h4>H. Comparatif synthétique — 9 cadres nationaux</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Pays / fédé</th>
+      <th>Titre du document</th>
+      <th>Taille</th>
+      <th>Statut</th>
+      <th>Philosophie dominante</th>
+      <th>Spécificité distinctive</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>USA</strong> (FAA / USPA)</td>
+      <td>AC 105-2E §8 + USPA Syllabus template</td>
+      <td>~6 p. + Word</td>
+      <td>AC non contraignant, Part 105 réglementaire</td>
+      <td>Cadre + template, DZ personnalise</td>
+      <td>Structure §8b Ground + Flight copiée mondialement</td>
+    </tr>
+    <tr>
+      <td><strong>UK</strong> (BS / CAA)</td>
+      <td>British Skydiving Jump Pilots Manual + CAP 660</td>
+      <td>~60 p.</td>
+      <td>BS manuel ops (club-distributed)</td>
+      <td>Technique moteur + cockpit</td>
+      <td>Attention shock cooling / engine mgmt descente</td>
+    </tr>
+    <tr>
+      <td><strong>France</strong> (FFP / DGAC)</td>
+      <td>DT-19 / DT-49 + arrêté 2006</td>
+      <td>~100 p.</td>
+      <td>Directive Technique FFP</td>
+      <td>Directive enseignement, règle 0,3 NM/10 kt</td>
+      <td>Pas de manuel pilote dédié ; pilote brief par chef de centre</td>
+    </tr>
+    <tr>
+      <td><strong>Allemagne</strong> (DFV / DAeC)</td>
+      <td>AHB Teil II</td>
+      <td>~76 p.</td>
+      <td>Manuel training + ops combiné</td>
+      <td>Formation intégrée pilote+sauteur, rôle SBL</td>
+      <td>Fusion training/ops unique ; SBL = chef saut sol</td>
+    </tr>
+    <tr>
+      <td><strong>Australie</strong> (APF / CASA)</td>
+      <td>APF Jump Pilot Manual V01-2026 <em>(voir §5.15)</em></td>
+      <td>~60 p.</td>
+      <td>MANDATORY Part 149</td>
+      <td>Réglementaire + thèse Geens référence</td>
+      <td>Formule 2 groundspeeds, buffer 6 NM inter-DZ</td>
+    </tr>
+    <tr>
+      <td><strong>Canada</strong> (CSPA / TC)</td>
+      <td>CARs Part 603 + PIM CSPA</td>
+      <td>—</td>
+      <td>Réglementaire + éducatif</td>
+      <td>SFOC par exploitant, pas de manuel pilote</td>
+      <td>500/2000 cloud, 2200 AGL min ; experience-based</td>
+    </tr>
+    <tr>
+      <td><strong>Afrique du Sud</strong> (PASA / SA-CAA)</td>
+      <td>PASA SOP §19</td>
+      <td>~20 p. de §19</td>
+      <td>MANDATORY Part 149</td>
+      <td>Cookbook praticien (checklists)</td>
+      <td>Seul à décrire hook pattern explicitement en manuel national</td>
+    </tr>
+    <tr>
+      <td><strong>Finlande</strong> (Traficom / SIL)</td>
+      <td>Operations Manual for Parachuting Flight Operations</td>
+      <td>94 p.</td>
+      <td>Guide Traficom (autorité)</td>
+      <td>Risk-analysis, basé sur FAA AC 105-2E</td>
+      <td>Appendix 7 formation vol multi-C208 ; rôle chief pilot</td>
+    </tr>
+    <tr>
+      <td><strong>Nouvelle-Zélande</strong> (NZPIA / CAA NZ)</td>
+      <td>NZPIA Drop Pilot Proficiency</td>
+      <td>—</td>
+      <td>Procédure NZPIA</td>
+      <td>Currency-based (6 drops / 12 mois)</td>
+      <td>Terminologie «&nbsp;drop pilot&nbsp;» ; split 2022 en 2 manuels</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>I. Convergences et divergences — lecture transversale</h4>
+<p><strong>Les 6 convergences universelles</strong> présentes dans tous les cadres trouvés&nbsp;:</p>
+<ol>
+  <li><strong>Brief pilote pré-vol</strong>&nbsp;: enregistré logbook ou document signé (PASA Form 22, AHB-Teil II, APF Loadmaster brief, FAA §8 etc.).</li>
+  <li><strong>W&amp;B + CG shift</strong>&nbsp;: traité comme <em>le</em> risque principal (FAA §8c-d, Finlande risk analysis, PASA §5, APF JPM §5.8.1, BS §5).</li>
+  <li><strong>Stall awareness low-speed jump run</strong>&nbsp;: tous manuels signalent marge de sécurité stall (FAA §8b(1)(d)(3), APF JPM §5.7.2 b, BS §4.4, PASA §11).</li>
+  <li><strong>Tail strike avoidance</strong>&nbsp;: mentionné FAA, APF (wingsuit), BS (descent procedures).</li>
+  <li><strong>Responsabilité finale d'exit sur le JM / Loadmaster / Spotter</strong>, pas sur le pilote (BS §4.7 explicite, APF JPM §5.6.3, FAA).</li>
+  <li><strong>Phase descente sous contrôle</strong>&nbsp;: shock cooling, gestion moteur, awareness voiles ouvertes (BS §4.8 référence, PASA §8).</li>
+</ol>
+
+<p><strong>Les divergences doctrinales</strong>&nbsp;:</p>
+<table>
+  <thead><tr><th>Question</th><th>Cadres qui codifient</th><th>Cadres qui laissent implicite</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Formule quantitative d'exit separation</td>
+      <td>Australie (Geens, 2 GS), USPA partiel (AXIS), FAA §8 implicite</td>
+      <td>Canada, Allemagne, NZ, Finlande</td>
+    </tr>
+    <tr>
+      <td>Hook / crosswind jump run dans le manuel pilote</td>
+      <td>Afrique du Sud (§10.5, §10.6), APF (§5.7.1 i/j)</td>
+      <td>USA, UK, Canada, Allemagne</td>
+    </tr>
+    <tr>
+      <td>Rôle explicite «&nbsp;chief pilot&nbsp;» club</td>
+      <td>Finlande, Allemagne (SBL)</td>
+      <td>USA, UK, Australie, Canada</td>
+    </tr>
+    <tr>
+      <td>Classification DZ chiffrée</td>
+      <td>Australie (RS 58 §10.2)</td>
+      <td>Tous les autres (laissé à l'exploitant)</td>
+    </tr>
+    <tr>
+      <td>Formation vol en formation multi-avion</td>
+      <td>USPA 101 (référencée par FAA §8), Finlande Appendix 7</td>
+      <td>UK, Canada, Allemagne, Afrique du Sud, NZ</td>
+    </tr>
+    <tr>
+      <td>Currency explicite pilote</td>
+      <td>Nouvelle-Zélande (6 drops/12 mois), Australie (JPA)</td>
+      <td>USA, UK (experience-based), Allemagne</td>
+    </tr>
+    <tr>
+      <td>Buffer inter-DZ</td>
+      <td>Australie (6 NM)</td>
+      <td>Tous les autres</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>J. Ce qu'il manque dans le paysage international</h4>
+<p>En croisant les 9 cadres, quatre sujets restent peu ou mal documentés au niveau national civil&nbsp;:</p>
+<ol>
+  <li><strong>Jump runs non-rectilignes (hook, crosswind, orbital)</strong>&nbsp;: seules l'Afrique du Sud et l'Australie les codifient dans leur manuel pilote. Les autres laissent cela aux articles de blog (DiverDriver, AXIS).</li>
+  <li><strong>Décalage cross-track pour axe parallèle 2ᵉ passe</strong>&nbsp;: aucun cadre national ne chiffre explicitement (§5.14 de ce document en construit une matrice empirique).</li>
+  <li><strong>Formule à 2 groundspeeds (plane + canopy)</strong>&nbsp;: seulement Australie-Geens. USPA/AXIS utilisent encore la règle «&nbsp;1 s par 5 kt GS avion&nbsp;».</li>
+  <li><strong>Comptage explicite du nombre de sauteurs par passe</strong>&nbsp;: seul la BSPA §7 (max 2 Category System Students/passe) et les consignes Noratlas (N=(L−H)/V+1, &gt; 15 ⇒ 2 passes) chiffrent. USPA, APF, FAA renvoient aux limites avion.</li>
+</ol>
+
+<h3 id="s5-17">5.17 Volume de parachutage au-dessus de la DZ — définitions règlementaires internationales</h3>
+
+<p>Jusqu'ici cet outil a traité l'<strong>étendue horizontale</strong> du largage (longueur du jump run, séparation des groupes). L'autre dimension est le <strong>volume 3D</strong> au-dessus de la DZ dans lequel les paras sont autorisés à évoluer — depuis la sortie jusqu'à l'ouverture et la descente sous voile. Ce volume n'est <em>pas</em> défini de façon identique d'un pays à l'autre&nbsp;: la France utilise une géométrie cône-cylindre héritée d'une note FFP 2004, le Royaume-Uni parle de «&nbsp;notified portion of airspace&nbsp;», l'Allemagne définit un cylindre fixe 2 NM × GND→FL100, les États-Unis raisonnent en <em>Letter of Agreement</em> ATC, et l'Australie dimensionne uniquement la surface au sol. Cette section cartographie ces définitions.</p>
+
+<h4>A. France — DGAC (AIP ENR 5.5) + note FFP (mars 2004)</h4>
+<p><strong>Géométrie de référence FFP</strong> (note technique Jean-Marc Seurin, Directeur Technique National, mars 2004, toujours d'actualité)&nbsp;:</p>
+<div class="formula">
+  <strong>Au-dessus de 7 500 ft/sol&nbsp;:</strong> cylindre de rayon <strong>2 NM</strong> (≈ 3,7 km) depuis 7 500 ft/sol jusqu'au plafond publié (FL155 standard).<br>
+  <strong>Entre sol et 7 500 ft/sol&nbsp;:</strong> <strong>tronc de cône</strong> — rayon 2 NM à 7 500 ft ⇒ rayon 0,5 NM (≈ 930 m) au sol.<br>
+  <strong>Plafond standard&nbsp;:</strong> FL155 (≈ 15 500 ft). Pour les sauts au-dessus, NOTAM obligatoire.
+</div>
+<p>La géométrie <em>truncated-cone</em> reflète le fait que la dispersion physique des voiles est maximale à l'ouverture (2 500–4 000 ft) puis se concentre vers la cible au sol — c'est le seul cadre national à publier une formule géométrique explicite pour la géométrie variable en altitude.</p>
+
+<p><strong>Publication&nbsp;: AIP France ENR 5.5 «&nbsp;Activités aériennes sportives et récréatives&nbsp;»</strong>. Chaque DZ parachutage est listée avec&nbsp;:</p>
+<ul>
+  <li><strong>Identification</strong> (numéro d'ordre + libellé «&nbsp;parachutage NOM DZ Aérodrome&nbsp;»).</li>
+  <li><strong>Limites latérales</strong>&nbsp;: coordonnées géographiques du point central (lat/lon en DMS).</li>
+  <li><strong>Limites verticales</strong>&nbsp;: plancher (SFC = surface sol) → plafond (FL publié ou hauteur ASFC en ft).</li>
+  <li><strong>Horaire d'activité (HOR)</strong>&nbsp;: SR–SS, SR–SS+30, H24, créneaux spécifiques.</li>
+  <li><strong>Organisme + conditions de pénétration</strong>&nbsp;: fréquence A/A club, SIV/APP/FIS, protocole signataire.</li>
+</ul>
+
+<p><strong>Échantillon de plafonds observés en France (AIP 2016–2025)</strong>&nbsp;:</p>
+<table>
+  <thead><tr><th>Plafond</th><th>DZ exemples</th><th>Commentaire</th></tr></thead>
+  <tbody>
+    <tr><td>1 700 ft ASFC</td><td>Gravelotte</td><td>Exception&nbsp;: largage <em>basse altitude</em>, réservé à l'héliportage ou formation initiale, hauteur au-dessus du sol et non FL.</td></tr>
+    <tr><td>FL 065</td><td>Rouen Vallée de Seine</td><td>Zone contraint par proximité TMA / espace contrôlé.</td></tr>
+    <tr><td>FL 080 – FL 095</td><td>Étang du Stock, Colmar Sud, Thouars</td><td>DZ club avec plafond réduit (activité C182 / Porter léger).</td></tr>
+    <tr><td>FL 110 – FL 135</td><td>Roanne, St-Nazaire, Le Mans, Dieuze, Montargis, La Flèche, Magny-Cours, Avignon Pujaut, Frétoy</td><td>Régime «&nbsp;intermédiaire&nbsp;»&nbsp;: sauts de sauts d'initiation à avancés, pas d'oxygène requis.</td></tr>
+    <tr><td>FL 140 – FL 145</td><td>Lille Marcq, Dijon Longvic, Lyon Corbas, Maubeuge, Calais Dunkerque, Niort, Pamiers, Le Havre Octeville, Besançon La Vèze, Nancy Azelot, Strasbourg Neuhof, Vannes Meucon, Dieppe St-Aubin</td><td>Plafond typique des centres FFP majeurs (≈ 14 000–14 500 ft = sortie 14 000 ft sans O₂).</td></tr>
+    <tr><td><strong>FL 155</strong></td><td><strong>Gap-Tallard</strong></td><td>Plafond standard FFP selon géométrie 2 NM. Au-dessus&nbsp;: NOTAM obligatoire.</td></tr>
+    <tr><td>FL 160 – FL 190</td><td>Le Puy Loudes, Col des Palombières, Saint-Palais</td><td>DZ montagneuses / terrain militaire où le plafond dépasse le FFP standard par protocole.</td></tr>
+    <tr><td><strong>FL 195</strong></td><td>Chalon Champforgeuil, Cercottes, Orléans Bricy, Wright, Ger, ETAP, Benou, Castres, Bastia Borgo</td><td>Plafond maximum régulier français&nbsp;; cellules militaires (ETAP = École des Troupes Aéroportées) ou centres pro 4-way / wingsuit.</td></tr>
+    <tr><td>ABV FL 195</td><td>Brienne-le-Château (par NOTAM)</td><td>Records / démos. Publié au cas par cas, jamais permanent.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Activation</strong>&nbsp;:</p>
+<ul>
+  <li><em>Horaire publié</em> ⇒ DZ active ; entrée autorisée sous condition de contact fréquence/protocole.</li>
+  <li><em>Hors horaire</em> ⇒ NOTAM ou protocole spécifique avec DSAC régionale.</li>
+  <li><em>Au-dessus du plafond publié</em> ⇒ NOTAM obligatoire (ex. Gap-Tallard «&nbsp;autres HOR et niveaux ABV FL155 annoncés par NOTAM&nbsp;»).</li>
+</ul>
+
+<h4>B. Royaume-Uni — CAA CAP 660 + UK AIP ENR 5.5</h4>
+<p><strong>Définition officielle CAP 660 glossary</strong>&nbsp;:</p>
+<blockquote><em>«&nbsp;Dropping/Drop Zone (DZ) — The <strong>notified portion of airspace</strong> within which parachute descents are made.&nbsp;»</em></blockquote>
+<p>La définition britannique est <strong>procédurale</strong> plutôt que géométrique&nbsp;: le volume est ce qui est <em>notifié</em> à la CAA et publié dans l'AIP, sans imposer une forme standardisée (cylindre/cône). Chaque DZ est donc un volume <em>sui generis</em>.</p>
+
+<p><strong>Processus d'établissement (CAP 660 §3.14–3.18)</strong>&nbsp;:</p>
+<ol>
+  <li>Application à CAA Airspace Regulation Section (AROps) + GA Unit avec&nbsp;: <em>DZ location, main operators, requested height of planned drops, planned frequency, days/hours, landowner permission</em>.</li>
+  <li>Consultation obligatoire (60 jours de commentaire)&nbsp;: MoD SO1 Airspace (DAATM), aérodromes licenciés &lt; 10 NM, groupes GA locaux &lt; 10 NM, sites vol à voile &lt; 10 NM, NATS si accès espace contrôlé.</li>
+  <li>Décision par Head of Airspace/ATC/Aerodromes (AAA)&nbsp;; si airspace complexity ⇒ processus CAP 1616 («&nbsp;Airspace Change&nbsp;») superposé.</li>
+  <li>Permission finale via formulaire SRG 1313.</li>
+</ol>
+
+<p><strong>Plafond typique UK</strong>&nbsp;: <em>Regular free-fall parachuting up to FL 150</em> (référencé UK CAA Aeronautical Charts + UK AIP ENR 5.5). Au-delà, «&nbsp;unusual parachuting activity&nbsp;» (CAP 660 §3.21) → notification dédiée procédure Appendix B. Pour déclenchement spécifique&nbsp;: <strong>NOTAM avec minimum 5 jours de préavis</strong>.</p>
+
+<p><strong>Transpondeur obligatoire</strong> (CAP 660 §3.62)&nbsp;: squawk <strong>0033 + Mode C</strong> (altitude reporting), requis au-dessus du FL100 et en espace contrôlé notifié.</p>
+
+<p><strong>Activation opérationnelle</strong>&nbsp;: BS Form 193 (actif/inactif) notifié à l'ATSU listé en ENR 5.5 + ACC si ATSU non ouvert.</p>
+
+<h4>C. États-Unis — 14 CFR Part 105 + FAA Order JO 7110.65 Chap 9 §7</h4>
+<p>Le cadre américain repose sur 3 piliers&nbsp;:</p>
+<ul>
+  <li><strong>14 CFR Part 105</strong> (réglementaire, partie du 14 CFR).</li>
+  <li><strong>FAA Order JO 7110.65</strong> (manuel ATC, chapitre 9 section 7 «&nbsp;Parachute Operations&nbsp;»).</li>
+  <li><strong>Letter of Agreement</strong> entre exploitant DZ et ATC local pour les sites permanents.</li>
+</ul>
+
+<p><strong>Autorisation d'espace</strong>&nbsp;:</p>
+<ul>
+  <li>Class G (uncontrolled)&nbsp;: notification simple (105.13).</li>
+  <li>Class A, B, C, D et air traffic area&nbsp;: <strong>ATC authorization</strong> requise (14 CFR 105.15 + 105.25) — formalisée par <em>FAA Form 7711-1</em> (Certificate of Waiver / Authorization) ou Airspace Authorization.</li>
+</ul>
+
+<p><strong>Contenu minimum d'une Letter of Agreement (FAA Order JO 7110.65 ch. 9 §7)</strong>&nbsp;:</p>
+<ol>
+  <li><strong>Description + location</strong> du jump zone(s).</li>
+  <li><strong>Conditions of use</strong> (hours, days, aircraft types, weather minima).</li>
+  <li><strong>Maximum jump altitude</strong>.</li>
+  <li><strong>Common jump altitudes</strong> (altitudes habituelles de sortie).</li>
+  <li><strong>Common parachute opening altitudes</strong>.</li>
+</ol>
+<p><strong>Toutes les altitudes sont exprimées en feet MSL</strong> (sea level), pas AGL — particularité américaine, contrastant avec la publication française en FL et l'australienne en AGL.</p>
+
+<p><strong>Minima météo (14 CFR 105.17)</strong>&nbsp;: identiques à VFR classique mais tablés par tranche&nbsp;:</p>
+<table>
+  <thead><tr><th>Altitude</th><th>Visibilité</th><th>Cloud clearance (below / above / horizontal)</th></tr></thead>
+  <tbody>
+    <tr><td>≤ 1 200 ft AGL</td><td>3 SM</td><td>500 / 1 000 / 2 000 ft</td></tr>
+    <tr><td>&gt; 1 200 ft AGL &amp; &lt; 10 000 ft MSL</td><td>3 SM</td><td>500 / 1 000 / 2 000 ft</td></tr>
+    <tr><td>≥ 10 000 ft MSL</td><td>5 SM</td><td>1 000 / 1 000 / 1 mi</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Règles spécifiques</strong>&nbsp;:</p>
+<ul>
+  <li><strong>14 CFR 105.19</strong>&nbsp;: de SS à SR, lumière visible à 3 SM obligatoire sur tout para sous voile ouverte.</li>
+  <li><strong>14 CFR 105.23</strong>&nbsp;: saut sur/vers un aéroport ⇒ accord préalable management + tour si existante ; voile peut dériver au-dessus d'un aéroport si ≥ <strong>2 000 ft au-dessus du tour de piste</strong> et sans créer de hazard.</li>
+  <li><strong>NOTAM</strong>&nbsp;: originé par ATC au plus tôt 7 jours avant l'événement (FAA Order JO 7110.65 §9-7).</li>
+</ul>
+
+<h4>D. Allemagne — DFS AIP ENR 5.5-1 + ICAO charts</h4>
+<p><strong>Géométrie standard</strong>&nbsp;: <strong>cylindre de rayon 2 NM × GND → FL100</strong> pour les zones permanentes (<em>permanent jump zones</em>) publiées en AIP ENR 5.5-1. Distinction explicite avec les <em>individual jumps</em> (non permanents).</p>
+<p><strong>Publication cartographique</strong>&nbsp;:</p>
+<ul>
+  <li>Cercle en <strong>pointillés</strong> sur les cartes ICAO.</li>
+  <li>Marquage <strong>«&nbsp;PJE&nbsp;»</strong> (<em>Parachute Jumping Exercise</em>).</li>
+  <li>Plancher (GND) et plafond (FL100) indiqués.</li>
+</ul>
+<p><strong>Plafond FL100 ≈ 10 000 ft</strong> est cohérent avec la limite oxygène EASA SPO.OP.195 — au-delà, oxygène requis pour équipage + dérogation SPO.SPEC.PAR.115 pour les sauteurs.</p>
+<p><strong>Particularité&nbsp;:</strong> le trafic non-parachutiste a <em>entry permission</em> mais doit <em>take care of dedicated air traffic</em> — c'est-à-dire visual avoidance du trafic dédié, pas une interdiction absolue.</p>
+
+<h4>E. Australie — RS 58 APF (surface au sol uniquement)</h4>
+<p>L'Australie a un modèle <strong>fondamentalement différent</strong>&nbsp;: le RS 58 §10.2 définit la DZ comme <strong>surface au sol</strong> (100 000 m² Student → 500 m² F-class), mais <strong>ne définit pas un volume d'airspace</strong>. Le contrôle de l'airspace est délégué à CASA via&nbsp;:</p>
+<ul>
+  <li>Dispositif <em>Class G uncontrolled</em> pour la plupart des DZ rurales.</li>
+  <li>Coordination ATC ponctuelle si Class C/D à proximité.</li>
+  <li>Jump Pilot Manual §5.6.4&nbsp;: fréquence 119.20 MHz dédiée parachutage.</li>
+  <li>Pas de publication standard d'un volume type dans l'AIP Australia ENR 5.5 — chaque DZ approuvée par Group Member APF.</li>
+</ul>
+<p>Le RS 58 §12.3 impose un <strong>buffer de 6 NM entre DZ actives</strong>&nbsp;: c'est la seule contrainte géométrique quasi-volumétrique (plan horizontal). Altitude max&nbsp;: limite aéronautique CASA + oxygène (non codifiée en un plafond DZ standard).</p>
+
+<h4>F. Comparatif synthétique — géométrie du volume</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Pays</th>
+      <th>Définition volume</th>
+      <th>Rayon standard</th>
+      <th>Plafond standard</th>
+      <th>Forme</th>
+      <th>Publication</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>France</strong></td>
+      <td>Formule FFP 2004 + AIP ENR 5.5 par site</td>
+      <td>2 NM au-dessus 7 500 ft&nbsp;; 0,5 NM au sol</td>
+      <td>FL155 (variable par DZ, FL065 → FL195)</td>
+      <td><strong>Tronc de cône</strong> (unique au monde)</td>
+      <td>AIP ENR 5.5 (SIA) + note FFP mars 2004</td>
+    </tr>
+    <tr>
+      <td><strong>UK</strong></td>
+      <td>«&nbsp;Notified portion of airspace&nbsp;» (CAP 660)</td>
+      <td>Non fixé (cas par cas)</td>
+      <td>FL150 typique, variable</td>
+      <td>Procédural (non géométrique)</td>
+      <td>UK AIP ENR 5.5 + SRG 1313 CAA</td>
+    </tr>
+    <tr>
+      <td><strong>USA</strong></td>
+      <td>Jump zone décrit en Letter of Agreement ATC</td>
+      <td>Variable, défini par LoA</td>
+      <td>Max altitude MSL par LoA</td>
+      <td>Polygone/cercle selon LoA</td>
+      <td>Sectional chart (symbole parachute) + Form 7711-1</td>
+    </tr>
+    <tr>
+      <td><strong>Allemagne</strong></td>
+      <td>Cylindre standard AIP ENR 5.5-1</td>
+      <td>2 NM fixe</td>
+      <td>FL100 fixe</td>
+      <td>Cylindre</td>
+      <td>AIP ENR 5.5-1 + ICAO chart (cercle pointillé «&nbsp;PJE&nbsp;»)</td>
+    </tr>
+    <tr>
+      <td><strong>Australie</strong></td>
+      <td>Surface sol uniquement (RS 58 §10.2)</td>
+      <td>~200 m (√100 000 m²) → 15 m (√500 m²)</td>
+      <td>Pas de plafond DZ ; CASA general airspace</td>
+      <td>Surface au sol seule</td>
+      <td>APF Group Member approval ; AIP Australia général</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>G. Cas particuliers — DZ avec volumes non-standard</h4>
+<ul>
+  <li><strong>Gravelotte (France, 1 700 ft ASFC)</strong>&nbsp;: largage basse altitude héliporté ou formation initiale&nbsp;; hauteur absolue sol (ASFC) et non FL. Plafond très bas car site héritage militaire.</li>
+  <li><strong>Brienne-le-Château (France, activité ABV FL195 par NOTAM)</strong>&nbsp;: autorisé jusqu'au FL195 (diamètre 10 NM selon aeroVFR), record attempts. Particularité&nbsp;: le cylindre ne suit pas la formule 2 NM standard.</li>
+  <li><strong>ETAP (Pau-Bayonne, France FL195)</strong>&nbsp;: École des Troupes Aéroportées, plafond militaire.</li>
+  <li><strong>Rouen Vallée de Seine (France FL065)</strong>&nbsp;: contraint par TMA ROUEN et trajectoires LFPE/LFPO.</li>
+  <li><strong>Bastia Borgo (France FL195, H24)</strong>&nbsp;: DZ corse, trafic insulaire faible, horaire étendu.</li>
+  <li><strong>Gap-Tallard (France FL155 + NOTAM ABV)</strong>&nbsp;: DZ montagne, centre FFP de référence. Ceiling standard du cadre FFP.</li>
+</ul>
+
+<h4>H. Observations doctrinales — pourquoi ces différences&nbsp;?</h4>
+<ol>
+  <li><strong>France&nbsp;: géométrie physique</strong> — la formule FFP «&nbsp;tronc de cône 2 NM→0,5 NM&nbsp;» reflète une modélisation de la dispersion voile sous vent, intégrant la trajectoire en descente. Unique dans le paysage international.</li>
+  <li><strong>Allemagne&nbsp;: standardisation stricte</strong> — cylindre fixe 2 NM × FL100, cohérent avec la culture règlementaire allemande (codification uniforme), compatible avec la règle oxygène EASA.</li>
+  <li><strong>Royaume-Uni&nbsp;: modèle consultatif</strong> — définition juridique minimaliste («&nbsp;notified portion&nbsp;») mais processus d'établissement lourd (60 jours, multi-consultation MoD/ATC/GA locaux). Permet une adaptation fine mais rend la création de nouvelles DZ complexe.</li>
+  <li><strong>États-Unis&nbsp;: modèle bilatéral ATC↔opérateur</strong> — Letter of Agreement entre DZ et ATC définit tout (altitudes MSL, conditions). Décentralisé, efficace en Class G rural, lourd en Class B/C/D.</li>
+  <li><strong>Australie&nbsp;: modèle surface + airspace découplés</strong> — RS 58 dimensionne le terrain (surface + hazards), l'airspace est géré séparément par CASA. Reflet de la faible densité aérienne australienne.</li>
+</ol>
+
+<p><strong>Pour un outil de simulation de largage multi-pays</strong>, la conséquence pratique est qu'il n'existe <strong>pas un «&nbsp;volume type universel&nbsp;»</strong>&nbsp;: le simulateur doit soit&nbsp;:</p>
+<ul>
+  <li><strong>Adopter la formule FFP</strong> (cylindre r=2 NM ABV 7500 ft + cône r=2→0,5 NM BLW) comme géométrie par défaut — c'est la plus détaillée et physiquement fondée.</li>
+  <li><strong>Permettre une géométrie personnalisée par DZ</strong> (r, z_bottom, z_ceiling) — ce qui est préférable pour simuler les cas particuliers (FL065 Rouen, 1 700 ft Gravelotte, FL195 Bastia).</li>
+  <li><strong>Intégrer le plafond comme paramètre critique</strong>&nbsp;: la sortie se fait nécessairement ≤ plafond, et la voile doit ouvrir ≥ minimum open height (2 000 ft civil) avant d'atteindre le sol.</li>
+</ul>
+
+<div class="synthesis">
+<h3>Synthèse — étendue du largage</h3>
+<p><strong>La règle des 60 s est une approximation&nbsp;; la vraie contrainte est en distance.</strong> Le paramètre physique est la séparation horizontale inter-groupes Δx ≥ 1 000 ft (≈ 300 m), traduite en temps via la groundspeed&nbsp;: 7 s à 90 kt, 5 s à 120 kt, jusqu'à 25 s en vent 50 kt. Les call-outs pilote (Skydive Chicago, Spaceland, Start Skydiving) sont tous en <em>miles</em>, jamais en secondes.</p>
+<p><strong>Oui on largue régulièrement sur ~2 NM de jump run total</strong> (lead-in + fenêtre + lead-out/hook), mais la <strong>fenêtre utile</strong> (nearest → furthest exit) reste généralement ≤ 1 NM. Les 2 NM utiles n'apparaissent qu'en militaire CARP ou DZ désertiques très étendues. Au-delà, la portée voile et la dispersion des trajectoires imposent un split en 2 passes.</p>
+<p><strong>Le jump run rectiligne face au vent est le défaut absolu (&gt; 90&nbsp;% civil)</strong>. Crosswind apparaît sur DZ longue-étroite (~5&nbsp;%), hook sur cas extrêmes (&lt; 2&nbsp;%, Twin Otter principalement), orbital en 2ᵉ passe. Le choix obéit à <strong>6 critères&nbsp;: forme DZ, vent, obstacles, longueur nécessaire, type d'avion, expérience sauteurs</strong>, toujours avec briefing cabine préalable explicite si non-rectiligne.</p>
+<p><strong>Constituer un load plafonné à N sorties</strong> repose sur 8 règles&nbsp;: (1) distinguer sauteurs/groupes/sorties, (2) tri discipline + taille + altitude déploiement, (3) plafonds catégoriels (2 movement, 0–1 high-pull), (4) compatibilité fall-rate intra-groupe ±15 mph, (5) seuils d'expérience (100 / 200 / 750 sauts), (6) équipement AAD + audible, (7) tracé flight paths visuel, (8) check-list DZSO finale. La <em>première contrainte saturée</em> (slots, sorties, temps, tandems, movement) plafonne le load.</p>
+<p>Les <strong>big-ways</strong> et le <strong>militaire CARP</strong> restent des cas hors cadre&nbsp;: big-way = 9–11 avions en formation latérale 130 ft, 1 exit quasi simultané&nbsp;; CARP = DZ dimensionnée (600 yd + 75 yd/para) pour chalk entier en 1 passe.</p>
+<p><strong>Le Cessna 208B Grand Caravan (17 places) sature à 7–9 exits / passage</strong>, soit ≤ 17 sauteurs en 1 passe. Au-delà, go-around obligatoire. En référence Noratlas (mil. FR), la formule N = (L−H)/V + 1 donne le plafond par porte ; <strong>&gt; 15 paras ⇒ ≥ 2 passages obligatoires</strong>.</p>
+<p><strong>Axes et contre-axes</strong>&nbsp;: le <em>rectiligne face au vent</em> est universel (USA, UK, FR, DE). Le <strong>contre-axe 180°</strong> est rare en civil (wingsuit solo, hop-and-pop en descente) ; l'<strong>axe parallèle (go-around)</strong> est le standard pour 2 passes — avec décalage latéral <strong>0,3 NM (vent faible) à 1,5 NM (vent fort)</strong> pour que la dérive voile 1ʳᵉ passe n'entre pas dans la colonne d'exit 2ᵉ passe. Référence SDC&nbsp;: offset 0,2 mi ≈ 370 m.</p>
+<p><strong>Groupes de dérive en multi-passes</strong>&nbsp;: max 2 movement/load (toutes disciplines), flight paths briefés, jamais de break-off vers la line of flight (Spaceland), toujours perpendiculaire à son propre axe (FFP). Quatre dispositions types&nbsp;: "V" divergente (45° de chaque côté), "séparée par passe" (1 movement / passage), "landmark-divided" (groupes même direction mais séparés par un repère géographique), "opposite tracking" (90° de chaque côté depuis même passe). Le wingsuit solo est le seul cas validé de contre-axe civil (sort dernier, haut ouverture, briefing radio).</p>
+</div>
+
+<!-- ======================= 6. PROCEDURES CABINE ======================= -->
+<h2 id="s6">6. Procédures cabine — briefing, call-outs, commandes</h2>
+
+<h3 id="s6-1">6.1 Briefing pré-vol (civil)</h3>
+<p>Le <strong>load organizer</strong> / chef de centre coordonne avec le pilote&nbsp;:</p>
+<ul>
+  <li>Altitude et cap de jump run.</li>
+  <li>Communications (sol ↔ avion, JM ↔ pilote, ATC).</li>
+  <li>Attitude avion pendant les corrections de spotter (pas de virage serré).</li>
+  <li>Vitesse de jump run et <em>power cut</em>.</li>
+  <li>Masse et centrage (gross weight, CG).</li>
+  <li>Procédures urgence avion et équipement.</li>
+  <li>Ordre des groupes et break-off.</li>
+  <li>Procédures non-largage (aller-retour DZ).</li>
+</ul>
+
+<h3 id="s6-2">6.2 Call-outs pilote — séquence standard</h3>
+<table>
+  <thead><tr><th>Call-out</th><th>Distance / Temps avant spot</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>« 5 minutes »</td><td>~5 NM</td><td>Fin de montée, ajustement trim, annonce ATC</td></tr>
+    <tr><td>« 2 minutes »</td><td>~2 NM</td><td>Groupes se préparent, check équipement, ceintures détachées</td></tr>
+    <tr><td>« 1 minute »</td><td>~1 NM</td><td>Réduction puissance, approche vitesse de largage</td></tr>
+    <tr><td>« Door! »</td><td>~30–45 s</td><td>Spotter prend la porte, vérification visuelle axe/obstacles</td></tr>
+    <tr><td>Updates toutes les 10–15 s</td><td>Jump run</td><td>Pilote annonce distance au centre DZ</td></tr>
+    <tr><td>« GO! » ou feu vert</td><td>Sur nearest exit</td><td>Top vert, 1ᵉʳ groupe sort</td></tr>
+    <tr><td>« Jumpers in the air »</td><td>Après chaque groupe</td><td>Annonce radio ATC</td></tr>
+    <tr><td>Feu rouge / « No more »</td><td>Sur furthest exit ou fin</td><td>Top rouge, fermeture porte</td></tr>
+  </tbody>
+</table>
+
+<h3 id="s6-3">6.3 Commandes militaires jumpmaster</h3>
+<p>Le jumpmaster donne une séquence de commandes <strong>avec gestes standardisés</strong> (le bruit cabine empêche la voix seule).</p>
+<ol>
+  <li><strong>« Ten minutes! »</strong>&nbsp;— mains en avant, paumes ouvertes, puis poings fermés à l'épaule.</li>
+  <li><strong>« Six minutes! »</strong> (dernière annonce avant mise en ordre).</li>
+  <li><strong>« Get ready! »</strong></li>
+  <li><strong>« Outboard personnel, stand up! »</strong></li>
+  <li><strong>« Inboard personnel, stand up! »</strong></li>
+  <li><strong>« Hook up! »</strong>&nbsp;— accrochage du crochet au câble.</li>
+  <li><strong>« Check static lines! »</strong></li>
+  <li><strong>« Check equipment! »</strong></li>
+  <li><strong>« Sound off for equipment check! »</strong>&nbsp;— chaque sauteur, à partir de l'arrière, tape l'épaule du précédent et annonce « OK! ». Le premier crie « OK jumpmaster! ».</li>
+  <li><strong>« Stand in the door! »</strong>&nbsp;— 1ᵉʳ sauteur en position porte.</li>
+  <li>Feu <strong>vert</strong> → sortie cadencée 1 para/s/porte.</li>
+  <li>Feu <strong>rouge</strong> → « RED LIGHT, RED LIGHT, RED LIGHT! », JM place la main en barrage, stick reflue de la porte.</li>
+</ol>
+
+<!-- ======================= 7. PAR PAYS ======================= -->
+<h2 id="s7">7. Procédures par pays</h2>
+
+<div class="country-card" id="s7-usa">
+<h4><span class="badge civ">CIV</span> USA — USPA SIM / FAR Part 105 / AC 105-2E</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: <em>USPA Skydiving Aircraft Operations Manual</em>, <em>Jump Pilot Training Syllabus</em>, FAR Part 105, AC 105-2E.</li>
+  <li><strong>Calcul spot</strong>&nbsp;: partagé pilote/spotter. Winds-aloft 3k/6k/9k/12k, moyenne, dérive <code>V × T</code>, forward throw 0,2 mi.</li>
+  <li><strong>Call-outs</strong>&nbsp;: séquence « 2 min / 1 min / door ». Updates toutes les 10–15 s.</li>
+  <li><strong>Top vert</strong>&nbsp;: feu vert sur gros porteurs (Otter, Caravan équipée) ou verbal « GO! ».</li>
+  <li><strong>Top rouge</strong>&nbsp;: feu rouge équivalent&nbsp;; sortie sur feu rouge = violation de sécurité majeure.</li>
+  <li><strong>Séparation</strong>&nbsp;: AXIS Exit Separation (base 6 s + 2 s si &gt; 5 sauteurs). 7 s à 90 kt, 5 s à 120 kt.</li>
+  <li><strong>Ordre de sortie</strong>&nbsp;: Hop&amp;Pop → CRW → belly (gros) → freefly → angle → AFF → tandem → wingsuit → high-pull.</li>
+  <li><strong>Break-off</strong>&nbsp;: ≥ 1 500 ft au-dessus de deployment (petits), ≥ 2 000 ft (gros).</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-uk">
+<h4><span class="badge civ">CIV</span> Royaume-Uni — British Skydiving Ops Manual (2024)</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: British Skydiving <em>Operations Manual</em> + <em>Jump Pilots Manual</em>.</li>
+  <li><strong>Calcul spot</strong>&nbsp;: <strong>CCI en pré-vol</strong>. Le pilote « fly the aircraft efficiently to a predetermined point over the ground ».</li>
+  <li><strong>Top vert</strong>&nbsp;: déclenché par le <strong>jumpmaster</strong>, validé par le pilote.</li>
+  <li><strong>Top rouge</strong>&nbsp;: pilote garde la main pour stopper à tout moment.</li>
+  <li><strong>Ordre de sortie</strong>&nbsp;: aligné USPA, ajustements locaux selon CCI.</li>
+  <li><strong>Spécificité</strong>&nbsp;: météo locale très variable (UK) → grande attention aux bulletins winds-aloft (heures de validité).</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-fr">
+<h4><span class="badge civ">CIV</span> France — FFP / Arrêté 13 mars 1989</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: Arrêté 13 mars 1989 (largage para par pilotes non-pro) + programme exploitant (DNC abolie 2017). Depuis 2017, la responsabilité de la formation au largage est celle du <strong>chef pilote de l'école</strong>.</li>
+  <li><strong>Prérequis</strong>&nbsp;: 200 h PPL, 70 h PIC, qualification classe avion + jour théorique facteurs humains.</li>
+  <li><strong>Règle chiffrée enseignée</strong>&nbsp;: <strong>0,3 NM d'offset par 10 kt de vent</strong>, fenêtre centrée sur le point de largage.</li>
+  <li><strong>Calcul spot</strong>&nbsp;: pilote ou chef largueur, selon école&nbsp;; GPS cockpit avec waypoint release.</li>
+  <li><strong>Top vert</strong>&nbsp;: annonce cockpit <strong>« C'est OK! »</strong>, porte coulissante ouverte, sortie séquentielle. Avion en <strong>légère descente</strong> pendant la sortie (éviter empennage sur PC-6).</li>
+  <li><strong>Top rouge</strong>&nbsp;: annonce négative cockpit ou porte refermée. Si passe interrompue, <strong>hippodrome</strong>.</li>
+  <li><strong>Post-largage</strong>&nbsp;: descente rapide PC-6 ≈ 6 500 ft/min à 90–95 KIAS.</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-de">
+<h4><span class="badge civ">CIV</span> Allemagne — DFV / LBA</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: DFV <em>Handbuch Absetzbetrieb</em> (validé EASA).</li>
+  <li><strong>Calcul spot</strong>&nbsp;: méthode <strong>métrique explicite</strong> (m/s × s). Ex&nbsp;: 40 kt ≈ 20 m/s × 60 s = 1 200 m de dérive chute.</li>
+  <li><strong>Qualification</strong>&nbsp;: <em>Absetzpilot</em> DFV avec validation <em>Fluglehrer</em> / chef de centre.</li>
+  <li><strong>Top vert/rouge</strong>&nbsp;: feu sur gros avions, verbal sinon. Procédures alignées avec pratique EASA.</li>
+  <li><strong>Spécificité</strong>&nbsp;: tradition allemande de <strong>chiffrage précis</strong> transmis aux pilotes et aux sauteurs, contrairement aux DZ USA où le spotter maîtrise la règle de pouce.</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-au">
+<h4><span class="badge civ">CIV</span> Australie — APF / CASA <em>(voir §5.15 pour le détail)</em></h4>
+<ul>
+  <li><strong>Référentiel 2026</strong>&nbsp;: <em>APF Operational Regulations V01-2026</em>, <em>Regulatory Schedules V01-2026</em> (dont RS 58 DZ), <em>Jump Pilot Manual V01-2026</em>, <em>DZSO Guide V01-2023</em>, <em>Exposition V5.1</em>, <em>Training Operations Manual</em>. Part 149 CASA (délégation réglementaire complète).</li>
+  <li><strong>Classification DZ (RS 58 §10.2)</strong>&nbsp;: matrice 7 niveaux × 4 display ratings. Ex&nbsp;: Class B sans display = 50 000 m² + 100 m obstacle ; Class F + Display Open = 500 m² + 5 m. <strong>Buffer 6 NM entre DZ</strong> (§12.3) avec plan de gestion des risques obligatoire.</li>
+  <li><strong>Rôles (OR 6.1)</strong>&nbsp;: 4 fonctions distinctes DZSO (sécurité DZ) / GCA (sol radio) / Loadmaster (spot bord) / Target Assistant (guidage radio élèves).</li>
+  <li><strong>JPA</strong> (Jump Pilot Authorisation)&nbsp;: 120 h total, 70 h PIC, 10 h sur type, brevet Class D, CASA Class 2 médical.</li>
+  <li><strong>Jump run (JPM §5.5, §5.7)</strong>&nbsp;: établi ≥ 1 min avant exit, overhead DZ face au vent, ouverture upwind, spot GPS format <code>« 270 / 0.2 short »</code>, feux rouge/orange/vert identiques au militaire.</li>
+  <li><strong>Exit separation APF (DZSO Guide §11.6)</strong>&nbsp;: 350–400 m (0,2 NM) entre groupes ; 7 s à 100 kt GS ; 10 s à 70 kt GS. Calcul basé sur 1 kt ≈ 0,5 m/s.</li>
+  <li><strong>Référence technique</strong>&nbsp;: thèse <em>Exit Separation</em> de Steven Geens (Instructor A) publiée par APF. Formule <code>t<sub>e</sub> = D / (v<sub>p</sub> − v<sub>c</sub>)</code>, jump run max utile 2 400 m (1,3 NM), diamètres de groupes tabulés, Freefall Drift Table.</li>
+  <li><strong>Multi-passes</strong> (JPM §5.7.1 i)&nbsp;: bank angle limité pour éviter désorientation ; orbits dans sens permettant au Loadmaster de voir les sauteurs dispatchés par la porte.</li>
+  <li><strong>Tracking/angles ≥ 3-way</strong>&nbsp;: endorsement DZSO logbook obligatoire ; leader ≥ 8 participants doit être Freefly Coach ou avoir 300 sauts tracking/angles (OR 9.9.2–9.9.3).</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-ca">
+<h4><span class="badge civ">CIV</span> Canada — CSPA / Transport Canada</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: <em>CSPA PIM 2C</em> + <em>Jump Master Reference Manual</em>.</li>
+  <li><strong>Calcul spot</strong>&nbsp;: très expérientiel, « set-up point gained by experience, a jump-by-jump assessment of the winds ».</li>
+  <li><strong>Top vert</strong>&nbsp;: déclenché par le JM, confirmé par le pilote.</li>
+  <li><strong>Top rouge</strong>&nbsp;: pilote, conforme pratique USPA.</li>
+  <li><strong>Spécificité</strong>&nbsp;: faible densité trafic sur beaucoup de DZ rurales → pilote a souvent les deux casquettes (pilote + spot).</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-it">
+<h4><span class="badge civ">CIV</span> Italie — ENAC</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: <em>Regolamento lanci paracadutistici ordinari e speciali</em> (ENAC, 2024).</li>
+  <li><strong>Limites vent</strong>&nbsp;: 7 m/s (14 kt) avec certaines voiles principales, 4 m/s (8 kt) avec d'autres.</li>
+  <li><strong>Calcul spot</strong>&nbsp;: procédure alignée EASA/USPA avec adaptation locale aux ATC italiens.</li>
+  <li><strong>Top vert/rouge</strong>&nbsp;: conformes pratique EASA.</li>
+</ul>
+</div>
+
+<div class="country-card" id="s7-mil">
+<h4><span class="badge mil">MIL</span> Militaire — USAF / US Army / France / OTAN</h4>
+<ul>
+  <li><strong>Référentiel</strong>&nbsp;: AFMAN 11-231 (USAF CARP), FM 3-99 (US Army), DAFMAN 13-217 (DZ/LZ), STANAG 3570 (OTAN), PIA-3.2.1.1 (France).</li>
+  <li><strong>Calcul spot</strong>&nbsp;: <strong>CARP</strong> formule <code>D = K·A·V</code> + <strong>HARP</strong> pour HALO/HAHO.</li>
+  <li><strong>Ordre stick</strong>&nbsp;: heavy drop 30 s à 1 min <strong>avant</strong> personnel&nbsp;; cadence 1 para/s/porte&nbsp;; chef de stick en tête ou deuxième selon mission.</li>
+  <li><strong>T-time / P-hour</strong>&nbsp;: parachute-hour = sortie du 1ᵉʳ para du 1ᵉʳ avion. Block time&nbsp;: ~20 min (C-130), ~30 min (C-141).</li>
+  <li><strong>Formation avion</strong>&nbsp;: 2 000 ft / 7 s de séparation en VMC, 130 ft de décalage latéral pour éviter le wash.</li>
+  <li><strong>Feu vert/rouge</strong>&nbsp;: central dans la discipline&nbsp;; sortie sur feu rouge = enquête et sanction.</li>
+  <li><strong>Racetrack</strong>&nbsp;: immédiat si problème&nbsp;; 6 min de séparation entre serials d'avions sur la DZ.</li>
+</ul>
+</div>
+
+<!-- ======================= 8. SYNTHESE GLOBALE ======================= -->
+<h2 id="s8">8. Synthèse globale</h2>
+
+<h3>8.1 Ce qui est universel</h3>
+<ul>
+  <li><strong>Physique</strong>&nbsp;: dérive chute = <code>V × T</code>, portée voile = <code>(V_voile − V_vent) × T_voile</code>, Δx = <code>V_ground × ΔT_exit</code>.</li>
+  <li><strong>Ordre de sortie</strong>&nbsp;: slow first / fast last partout, ajusté par discipline et par taille de groupe.</li>
+  <li><strong>Top vert</strong>&nbsp;: conjonction « nearest exit + clair espace aérien ».</li>
+  <li><strong>Top rouge</strong>&nbsp;: dépassement d'une limite (furthest exit, sécurité, fin).</li>
+  <li><strong>Racetrack</strong> pour 2ᵉ passe standardisé partout.</li>
+  <li><strong>Break-off plus haut pour gros groupes</strong>&nbsp;: ≥ 1 500 ft petits / ≥ 2 000 ft gros.</li>
+  <li><strong>Boarding en ordre inverse de sortie</strong>.</li>
+</ul>
+
+<h3>8.2 Ce qui diffère par pays</h3>
+<table>
+  <thead><tr><th>Aspect</th><th>USA</th><th>UK</th><th>France</th><th>Australie</th><th>Allemagne</th></tr></thead>
+  <tbody>
+    <tr><td>Qui calcule le spot</td><td>Spotter / pilote</td><td>CCI pré-vol</td><td>Pilote (règle 0,3 NM)</td><td>CCI / DZSO</td><td>Pilote (métrique)</td></tr>
+    <tr><td>Règle chiffrée enseignée</td><td>60 kt / 1 NM (FF)</td><td>Graphique photo</td><td>0,3 NM / 10 kt</td><td>Experience-based</td><td>V(m/s) × T(s)</td></tr>
+    <tr><td>Déclenchement top vert</td><td>Pilote (feu/voix)</td><td>JM (avec accord pilote)</td><td>Cockpit « C'est OK »</td><td>Pilote + LJM</td><td>Pilote (feu)</td></tr>
+    <tr><td>Outil séparation</td><td>AXIS Exit Separation</td><td>Tableaux CCI</td><td>Règles DT 49</td><td>AXIS + Geens thesis</td><td>DFV Handbuch</td></tr>
+    <tr><td>Limite vent typique</td><td>Variable DZ</td><td>Variable DZ</td><td>15 kt (22 kt tandem)</td><td>Variable DZ</td><td>Variable DZ</td></tr>
+  </tbody>
+</table>
+
+<h3>8.3 Convergences techniques</h3>
+<p>La méthode civile moderne converge vers un <strong>stack de 4 éléments</strong>&nbsp;:</p>
+<ol>
+  <li><strong>GPS cockpit</strong> avec ligne de vol et waypoint release.</li>
+  <li><strong>Calculateur externe</strong> (AXIS, Spot Assist) pour la séparation et le check du spot.</li>
+  <li><strong>Vérification visuelle</strong> par spotter ou pilote, porte ouverte.</li>
+  <li><strong>Feu vert/rouge ou commande verbale</strong> pour le déclenchement, avec autorité finale du PIC.</li>
+</ol>
+
+<!-- ======================= SOURCES ======================= -->
+<h2 id="sources">Sources</h2>
+<div class="sources">
+
+<h3>Méthodologie générale, calculs, outils</h3>
+<ul>
+  <li><a href="https://www.uspa.org/sim/4-7">USPA SIM 4-7 — Exit Point Determination</a></li>
+  <li><a href="https://www.uspa.org/drop-zone-management/aircraft-operations-and-pilot-training">USPA Drop Zone Management &amp; Aircraft Operations</a></li>
+  <li><a href="https://www.uspa.org/sim/6-9">USPA SIM 6-9 — Wingsuit</a></li>
+  <li><a href="https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_105-2E.pdf">FAA AC 105-2E — Sport Parachuting</a></li>
+  <li><a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-105">14 CFR Part 105 — Parachute Operations</a></li>
+  <li><a href="https://www.skydivefundamentals.com/safety/freefall-drift-and-selecting-a-spot">Skydive Fundamentals — Freefall Drift &amp; Spotting</a></li>
+  <li><a href="https://skydivetheranch.com/learn-to-skydive/determing-exit-point/">Skydive the Ranch — Determining Exit Point</a></li>
+  <li><a href="https://floridaskydiving.com/determining-exit-point-aka-spotting/">Florida Skydiving Center — Determining Exit Point aka Spotting</a></li>
+  <li><a href="https://diverdriver.com/jump-aircraft-spotting-basics/">DiverDriver — Jump Aircraft Spotting Basics</a></li>
+  <li><a href="https://diverdriver.com/crosswind-jump-runs/">DiverDriver — Crosswind Jump Runs</a></li>
+  <li><a href="https://diverdriver.com/hook-pattern-jump-run/">DiverDriver — Hook Pattern Jump Run</a></li>
+  <li><a href="https://diverdriver.com/gps-spotting/">DiverDriver — GPS Spotting</a></li>
+  <li><a href="https://diverdriver.com/jump-pilot-training-syllabus/">DiverDriver — Jump Pilot Training Syllabus</a></li>
+  <li><a href="https://axis.tools/tool_Exit.php">AXIS Exit Separation tool</a></li>
+  <li><a href="https://axis.tools/">AXIS Flight School — Tools repository</a></li>
+  <li><a href="https://www.spotassist.com/flying-formula/">Spot Assist — Flying Formula</a></li>
+</ul>
+
+<h3>Ordre de sortie, séparations, break-off</h3>
+<ul>
+  <li><a href="https://blog.axisflightschool.com/2025/08/14/exit-order-explained-why-it-matters-and-how-to-nail-it/">AXIS blog — Exit Order Explained (2025)</a></li>
+  <li><a href="https://www.skydivecarolina.com/blog/skydiving-exit-order-separation/">Skydive Carolina — Exit Order &amp; Separation</a></li>
+  <li><a href="https://skydivepalmbeach.com/blog/skydiving-exits-separation/">Skydive Palm Beach — Exits &amp; Separation</a></li>
+  <li><a href="https://houston.skydivespaceland.com/exit-separation-skydiving-groups/">Skydive Spaceland Houston — Exit Separation Between Groups</a></li>
+  <li><a href="https://houston.skydivespaceland.com/exit-order-aircraft-boarding/">Skydive Spaceland Houston — Exit Order &amp; Aircraft Boarding</a></li>
+  <li><a href="https://skydivingdzs.com/exit-order-and-exceptions-to-the-rule/">Skydiving DZs — Exit Order and Exceptions</a></li>
+  <li><a href="https://furycoaching.com/2021/04/26/run-away-plan-safe-break-off/">Fury Coaching — How to plan a safe break off</a></li>
+  <li><a href="https://skydive-safety.com/Articles-BIG-WAY%20BASICS.html">Skydive Safety — Big-Way Basics</a></li>
+  <li><a href="https://www.perrisorganizers.com/bigway-basics.html">Perris Organizers — Bigway Basics</a></li>
+  <li><a href="https://www.skydivemag.com/new/freefly-breakoff/">Skydivemag — Freefly Breakoff</a></li>
+  <li><a href="https://florida.skydivespaceland.com/planning-breakoff-and-tracking/">Skydive Spaceland Florida — Breakoff &amp; Tracking</a></li>
+  <li><a href="https://www.aon2.co.uk/exit-separation/">AO(N²) — Exit Separation</a></li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1411/exit-separation.pdf.aspx">APF — Exit Separation thesis (Steven Geens)</a></li>
+</ul>
+
+<h3>Disciplines spécifiques</h3>
+<ul>
+  <li><a href="https://www.skydivemag.com/new/2017-08-31-jump-run-for-wingsuits/">Skydivemag — Jump Run for Wingsuits</a></li>
+  <li><a href="https://www.uspa.org/wingsuit-progression-part-three-a-wingsuit-skydive-from-start-to-finish-an-incomplete-guide">USPA — Wingsuit Progression Part Three</a></li>
+  <li><a href="https://squirrel.ws/learn/wingsuit-progression-2-exit-order/">Squirrel — WS Progression 2: Exits</a></li>
+  <li><a href="https://squirrel.ws/learn/wingsuit-progression-3-the-skydive/">Squirrel — WS Progression 3: The Skydive</a></li>
+  <li><a href="https://fai.org/page/isc-canopy-formation">FAI — Canopy Formation (ISC)</a></li>
+  <li><a href="https://www.skydivelangar.co.uk/what-is-cf-canopy-formation/">Skydive Langar — What is CF?</a></li>
+  <li><a href="https://www.skydiveaz.com/wp-content/uploads/2024/07/tracking-or-angle-flying-jumps.pdf">Skydive Arizona — Tracking &amp; Angle Flying Jumps</a></li>
+</ul>
+
+<h3>Manuels pilotes par pays</h3>
+<ul>
+  <li><a href="https://skydiverdriver.com/britishskydiving.pdf">British Skydiving Jump Pilots Manual</a></li>
+  <li><a href="https://britishskydiving.org/wp-content/uploads/2025/02/Operations-Manual-November-2024.pdf">British Skydiving Operations Manual (2024)</a></li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1260/Jump%20Pilot%20Manual%20V01-2024%20FINAL.pdf.aspx">APF Jump Pilot Manual V01-2024</a></li>
+  <li><a href="https://www.ffp.asso.fr/en/piloter-un-avion-largueur/">FFP — Piloter un avion largueur</a></li>
+  <li><a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000863105">Arrêté du 13 mars 1989 (largage parachutistes)</a></li>
+  <li><a href="https://www.aerovfr.com/2024/08/largage-para-en-pc-6-turbo-porter/">aeroVFR — Largage para en PC-6 Turbo Porter</a></li>
+  <li><a href="https://www.cspa.ca/sites/default/files/PIM2C-fr_1.pdf">CSPA PIM 2C FR</a></li>
+  <li><a href="https://www.cspa.ca/sites/default/files/2019%20JM%20Reference%20Manual%20(en).pdf">CSPA Jump Master Reference Manual</a></li>
+  <li><a href="https://www.easa.europa.eu/en/downloads/134328/de">EASA — Handbuch für Absetzbetrieb (DFV)</a></li>
+  <li><a href="https://www.enac.gov.it/app/uploads/2024/04/Regolamento_Disciplina_lanci_paracaditistici_ordinari_e_speciali_finale_Ed2.pdf">ENAC — Regolamento lanci paracadutistici</a></li>
+</ul>
+
+<h3>Militaire (cadrage)</h3>
+<ul>
+  <li><a href="https://static.e-publishing.af.mil/production/1/af_a3/publication/afman11-231/afman11-231.pdf">AFMAN 11-231 — CARP</a></li>
+  <li><a href="https://www.globalsecurity.org/military/library/policy/army/fm/3-21-38/ch6.htm">FM 3-21.38 ch. 6</a></li>
+  <li><a href="https://www.globalsecurity.org/military/library/policy/army/fm/57-38/Ch6.htm">FM 57-38 ch. 6 — Drop Zones (dimensionnement CARP)</a></li>
+  <li><a href="https://www.benning.army.mil/mcoe/usmc/Content/PDF/Jumpmaster%20Study%20Guide%20Supplemental%20Matierials.pdf">US Army — Jumpmaster Study Guide (CARP DZ)</a></li>
+  <li><a href="https://static.e-publishing.af.mil/production/1/af_a3_5/publication/afi13-217/afi13-217.pdf">AFI 13-217 — Assault Zone Procedures</a></li>
+  <li><a href="https://www.globalsecurity.org/military/ops/airborne-tactics.htm">GlobalSecurity — Airborne Operations Tactics</a></li>
+  <li><a href="https://www.globalsecurity.org/military/ops/airborne-equipment.htm">GlobalSecurity — Airdrop Equipment Delivery</a></li>
+  <li><a href="https://www.globalsecurity.org/military/ops/airborne-glossary.htm">GlobalSecurity — Airborne Glossary</a></li>
+  <li><a href="https://www.benning.army.mil/infantry/artb/1-507th/jumpmaster/content/pdf/Updated%20Pre-Jump_asof23Sep15.pdf">US Army — Sustained Airborne Training (Pre-Jump)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Jumpmaster">Wikipedia — Jumpmaster</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/High-altitude_military_parachuting">Wikipedia — High-altitude military parachuting</a></li>
+  <li><a href="https://noratlas-de-provence.com/communication/105-3-consignes-particulieres-parachutage-au-01-04-16.html">Noratlas de Provence — Consignes Particulières Parachutage</a></li>
+  <li><a href="https://www.benning.army.mil/infantry/magazine/issues/2024/Fall/pdf/13_Zarek_winds.pdf">Infantry Magazine — Mid-Air Winds for Airborne Ops</a></li>
+</ul>
+
+<h3>Étendue du largage, longueur de jump run, big-ways</h3>
+<ul>
+  <li><a href="https://apps.skydivechicago.com/info/">Skydive Chicago — Info &amp; weather (jump run 310°, lead-in 0.4 mi, hook 0.6 mi, max 2 movement groups)</a></li>
+  <li><a href="https://skydivingdzs.com/exit-order-and-exceptions-to-the-rule/">Skydiving DZs — « 60 secondes » et exemple 8-way + 4-ways + 2-ways + solo = 70–80 s</a></li>
+  <li><a href="https://houston.skydivespaceland.com/exit-separation-skydiving-groups/">Skydive Spaceland Houston — Exit Separation (groundspeed vs time)</a></li>
+  <li><a href="https://www.skydivecsc.com/blog/boogie-advice-for-new-skydivers">Chicagoland Skydiving Center — Multiple jump runs &amp; exit altitudes</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Big-ways">Wikipedia — Big-ways</a></li>
+  <li><a href="https://skydivechicago.com/skydiving-record-formation/">Skydive Chicago — 200-way &amp; 250-way record attempts (11 avions)</a></li>
+  <li><a href="https://www.skydivemag.com/new/bigger-than-records-the-spirit-of-the-250/">Skydive Mag — 250-way (11 avions, 3 ans de préparation)</a></li>
+  <li><a href="https://p3skydiving.com/info_BWC.php">P3 Big Way Camp — progression 16/22 ways → 60 ways</a></li>
+  <li><a href="https://p3skydiving.com/info_100WC.php">P3 100-Way Camp</a></li>
+  <li><a href="https://www.uspa.org/exit-fundamentals-for-new-big-way-jumpers">USPA — Exit Fundamentals for New Big-Way Jumpers</a></li>
+  <li><a href="https://www.skydivemag.com/new/tbs-world-record-3-points/">Skydive Mag — 108-way formations record</a></li>
+</ul>
+
+<h3>Caravan, contre-axes, cross-track offset, groupes de dérive multi-passes</h3>
+<ul>
+  <li><a href="https://diverdriver.com/cessna-caravan-208/">DiverDriver — Cessna 208 Caravan (configuration jump run, 85 KIAS, flaps 10°)</a></li>
+  <li><a href="https://diverdriver.com/cessna-182-skydiving-aircraft/">DiverDriver — Cessna 182 (jump run 75–80 KIAS, NO CUT, CHT 300°F, shock cooling)</a></li>
+  <li><a href="https://diverdriver.com/cessna-206/">DiverDriver — Cessna U-206 (jump run 80 KIAS, cowl flaps, fuel selector L/R sans BOTH)</a></li>
+  <li><a href="https://diverdriver.com/dehavilland-twin-otter/">DiverDriver — DHC-6 Twin Otter (jump run 80 KIAS, 20 lb torque, hook pattern natif par engine drag)</a></li>
+  <li><a href="https://diverdriver.com/king-air-90/">DiverDriver — King Air 90 (Neal Alders, flaps 60 % obligatoires, right engine 600 lb)</a></li>
+  <li><a href="https://diverdriver.com/pac-750xl/">DiverDriver — PAC 750XL (George Merle + Philip Esdaile, ½ flaps, stall recovery Ferrell)</a></li>
+  <li><a href="https://diverdriver.com/sc-7-skyvan/">DiverDriver — SC-7 Skyvan (tailgate, max 10 paras en porte, jump run 75–95 KIAS)</a></li>
+  <li><a href="https://diverdriver.com/training/">DiverDriver — Jump Pilot Training (jumprun emergencies : premature deployment, stall/spin, engine failure, jumper-in-tow, structural)</a></li>
+  <li><a href="https://diverdriver.com/formation-flight-overview/">DiverDriver — Formation Flight Overview (Chris Schindler, Formation Flying 101, record 246-way Chicago 1998)</a></li>
+  <li><a href="https://diverdriver.com/freefall-drift-simulator/">DiverDriver — Freefall Drift Simulator (Prof. John Kallend, IIT, animation fast/slow faller)</a></li>
+  <li><a href="https://diverdriver.com/gps-spotting/">DiverDriver — GPS Spotting (Garmin III, précision ±30 ft)</a></li>
+  <li><a href="https://diverdriver.com/faa-regulations-part-105/">DiverDriver — FAA Regulations Part 105 (digest intégral 105.1 → 105.49)</a></li>
+  <li><a href="https://skydiverdriver.com/resources.htm">SkydiverDriver Resources — manuels POH, AFM et guides pilotes (agrégateur)</a></li>
+  <li><a href="https://caravanpilots.blogspot.com/2014/10/flying-skydivers-in-c208b-grand-caravan.html">Caravan Nation — Flying Skydivers in the C208B Grand Caravan (17 places, montée 15 min)</a></li>
+  <li><a href="https://longislandskydiving.com/blog/new-plane-new-possibilities/">Long Island Skydiving — Cessna 208 Grand Caravan (15–21 skydivers, climb &lt; 10 min)</a></li>
+  <li><a href="https://britishskydiving.org/wp-content/uploads/2025/02/Operations-Manual-November-2024.pdf">British Skydiving — Operations Manual (§7 Number of Skydivers per Pass, max 2 Category System Students/passe)</a></li>
+  <li><a href="https://www.ffp.asso.fr/wp-content/uploads/2025/04/Directive-Technique-49-modifiee-15-avril-2025.pdf">FFP DT-49 (2025) — Méthodes d'enseignement (perpendiculaire à l'axe de largage)</a></li>
+  <li><a href="https://www.ffp.asso.fr/wp-content/uploads/2013/03/DT_19_modifiee_le_9_fev_2012-3.pdf">FFP DT-19 (2012) — Méthodes d'enseignement (séparation 300 m, perpendiculaire à l'axe)</a></li>
+  <li><a href="https://noratlas-de-provence.com/communication/105-3-consignes-particulieres-parachutage-au-01-04-16.html">Noratlas de Provence — Consignes 105.2 (formule N=(L−H)/V+1, &gt; 15 paras ⇒ 2 passages)</a></li>
+  <li><a href="https://fr.wikipedia.org/wiki/Parachutisme">Wikipedia FR — Parachutisme (axe de largage, séparation 300 m)</a></li>
+  <li><a href="https://axis.tools/tool_Exit.php">AXIS Flight School — Exit Separation Tool (1 000 ft min, 6 s min, +2 s gros groupe)</a></li>
+  <li><a href="https://blog.axisflightschool.com/2025/08/14/exit-order-explained-why-it-matters-and-how-to-nail-it/">AXIS — Exit Order Explained (opposite direction tracking si briefé)</a></li>
+  <li><a href="https://www.skydivemag.com/new/avoiding-conflict-in-our-airspace/">Skydive Mag / Christy West — Avoiding Conflict (landmark-divided airspace)</a></li>
+  <li><a href="https://houston.skydivespaceland.com/tracking-tracing-dive-policies/">Spaceland Houston — Movement Jump Policies (max 2 movement, pas de break-off vers line of flight)</a></li>
+  <li><a href="https://www.skydivecarolina.com/blog/skydiving-exit-order-separation/">Skydive Carolina — Exit Order (wingsuit opposite direction)</a></li>
+  <li><a href="https://skydivelongisland.com/about/articles/lets-talk-about-tracking/">Skydive Long Island — Tracking (offset jump runs, 45–90° perpendicular)</a></li>
+</ul>
+
+<h3>Volume de parachutage — définitions règlementaires par pays (§5.17)</h3>
+<ul>
+  <li><a href="https://www.aerovfr.com/2021/05/les-volumes-de-parachutage-a-prendre-en-compte/">aeroVFR — Les volumes de parachutage à prendre en compte (note FFP mars 2004, Jean-Marc Seurin)</a></li>
+  <li><a href="https://lamhdf.ffam.asso.fr/wa_files/Activite_20aeriennes_FR-ENR-5_5-fr-FR.pdf">AIP France — ENR 5.5 Activités aériennes sportives et récréatives (SIA, 2016)</a></li>
+  <li><a href="https://www.sia.aviation-civile.gouv.fr/">Service de l'Information Aéronautique (SIA) — AIP France</a></li>
+  <li><a href="https://www.caa.co.uk/publication/download/12329">UK CAA CAP 660 — Parachuting (Edition 5, March 2020 : §3.13-3.20 Airspace Notification, §3.62 Transponder 0033)</a></li>
+  <li><a href="https://www.caa.co.uk/general-aviation/ga-airspace/airspace-notification-of-parachuting/">UK CAA — Airspace notification of parachuting</a></li>
+  <li><a href="https://www.caa.co.uk/commercial-industry/airspace/event-and-obstacle-notification/airspace-restrictions/">UK CAA — Airspace restrictions (danger areas, NOTAM)</a></li>
+  <li><a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-105">eCFR — 14 CFR Part 105 Parachute Operations (complete, 105.13, 105.15, 105.17, 105.19, 105.23, 105.25)</a></li>
+  <li><a href="https://www.law.cornell.edu/cfr/text/14/105.17">14 CFR § 105.17 — Flight visibility and clearance from cloud requirements (Cornell LII)</a></li>
+  <li><a href="https://www.law.cornell.edu/cfr/text/14/105.23">14 CFR § 105.23 — Parachute operations over or onto airports (2 000 ft above traffic pattern)</a></li>
+  <li><a href="https://www.faa.gov/air_traffic/publications/atpubs/atc_html/chap9_section_7.html">FAA Order JO 7110.65 — Chapter 9 Section 7 Parachute Operations (Letter of Agreement content)</a></li>
+  <li><a href="https://www.faa.gov/air_traffic/publications/atpubs/foa_html/chap19_section_4.html">FAA — Facility Operation and Administration Ch 19 §4 Parachute Jump Operations</a></li>
+  <li><a href="https://www.faa.gov/documentLibrary/media/Order/7110.65AA_Bsc_w_Chg_1_dtd_10_5_23.pdf">FAA Order JO 7110.65AA — Air Traffic Control (Oct 2023, version complète)</a></li>
+  <li><a href="https://knowledgebase.vatsim-germany.org/books/vfr-AeY/page/parachute-jumping-exercise-pje">VATSIM Germany — Parachute Jumping Exercise (PJE) — cylindre 2 NM × GND-FL100, marquage ICAO «&nbsp;PJE&nbsp;»</a></li>
+  <li><a href="https://aip.aero/de/en/">DFS — AIP Germany (aip.aero)</a></li>
+  <li><a href="https://aim.rlp.cz/eaip/html/eAIP/LK-ENR-5.5-en-GB.html">AIP Czech Republic — ENR 5.5 Aerial sporting and recreational activities</a></li>
+  <li><a href="https://ops.skeyes.be/html/belgocontrol_static/eaip/eAIP_Main/html/eAIP/EB-ENR-5.1-en-GB.html">AIP Belgium — ENR 5.1 (structure ENR européenne comparable)</a></li>
+  <li><a href="https://airservices.gov.au/aip/aip.asp?pg=10">Airservices Australia — AIP Australia (ENR parachuting general, RS 58 surface-only)</a></li>
+</ul>
+
+<h3>Manuels pilote parachutage — comparatif international (§5.16)</h3>
+<ul>
+  <li><a href="https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_105-2E_Ed_Upd_2.pdf">FAA AC 105-2E — Sport Parachuting (Ed Upd 2, §8 Pilot Responsibilities + Jump Pilot Training)</a></li>
+  <li><a href="https://www.uspa.org/jumppilot">USPA — Aircraft Operations and Pilot Training (Jump Pilot Training Syllabus template Word)</a></li>
+  <li><a href="https://skydiverdriver.com/britishskydiving.pdf">British Skydiving — Jump Pilots Manual (2008, §4.5 Calculation of exit/opening point, §4.5.4 Throwforward, §4.8 Descent)</a></li>
+  <li><a href="https://britishskydiving.org/wp-content/uploads/2019/04/JUMP-PILOTS-MANUAL.doc">British Parachute Association — Jump Pilots Manual (version DOC source)</a></li>
+  <li><a href="https://www.caa.co.uk/publication/download/12329">UK CAA CAP 660 — Parachuting</a></li>
+  <li><a href="https://laws-lois.justice.gc.ca/eng/regulations/SOR-96-433/FullText.html">Canadian Aviation Regulations (SOR/96-433) — Part 603 Special Flight Operations Certificate</a></li>
+  <li><a href="https://tc.canada.ca/en/aviation/general-operating-flight-rules/staff-instructions-recreational-aviation/parachuting-built-area/section-three-issuing-special-flight-operations-certificate">Transport Canada — SFOC Parachuting (cloud/visibility/altitude minima)</a></li>
+  <li><a href="https://www.cspa.ca/en/PIMs">CSPA — Parachutist Information Manuals (PIM 2A–2C)</a></li>
+  <li><a href="https://www.traficom.fi/sites/default/files/media/file/OPSmanForParachuteClubs8_11_2019_EN.pdf">Traficom (Finlande) — Operations Manual for Parachuting Flight Operations (2019, v3, 94 p., basé sur AC 105-2E §8)</a></li>
+  <li><a href="https://www.para.co.za/Files/PASA%20Standard%20Operating%20Procedures.pdf">PASA (Afrique du Sud) — Standard Operating Procedures §19 Handy Tips for New Jump Pilots (11 chap., hook pattern §10.6)</a></li>
+  <li><a href="https://www.para.co.za/Documents">PASA — Documents page (index MOP, SOP, Part 149 ARO 004)</a></li>
+  <li><a href="https://www.nzpia.co.nz/requirements/Drop-Pilot-Proficiency">NZPIA (Nouvelle-Zélande) — Drop Pilot Competency (6 drops / 12 mois ou certification logbook)</a></li>
+  <li><a href="https://www.dfv.aero/downloads/AHB-Part_II_Version_10_EN.pdf">DFV (Allemagne) — AHB Part II Version 10 (EN)</a></li>
+  <li><a href="https://lsgb.daec.de/media/files/2022/Luftsportgeraete_Buero/Fallschirm/AHB-Teil_II_Version_11.pdf">DAeC / LSG-B — AHB Teil II Version 11 (2022, DE, 76 p. organisation Sprungbetrieb + rôle SBL)</a></li>
+  <li><a href="https://diverdriver.com/jump-pilot-training-syllabus/">DiverDriver — Jump Pilot Training Syllabus (USPA template commenté)</a></li>
+  <li><a href="https://skydiverdriver.com/resources.htm">SkydiverDriver — Manuals, POHs and FARs (agrégateur manuels pilote)</a></li>
+  <li><a href="https://www.faasafety.gov/files/gslac/library/documents/2016/Sep/120445/Flying%20for%20Skydive%20Operations.pdf">FAA P-8740-62 — Flying for Skydive Operations</a></li>
+  <li><a href="https://www.faasafety.gov/files/gslac/library/documents/2016/Sep/120446/Skydiving%20and%20Parachute%20Operations.pdf">FAA P-8740-57 — Skydiving and Parachute Operations</a></li>
+</ul>
+
+<h3>Australie — Australian Parachute Federation (APF) / CASA</h3>
+<ul>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1260/Operational%20Regulations%20V01-2026.pdf.aspx?EMBED=Y">APF Operational Regulations V01-2026 (MANDATORY)</a> — OR 6.1 rôles DZSO/GCA/Loadmaster/TA, OR 9.9 tracking/angles.</li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1260/Regulatory%20Schedules%20V01-2026.pdf.aspx?EMBED=Y">APF Regulatory Schedules V01-2026 (MANDATORY)</a> — RS 58 §10.2 classification DZ, §12.3 buffer 6 NM.</li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1260/OR%20and%20RS%20combined%202024.pdf.aspx">APF OR &amp; RS Combined 2024</a> — version consolidée avec matrice DZ classes.</li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1258/Jump%20Pilot%20Manual%20V01-2026.pdf.aspx?EMBED=Y">APF Jump Pilot Manual V01-2026 (MANDATORY)</a> — §5.5 Spotting (GPS + visuel), §5.7 Jump Run (1 min avant, feux rouge/orange/vert), §5.7.1 i/j passes multiples.</li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1260/DZSO%20Guide%20V01-2023.pdf.aspx?EMBED=Y">APF DZSO Endorsement Guide V01-2023</a> — §11.6 Calculations for Exit Separation (350–400 m / 0,2 NM, 7 s @ 100 kt, 10 s @ 70 kt).</li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1411/exit-separation.pdf.aspx?Embed=Y">APF Thesis — Exit Separation (Steven Geens, Instructor A Thesis)</a> — jump run max 2 400 m, formule t<sub>e</sub> = D / (v<sub>p</sub> − v<sub>c</sub>), Tables 1–3 (groundspeed, tracking distances, freefall drift).</li>
+  <li><a href="https://www.apf.com.au/ArticleDocuments/1260/Exposition%20V5.1%2001%20April%202026.pdf.aspx?EMBED=Y">APF Exposition V5.1 (2026)</a> — document chapeau Part 149, §4.4.2 usage radio GCA.</li>
+  <li><a href="https://www.apf.com.au/members/members/publications/misc-publications/exit-seperation">APF — Exit Separation publication page</a></li>
+  <li><a href="https://www.apf.com.au/members/members/publications/publications">APF Publications (index complet)</a></li>
+  <li><a href="https://www.apf.com.au/members/safety-training/aircraft-jump-pilot-information/aircraft-jump-pilot-information">APF Aircraft &amp; Jump Pilot Information</a></li>
+</ul>
+
+</div>
+
+</main>
+</body>
+</html>

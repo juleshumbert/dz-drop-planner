@@ -1,0 +1,62 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['20', '22']
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run with coverage (informational, non-blocking)
+        if: matrix.node-version == '22'
+        run: node --test --experimental-test-coverage tests/ || true
+        continue-on-error: true
+
+  lint-html:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify index.html script tags consistency
+        run: |
+          # All v=NN cache-bust suffixes must agree
+          versions=$(grep -oE '\?v=[0-9]+' index.html | sort -u | wc -l)
+          if [ "$versions" -ne 1 ]; then
+            echo "::error::index.html has mismatched ?v= cache-bust versions:"
+            grep -nE '\?v=[0-9]+' index.html
+            exit 1
+          fi
+          echo "All cache-bust versions agree."
+
+      - name: Verify no credentials committed
+        run: |
+          if [ -f credentials.json ]; then
+            echo "::error::credentials.json must not be committed"
+            exit 1
+          fi
+          if find . -name "*.env" -not -path "./node_modules/*" | grep -q .; then
+            echo "::error::.env files must not be committed"
+            exit 1
+          fi

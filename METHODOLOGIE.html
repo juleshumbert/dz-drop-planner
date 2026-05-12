@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>DZ Drop Planner — méthodologie complète et plan d'évolution</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --fg:#1a1a1a; --muted:#555; --bg:#fafafa; --accent:#0b5394; --accent2:#b45309;
+    --accent3:#2f855a; --accent4:#6d28d9; --card:#fff; --border:#e5e5e5; --code-bg:#f3f4f6;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  main{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+  h1{font-size:2rem;margin:0 0 .25rem;color:var(--accent);}
+  h2{font-size:1.5rem;margin:2.5rem 0 .75rem;padding-bottom:.3rem;border-bottom:3px solid var(--accent);color:var(--accent);}
+  h3{font-size:1.2rem;margin:1.5rem 0 .5rem;color:var(--accent2);}
+  h4{font-size:1.05rem;margin:1.1rem 0 .35rem;color:#333;}
+  p,ul,ol{margin:.5rem 0;}
+  ul,ol{padding-left:1.3rem;}
+  li{margin:.18rem 0;}
+  code{background:var(--code-bg);padding:.1rem .35rem;border-radius:3px;font-size:.92em;}
+  pre{background:var(--code-bg);padding:.75rem 1rem;border-radius:6px;overflow:auto;font-size:.88rem;line-height:1.45;}
+  table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.92rem;}
+  th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;vertical-align:top;}
+  th{background:#eef3f9;color:#1f3a5f;}
+  tbody tr:nth-child(even){background:#fbfcfe;}
+  .subtitle{color:var(--muted);font-style:italic;margin:0 0 1.5rem;}
+  .toc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.3rem;margin:1.25rem 0 2.5rem;}
+  .toc strong{display:block;margin-bottom:.3rem;font-size:1.05rem;color:var(--accent);}
+  .toc ol{margin:.3rem 0;padding-left:1.3rem;}
+  .toc ol ol{padding-left:1.2rem;}
+  .toc a{color:var(--accent);text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:6px;padding:.75rem 1rem;margin:.8rem 0;}
+  .synthesis{background:#fff8e6;border-left:4px solid var(--accent2);border-radius:6px;padding:.85rem 1.1rem;margin:1.2rem 0;}
+  .synthesis h3, .synthesis h4{margin-top:0;color:var(--accent2);}
+  .callout{background:#eef9ef;border-left:4px solid var(--accent3);border-radius:6px;padding:.7rem 1rem;margin:.8rem 0;}
+  .warn{background:#fdecea;border-left:4px solid #c53030;border-radius:6px;padding:.7rem 1rem;margin:.8rem 0;}
+  .formula{background:#f0f4f8;border-left:3px solid var(--accent);border-radius:4px;padding:.5rem .9rem;margin:.6rem 0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92rem;}
+  .prop{background:#f5f3ff;border-left:4px solid var(--accent4);border-radius:6px;padding:.85rem 1.1rem;margin:1.2rem 0;}
+  .prop h4{margin-top:0;color:var(--accent4);}
+  .prop .limit{font-weight:700;color:#c53030;display:block;margin-bottom:.3rem;}
+  .tag{display:inline-block;font-size:.78rem;background:#e5edf7;color:#1f3a5f;border-radius:3px;padding:.1rem .55rem;margin-right:.3rem;font-weight:700;}
+  .tag.core{background:#dbeafe;color:#1e3a8a;}
+  .tag.worker{background:#fef3c7;color:#92400e;}
+  .tag.ui{background:#dcfce7;color:#166534;}
+  .tag.mc{background:#fae8ff;color:#86198f;}
+  .tag.opt{background:#e0e7ff;color:#3730a3;}
+  footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--muted);font-size:.88rem;}
+  .checklist li{list-style:none;margin-left:-1rem;position:relative;padding-left:1.6rem;}
+  .checklist li::before{content:"☐";position:absolute;left:0;color:var(--accent);font-weight:900;}
+  .top-links{font-size:.82rem;color:var(--muted);margin:.3rem 0 1rem;}
+  .top-links a{color:var(--muted);margin-right:.8rem;}
+</style>
+</head>
+<body>
+<main>
+
+<h1>DZ Drop Planner — méthodologie complète et plan d'évolution</h1>
+<p class="subtitle">Documentation technique fidèle du simulateur jump-simu et plan d'amélioration chiffré, adossé à la recherche aérodynamique et à la DT FFP 49.</p>
+<p class="top-links">Voir aussi : <a href="SCIENCE.md">SCIENCE.md</a> · <a href="AERODYNAMICS_RESEARCH.html">AERODYNAMICS_RESEARCH</a> · <a href="METHODES_LARGAGE.html">METHODES_LARGAGE</a> · <a href="CLAUDE.md">CLAUDE.md</a></p>
+
+<div class="card">
+Ce document décrit <strong>fidèlement</strong> le fonctionnement actuel du simulateur — atmosphère, météo, aérodynamique de la chute, ouverture, vol sous voile, Monte-Carlo, optimiseur (unique, en 4 phases), zones NFZ — et propose un <strong>plan d'amélioration chiffré</strong>, adossé à la recherche aérodynamique (<code>AERODYNAMICS_RESEARCH.md</code>) et à la <strong>Directive Technique FFP n°49</strong> (modifiée le 15 avril 2025) pour les aspects wingsuit.
+</div>
+
+<nav class="toc" aria-label="Sommaire">
+  <strong>Sommaire</strong>
+  <ol>
+    <li><a href="#m1">Portée et conventions</a></li>
+    <li><a href="#m2">Architecture globale du code</a></li>
+    <li><a href="#m3">Modèle atmosphérique</a></li>
+    <li><a href="#m4">Données météorologiques</a></li>
+    <li><a href="#m5">Hypothèses de largage et repères géométriques</a></li>
+    <li><a href="#m6">Chute libre</a></li>
+    <li><a href="#m7">Phase d'ouverture</a></li>
+    <li><a href="#m8">Vol sous voile</a></li>
+    <li><a href="#m9">Pilotage et steering</a></li>
+    <li><a href="#m10">Pipeline <code>simPass</code></a></li>
+    <li><a href="#m11">Monte-Carlo</a></li>
+    <li><a href="#m12">Optimiseur en 4 phases</a></li>
+    <li><a href="#m13">Zones interdites (NFZ)</a></li>
+    <li><a href="#m14">Synthèse des hypothèses</a></li>
+    <li><a href="#m15">Limites et plan d'amélioration</a>
+      <ol>
+        <li><a href="#m15-1">Unifier la physique</a></li>
+        <li><a href="#m15-2">Typologies alignées aero + FFP DT49</a></li>
+        <li><a href="#m15-3">Wingsuit : finesse, pilotage, côté de vol</a></li>
+        <li><a href="#m15-4">Ouverture différenciée par classe</a></li>
+        <li><a href="#m15-5">Finesse variable (rear-risers, min-sink)</a></li>
+        <li><a href="#m15-6">Finesse vs vitesse air</a></li>
+        <li><a href="#m15-7">Charge alaire explicite</a></li>
+        <li><a href="#m15-8">Monte-Carlo refondu</a></li>
+        <li><a href="#m15-9">Objectif enrichi (soft NFZ, vent arrière, plafond)</a></li>
+        <li><a href="#m15-10">Poids objectif configurables en UI</a></li>
+        <li><a href="#m15-11">NFZ temporelles</a></li>
+        <li><a href="#m15-12">Skills par typologie</a></li>
+        <li><a href="#m15-13">ρ(z) dérivé des températures Open-Meteo</a></li>
+        <li><a href="#m15-14">LUT vent eager</a></li>
+        <li><a href="#m15-15">Ordre de sortie : crossover OX</a></li>
+        <li><a href="#m15-16">Panneau "Hypothèses" UI</a></li>
+        <li><a href="#m15-17">Paramétrage Monte-Carlo enrichi en UI</a></li>
+        <li><a href="#m15-18">Enveloppe d'incertitude trajectoire (1σ / 3σ)</a></li>
+        <li><a href="#m15-19">Stick type pour l'optimisation</a></li>
+      </ol>
+    </li>
+    <li><a href="#m16">Annexes — API publique</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<h2 id="m1">1. Portée du document et conventions</h2>
+
+<h3>1.1 Ce que décrit ce document</h3>
+<ul>
+  <li>Le <strong>modèle scientifique</strong> implémenté (cohérent avec <code>SCIENCE.md</code>).</li>
+  <li>La <strong>chaîne de calcul</strong> saisie UI → verdict GO/NOGO Monte-Carlo.</li>
+  <li>Les <strong>hypothèses simplificatrices</strong>, leurs domaines de validité.</li>
+  <li>Les <strong>évolutions</strong> : chaque limite identifiée → proposition chiffrée adossée à la recherche aéro ou à la DT FFP 49.</li>
+</ul>
+
+<h3>1.2 Ce que le document ne décrit pas</h3>
+<ul>
+  <li>L'UI (DOM, Tailwind, Leaflet) — voir commentaires en tête de <code>app.js</code>, <code>map.js</code>, <code>charts.js</code>, <code>ui-optimizer.js</code>.</li>
+  <li>La réglementation pilote avion — voir <code>METHODES_LARGAGE.md</code>.</li>
+</ul>
+
+<h3>1.3 Conventions</h3>
+<ul>
+  <li><strong>Langue</strong> : français. Vocabulaire technique suit <code>AERODYNAMICS_RESEARCH.md §7</code>.</li>
+  <li><strong>Unités</strong> : SI strict interne ; kt, NM, ft, FL, ° en UI. Conversions <code>PhysicsCore.KT2MS</code>, <code>NM2M</code>, <code>DEG2RAD</code>.</li>
+  <li><strong>Repère</strong> : Est/Nord en m relatifs au centre DZ.</li>
+  <li><strong>État</strong> : <code>s = [xE, xN, z, vE, vN, vz]</code>. <code>z</code> absolu (AMSL).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="m2">2. Architecture globale du code</h2>
+
+<h3>2.1 Pile zéro-build</h3>
+<ul>
+  <li><strong>HTTP local</strong> : <code>python3 -m http.server 8000</code>.</li>
+  <li><strong>file://</strong> : Blob-worker fallback où <code>optimizer-v2.js::_fetchPCSource</code> injecte la source de <code>physics-core.js</code>. À préserver pour toute évolution du plumbing worker.</li>
+</ul>
+
+<h3>2.2 Ordre de chargement (IIFE globales)</h3>
+<table>
+<thead><tr><th>#</th><th>Fichier</th><th>Exporte</th><th>Dépend de</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>physics-core.js</code></td><td><span class="tag core">core</span><code>PhysicsCore</code></td><td>—</td></tr>
+<tr><td>2</td><td><code>nfz.js</code></td><td><code>NFZ</code></td><td>Leaflet</td></tr>
+<tr><td>3</td><td><code>monte-carlo.js</code></td><td><span class="tag mc">MC</span><code>MonteCarlo</code></td><td><code>PhysicsCore</code></td></tr>
+<tr><td>4</td><td><code>simulation.js</code></td><td><code>runSimulation</code>, <code>runCoreSimulation</code>, <code>simulateHeadless</code> (orchestration main-thread lisant l'état UI)</td><td><code>PhysicsCore</code>, <code>NFZ</code>, <code>app.js</code></td></tr>
+<tr><td>5</td><td><code>app.js</code></td><td><span class="tag ui">ui</span><code>DZ_DB</code>, <code>PARA_TYPOLOGIES</code>, <code>PLEVELS</code>, état global, <code>recompute()</code>, <code>fetchMeteo()</code></td><td><code>PhysicsCore</code></td></tr>
+<tr><td>6</td><td><code>charts.js</code></td><td>barbes D3, airgram, profils</td><td>D3, <code>windProfile</code></td></tr>
+<tr><td>7</td><td><code>map.js</code></td><td>Leaflet, marqueurs, poignées d'axe</td><td>Leaflet</td></tr>
+<tr><td>8</td><td><code>animation.js</code></td><td>timeline avion + parachutistes</td><td><code>simResults</code></td></tr>
+<tr><td>9</td><td><code>optimizer-v2.js</code></td><td><span class="tag opt">opt</span><code>OptimizerV2</code> (pipeline unique)</td><td><code>PhysicsCore</code>, <code>MonteCarlo</code>, workers</td></tr>
+<tr><td>10</td><td><code>ui-optimizer.js</code></td><td>panneaux NFZ, MC, bouton "OPTIMISER"</td><td><code>OptimizerV2</code>, <code>MonteCarlo</code>, <code>NFZ</code></td></tr>
+</tbody>
+</table>
+
+<h3>2.3 Duplication de physique — point critique</h3>
+<div class="warn">
+<strong>La physique existe en double.</strong> <code>physics-core.js</code> est canonique, utilisé par <code>OptimizerV2</code>, le worker V2 et <code>MonteCarlo</code>. <code>simulation.js</code> contient un <strong>jumeau legacy</strong> (<code>getAtmosphere</code>, <code>rk4Step</code>, <code>windVecAtZ</code>, <code>runCoreSimulation</code>…) utilisé par le chemin main-thread pour le rafraîchissement live.
+<br><br>
+<strong>Règle.</strong> Toute modification doit être appliquée aux deux fichiers simultanément, et <code>SCIENCE.md</code> tenu à jour. <em>Le §15.1 propose la suppression du jumeau — priorité n°1 des évolutions.</em>
+</div>
+
+<h3>2.4 Un seul optimiseur</h3>
+<p>Le pipeline d'optimisation est fourni uniquement par <strong><code>OptimizerV2</code></strong> (<code>optimizer-v2.js</code>), qui délègue le travail parallèle à <code>optimizer-worker-v2.js</code>. Le bouton "OPTIMISER" de <code>index.html</code> (<code>onMainOptimize</code>) appelle directement <code>OptimizerV2.run()</code>.</p>
+
+<h3>2.5 Contrat Web Worker</h3>
+<p>Les workers reçoivent des entrées sérialisées (<code>windProfile</code>, <code>jumpersList</code>, <code>nfzSerialized</code>, <code>cfg</code>). Aucun DOM, aucun état partagé. Toute nouvelle entrée doit : (1) être ajoutée au message, (2) être prise en compte dans <code>PhysicsCore</code>, (3) être remontée côté <code>ui-optimizer.js</code> / <code>optimizer-v2.js</code>.</p>
+
+<h3>2.6 État global</h3>
+<table>
+<thead><tr><th>Variable</th><th>Contenu</th><th>Lue par</th></tr></thead>
+<tbody>
+<tr><td><code>windProfile</code></td><td>12 couches <code>{hpa, z, spd, dir, temp, cloud, geoH}</code></td><td><code>PhysicsCore.setWindProfile</code>, charts, MC</td></tr>
+<tr><td><code>meteoData</code></td><td><code>qnh</code>, <code>cloud_*</code>, <code>time</code></td><td>UI, <code>recompute()</code></td></tr>
+<tr><td><code>jumpersList</code></td><td>Stick courant</td><td><code>simPass</code>, UI, optim</td></tr>
+<tr><td><code>currentTarget</code>, <code>currentRV</code></td><td><code>{lat, lon}</code></td><td><code>simPass</code>, carte</td></tr>
+<tr><td><code>simResults</code></td><td>Sortie <code>runSimulation</code></td><td>animation, charts, carte</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="m3">3. Modèle atmosphérique</h2>
+
+<h3>3.1 ISA à 3 couches</h3>
+<table>
+<thead><tr><th>Couche</th><th>Altitude</th><th>T(z)</th><th>P(z)</th></tr></thead>
+<tbody>
+<tr><td>Troposphère</td><td>0–11 000 m</td><td><code>T = 288.15 − 0.0065·z</code></td><td><code>101325·(T/288.15)<sup>5.2559</sup></code></td></tr>
+<tr><td>Tropopause</td><td>11 000–20 000 m</td><td><code>216.65</code></td><td><code>P₁₁·exp(−g·(z−11000)/(R·216.65))</code></td></tr>
+<tr><td>Stratosphère</td><td>&gt; 20 000 m</td><td><code>216.65 + 0.001·(z−20000)</code></td><td><code>P₂₀·(T/216.65)<sup>−g/(0.001·R)</sup></code></td></tr>
+</tbody>
+</table>
+<p>Constantes : <code>g = 9.80665 m/s²</code>, <code>R_air = 287.058</code>, <code>ρ₀ = 1.225 kg/m³</code>, clamp <code>T ≥ 150 K</code>. <code>isaDelta</code> (K) décale uniquement <code>T</code>. <code>ρ = P/(R_air·T)</code>.</p>
+
+<h3>3.2 Rôle actuel des données méteo pour ρ</h3>
+<div class="warn">
+<strong>Aujourd'hui, <code>ρ(z)</code> est calculée uniquement à partir de l'ISA + <code>isaDelta</code> UI</strong>, pas des données Open-Meteo. La chaîne est :
+<pre>UI                    PhysicsCore                      Sortie
+────────────────────────────────────────────────────────────
+altM (FL × 30.48)  ─┐
+qnh (depuis méteo) ─┼─→ altQnhM = altM + (qnh−1013.25)·8.43
+isaDelta (UI)      ─┼─→ getDensity(altQnhM, isaDelta) ─→ ρ(z)
+                    │
+windProfile[i].temp ╳  (stockée mais pas utilisée pour ρ)
+windProfile[i].geoH ╳  (stockée mais pas utilisée pour ρ)</pre>
+<code>qnh</code> est bien injecté dans l'altitude effective. <code>isaDelta</code> est à saisir manuellement (défaut 0). <strong>Les températures Open-Meteo par niveau sont stockées mais inutilisées côté physique</strong> — elles ne servent qu'à l'airgram.
+<br><br>
+Conséquence : en journée chaude (ISA+15 °C en Occitanie) sans ajustement UI, ρ est faussée de ~5 %, décalant TAS et vT d'autant. <em>§15.13 propose la dérivation complète de <code>ρ(z)</code> depuis le profil thermique Open-Meteo.</em>
+</div>
+
+<h3>3.3 LUT densité</h3>
+<p><code>Float64Array(1301)</code> précalculée à l'initialisation : 0–13 000 m pas de 10 m, interpolation linéaire. Construite à <code>isa = 0</code> ⇒ <code>isaDelta ≠ 0</code> court-circuite la LUT. Pour les optimisations massives, garder <code>isaDelta = 0</code>.</p>
+
+<h3>3.4 Correction QNH</h3>
+<div class="formula">altQnhM = altM + (qnh − 1013.25) × 8.43</div>
+<p>8.43 m/hPa = gradient altimétrique standard au sol (pH ≈ R·T/g ≈ 8 430 m).</p>
+
+<h3>3.5 TAS</h3>
+<div class="formula">TAS = KIAS × √(ρ₀ / ρ(z))</div>
+<p>FL140 ISA std : ~+20 %. KIAS 120 → TAS ~144 kt.</p>
+
+<!-- ============================================================ -->
+<h2 id="m4">4. Données météorologiques</h2>
+
+<h3>4.1 Source : Open-Meteo</h3>
+<p>Endpoint <code>https://api.open-meteo.com/v1/forecast</code> avec modèle (GFS, ECMWF, ICON, AROME), lat/lon DZ, <code>wind_speed_unit=kn</code>, horizon +48 h. L'offset <code>meteo_hour</code> sélectionne l'index.</p>
+
+<h3>4.2 Niveaux pression</h3>
+<pre>PLEVELS = [500, 550, 600, 650, 700, 750, 800, 850, 900, 925, 950, 1000]; // hPa</pre>
+<p>~0 m (1000 hPa) à ~5 500 m (500 hPa). <strong><code>z</code> = <code>geopotential_height</code></strong> renvoyé par l'API. <code>hpa2alt</code> (charts) = repli.</p>
+
+<h3>4.3 Données méteo annexes</h3>
+<ul>
+  <li><code>qnh</code> : <code>pressure_msl[idx]</code> → correction altimétrique (§3.4).</li>
+  <li><code>cloud_total/low/mid/high</code> : airgram, alerte plafond.</li>
+  <li><code>time</code> : timestamp ISO.</li>
+</ul>
+
+<h3>4.4 Interpolation vectorielle du vent — justification physique</h3>
+
+<p>Dans <code>PhysicsCore.windAtZ(z)</code>, l'interpolation porte sur les <strong>composantes E/N précalculées</strong>, pas sur (vitesse, direction).</p>
+
+<div class="callout">
+<strong>Pourquoi vectoriel ?</strong> Interpoler la direction à travers 360°/0° donne des résultats absurdes. Exemple : 355° et 5° interpolés → 180° (à l'envers) alors que l'interp E/N donne 0° (correct).
+<br><br>
+<strong>Pourquoi linéaire et pas spline ?</strong> Le vent en troposphère libre varie de façon douce avec l'altitude, et la résolution verticale Open-Meteo (~450 m entre couches en basse tropo) donne une erreur d'interp linéaire de l'ordre de grandeur de l'incertitude modèle (1–2 kt, quelques degrés). Une spline cubique n'apporterait rien physiquement.
+<br><br>
+<strong>Physiquement valide ?</strong> Oui pour la troposphère libre (vent quasi-géostrophique, variation lente). Dans la couche limite de surface (&lt; 300 m), c'est le <strong>profil log de Prandtl</strong> qui prend le relais — c'est lui qui est physiquement important, pas la spline entre couches d'altitude.
+<br><br>
+<strong>Cohérence avec les données source.</strong> Open-Meteo fournit des moyennes par niveau pression, pas des profils haute résolution type radiosondage. La linéarité entre couches est donc <strong>le niveau de granularité approprié</strong>. Le cache eager §4.6 gèle les valeurs à l'init pour supprimer le coût à la requête.
+</div>
+
+<h3>4.5 Profil logarithmique de surface (Prandtl)</h3>
+<div class="formula">V(z) = V_ref × ln(z/z₀) / ln(z_ref/z₀)</div>
+<p>Sous la plus basse couche ; <code>z₀ = 0.03 m</code> (terrain plat/herbe). Sous <code>z₀</code> : vitesse nulle. Exemple : 100 m sol avec 15 kt à 300 m → ~12.7 kt.</p>
+
+<h3>4.6 LUT de vent précalculée (eager, comme ρ)</h3>
+
+<p>Exactement comme la LUT densité (§3.3), le profil de vent est transformé en <strong>deux <code>Float64Array</code></strong> remplies <strong>eager</strong> à chaque <code>setWindProfile</code> : <code>_wLutE[0..maxAlt]</code> et <code>_wLutN[0..maxAlt]</code>, par pas de 1 m (typiquement 0–14 000 m).</p>
+
+<pre>function windAtZ(z) {
+  var k = z | 0;
+  if (k &lt; 0) k = 0;
+  if (k &gt;= _wLutE.length) k = _wLutE.length - 1;
+  var f = z - k;
+  return {
+    e: _wLutE[k] + f * (_wLutE[k+1] - _wLutE[k]),
+    n: _wLutN[k] + f * (_wLutN[k+1] - _wLutN[k])
+  };
+}</pre>
+
+<p><strong>Coût mémoire.</strong> 2 × 14 000 × 8 B = 224 kB — négligeable.</p>
+<p><strong>Gain.</strong> <code>windAtZ</code> devient une lecture pure en O(1), sans recherche binaire, sans branchement log-Prandtl (déjà encodé). Retire une fraction significative du temps d'un <code>simPass</code> qui appelle <code>windAtZ</code> plusieurs milliers de fois par parachutiste.</p>
+<p><strong>Invalidation.</strong> Reconstruction à chaque <code>setWindProfile</code> (DZ, modèle, heure, perturbation MC). 14 000 évaluations ≈ 1 ms.</p>
+
+<div class="callout">
+<strong>État actuel.</strong> Le cache est aujourd'hui <strong>lazy</strong> (sentinelle <code>-999999</code>, remplissage à la première requête). L'évolution §15.14 passe en <strong>eager</strong> pour le gain perf et la simplicité.
+</div>
+
+<!-- ============================================================ -->
+<h2 id="m5">5. Hypothèses de largage et repères géométriques</h2>
+
+<h3>5.1 Chaîne des repères</h3>
+<ol>
+  <li>Cible TGT (<code>currentTarget</code> en E/N).</li>
+  <li>Offset cross-track : <code>tgtE = targetE + crossM·perpE ; tgtN = targetN + crossM·perpN</code>.</li>
+  <li>Top vert : à <code>topNm</code> devant <code>tgt</code>.</li>
+  <li>p1Exit : à <code>delaiTopVert</code> s après top vert.</li>
+  <li>Sortie <code>i</code> : <code>p_i = p1Exit + trackE·(i·dtSortie·gsMs), …</code></li>
+  <li>Top rouge : dernière sortie.</li>
+</ol>
+
+<h3>5.2 Vitesse sol sur jump run</h3>
+<div class="formula">tw = wJump · track  →  gsMs = max(1, tasMs + tw)  →  dtSortie = espacementM / gsMs</div>
+
+<h3>5.3 Direction break-off et séparation intra-groupe</h3>
+<p>Signe du cross-track ⇒ côté RV ⇒ direction break-off. Groupes <code>nbPara &gt; 1</code> : sous-parachutistes distribués sur un cercle de rayon <code>sepDist</code>.</p>
+
+<h3>5.4 Hypothèses implicites</h3>
+<ul>
+  <li>Axe constant, pas de correction dynamique.</li>
+  <li>TAS fixée, pas de pilotage avion modélisé.</li>
+  <li>Exit vertical parfait avec vitesse initiale = vitesse sol avion. <em>Le §15.8 ajoute une incertitude sur le temps de sortie qui englobe les écarts.</em></li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="m6">6. Chute libre</h2>
+
+<h3>6.1 Équations de traînée</h3>
+<p>Traînée paramétrée par <code>vT</code> (saisie <code>vc</code>) sans <code>Cd·A</code> explicite.</p>
+<div class="formula">
+v<sub>r</sub> = v − w(z) − v<sub>track</sub><br>
+c = (ρ(z)/ρ₀) × g / v<sub>T</sub>²<br>
+v̇<sub>E</sub> = −c·|v<sub>r</sub>|·v<sub>r,E</sub>,  v̇<sub>N</sub> = −c·|v<sub>r</sub>|·v<sub>r,N</sub>,  v̇<sub>z</sub> = −g − c·|v<sub>r</sub>|·v<sub>r,z</sub>
+</div>
+
+<h3>6.2 Limites du modèle</h3>
+<ul>
+  <li>Traînée isotrope (<code>c</code> unique 3 directions) alors qu'un ventral a <code>Cd·A</code> vertical ~3× horizontal.</li>
+  <li>Portance wingsuit modélisée comme "vent fantôme" via <code>trackVec</code>.</li>
+  <li><code>vT</code> unique pour toutes positions.</li>
+</ul>
+
+<h3>6.3 Injection du tracking</h3>
+<pre>totalFallZ = env.altM − hOuvAbs
+vtTrack    = vc × 1.15
+grTrack    = min(trackDist / max(totalFallZ, 100), 1.5)    // ← borné à 1.5, sous-estime wingsuit
+vhTrack    = grTrack × vtTrack
+trackVec   = { e: sin(axe + trackAxis)·vhTrack, n: cos(axe + trackAxis)·vhTrack }</pre>
+
+<div class="warn">
+Le plafond <code>grTrack ≤ 1.5</code> empêche toute wingsuit d'atteindre sa finesse réelle (2.5–3.5). Évolution §15.3.
+</div>
+
+<h3>6.4 Break-off</h3>
+<p>Si <code>hBreak &gt; hOuv</code>, 2<sup>e</sup> phase de chute avec <code>trackVec</code> issu du vecteur radial <code>_sepE/_sepN</code>.</p>
+
+<h3>6.5 Intégration RK4</h3>
+<p>Pas <code>dt = 0.25 s</code> (0.15 s en validation finale V2). Erreur locale <code>O(dt⁵)</code>, globale <code>O(dt⁴)</code>.</p>
+
+<h3>6.6 Détection de seuil</h3>
+<div class="formula">frac = (s[2] − targetZ) / (s[2] − ns[2])  →  s_exact = s + frac·(ns − s)</div>
+
+<!-- ============================================================ -->
+<h2 id="m7">7. Phase d'ouverture</h2>
+
+<h3>7.1 Modèle 3 sous-phases (5.5 s total)</h3>
+<table>
+<thead><tr><th>Sous-phase</th><th>Durée</th><th>vT "effective"</th></tr></thead>
+<tbody>
+<tr><td>Pilot chute</td><td>1.0 s</td><td><code>vc·(1 − 0.1·t/t_P)</code></td></tr>
+<tr><td>Line stretch</td><td>1.5 s</td><td>Linéaire <code>vc → 3·vzVoile</code></td></tr>
+<tr><td>Inflation</td><td>3.0 s</td><td>Hermite <code>3·vzVoile → vzVoile</code></td></tr>
+</tbody>
+</table>
+
+<h3>7.2 RK2 Heun, <code>dt = 0.1 s</code></h3>
+
+<h3>7.3 Hypothèses implicites</h3>
+<ul>
+  <li>Durée fixe 5.5 s toutes voiles (évol. §15.4).</li>
+  <li>Pas de pic snatch modélisé.</li>
+  <li>Pas de dérive de cap pendant l'ouverture.</li>
+  <li>Vent vertical nul.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="m8">8. Vol sous voile</h2>
+
+<h3>8.1 Modèle cinématique</h3>
+<div class="formula">
+v<sub>h,TAS</sub> = vzVoile × glide × √(ρ₀/ρ(z))<br>
+v<sub>z</sub> = vzVoile × √(ρ₀/ρ(z)) + k<sub>virage</sub>·ψ̇²<br>
+v<sub>E</sub> = sin(ψ)·v<sub>h,TAS</sub> + w<sub>E</sub>(z),  v<sub>N</sub> = cos(ψ)·v<sub>h,TAS</sub> + w<sub>N</sub>(z)
+</div>
+
+<h3>8.2 Correction densité</h3>
+<p>FL140 ≈ +20 % sur vz et vh.</p>
+
+<h3>8.3 Modèle de virage (<code>dt = 0.5 s</code>)</h3>
+<ol>
+  <li>Cible de cap <code>targetH</code> de <code>steerFn</code>.</li>
+  <li><code>delta</code> ramené <code>[−180°, 180°]</code>.</li>
+  <li><code>desiredRate = clamp(delta/dt, ±maxTR)</code>.</li>
+  <li>Accélération angulaire ≤ <code>rateAccel·dt</code>.</li>
+  <li>Freinage anticipatif si <code>|delta| &lt; stoppingAngle·1.2 && &lt; 10°</code> → taux × 0.7.</li>
+  <li>Mise à jour du cap.</li>
+  <li><code>vz += turnSinkFactor · currentRate²</code>.</li>
+</ol>
+<p>Défauts : <code>maxTurnRate = 30°/s</code>, <code>rateAccel = 90°/s²</code>, <code>turnSinkFactor = 0.015</code>.</p>
+
+<h3>8.4 Hypothèses implicites</h3>
+<ul>
+  <li>Finesse constante — pas de freins/rear-riser (évol. §15.5).</li>
+  <li>Pas de décrochage.</li>
+  <li>Arrondi implicite à <code>z = elevM</code>.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="m9">9. Pilotage et steering</h2>
+
+<h3>9.1 Steering vers un point (crab angle)</h3>
+<ol>
+  <li><code>dh = √(dx² + dy²)</code>. Si <code>&lt; 5 m</code> cap figé.</li>
+  <li>Vent <code>w = windAtZ(z)</code>.</li>
+  <li><code>wp = w · perp(dx̂, dŷ)</code>.</li>
+  <li>Si <code>|wp| ≥ vhMs</code> → vol face au vent pur.</li>
+  <li>Sinon <code>comp = √(vh² − wp²)</code>.</li>
+</ol>
+<p><strong>Bruit pilote</strong> : <code>noiseSeed · 20°·(1−skill)</code>. <strong>Délai réaction</strong> : <code>2.0/max(skill,0.1)</code> s.</p>
+
+<h3>9.2 Steering deux-phases</h3>
+<p><code>t &lt; tPilotCommon</code> (8 s) : cap perpendiculaire (break-off). Après : direct RV.</p>
+
+<h3>9.3 Critère RV</h3>
+<p>Rectangle <code>rvL × rvW</code> (200×100 m), plancher <code>rvAlt = 300 m AGL</code>.</p>
+
+<!-- ============================================================ -->
+<h2 id="m10">10. Pipeline <code>simPass</code></h2>
+
+<h3>10.1 Entrées principales</h3>
+<table>
+<thead><tr><th>Champ</th><th>Unité</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>dz</code>, <code>target</code>, <code>rv</code></td><td><code>{lat, lon}</code></td><td>Centre DZ, cible, RV</td></tr>
+<tr><td><code>axe</code></td><td>°</td><td>Cap jump run</td></tr>
+<tr><td><code>crossNm</code>, <code>topNm</code></td><td>NM</td><td>Offset, distance top vert → cible</td></tr>
+<tr><td><code>altM</code>, <code>elevM</code></td><td>m</td><td>Altitude sortie AMSL (QNH-corr.), sol</td></tr>
+<tr><td><code>tasMs</code>, <code>isa</code></td><td>m/s, K</td><td>TAS, delta ISA</td></tr>
+<tr><td><code>delaiTopVert</code>, <code>espacementM</code></td><td>s, m</td><td>Délai annonce, séparation</td></tr>
+<tr><td><code>jumpers</code>, <code>nPara</code></td><td>—</td><td>Stick</td></tr>
+<tr><td><code>dtCfg</code>, <code>sepThresh</code>, <code>timeMin</code></td><td>—</td><td>Pas d'intégration et seuils</td></tr>
+<tr><td><code>nfzList</code></td><td>array</td><td>Zones NFZ sérialisées</td></tr>
+</tbody>
+</table>
+
+<h3>10.2 Étapes</h3>
+<ol>
+  <li>Géométrie lat/lon → E/N.</li>
+  <li>Vent d'altitude → <code>gsMs</code>, <code>dtSortie</code>.</li>
+  <li>Points clés (tgt, greenPoint, p1Exit).</li>
+  <li>Direction break-off.</li>
+  <li>Boucle parachutistes (<code>simJumper</code>).</li>
+  <li>Séparations (<code>computePairMinDists</code>, garde +10 s).</li>
+  <li>Vérification NFZ (bbox + ray-casting).</li>
+  <li>Verdict GO.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="m11">11. Monte-Carlo</h2>
+
+<h3>11.1 Intention</h3>
+<p>N passes (défaut 100) avec entrées perturbées → <code>P_GO</code>, verdict GO/MARGINAL/NOGO, ellipses 95 %, percentiles des marges et séparations.</p>
+
+<h3>11.2 Box-Muller</h3>
+<pre>u1, u2 ∼ U(0,1)
+Z = √(−2·ln(u1 + 1e-30)) · cos(2π·u2)</pre>
+
+<h3>11.3 Perturbation du vent — AR(1)</h3>
+<div class="formula">ε<sub>k</sub> = φ · ε<sub>k−1</sub> + √(1 − φ²) · σ · N(0,1)</div>
+<p><code>φ = 0.7</code> (correl. verticale ~1 km), σ_spd = 3 kt, σ_dir = 15°.</p>
+
+<h3>11.4 Perturbations parachutistes <em>actuelles</em></h3>
+<table>
+<thead><tr><th>Paramètre</th><th>Perturbation</th><th>σ actuel</th></tr></thead>
+<tbody>
+<tr><td><code>vc</code></td><td>× (1 + σ·N(0,1))</td><td>5 %</td></tr>
+<tr><td><code>vzVoile</code></td><td>× (1 + σ·N(0,1))</td><td>8 %</td></tr>
+<tr><td><code>glide</code></td><td>× (1 + σ·N(0,1))</td><td>10 %</td></tr>
+<tr><td><code>hOuv</code></td><td>+ σ·N(0,1)</td><td>50 m</td></tr>
+<tr><td><code>skill</code></td><td>additive, clampé [0.2, 1.0]</td><td>0.1</td></tr>
+<tr><td><code>_mcPilotNoise</code></td><td>N(0,1) injecté</td><td>—</td></tr>
+</tbody>
+</table>
+<p><em>Le §15.8 refond ces perturbations pour couvrir plus de sources d'incertitude réalistes.</em></p>
+
+<h3>11.5 Ellipse de confiance 95 %</h3>
+<ol>
+  <li>Moyenne <code>(mx, my)</code>.</li>
+  <li>Covariance 2×2 <code>Σ</code>.</li>
+  <li>Valeurs propres analytiques <code>λ₁,₂ = tr/2 ± √(tr²/4 − det)</code> (plancher 0.01).</li>
+  <li>Angle principal <code>½·atan2(2σEN, σEE − σNN)</code>.</li>
+  <li><code>χ² = −2·ln(0.05) ≈ 5.991</code> (2 ddl).</li>
+  <li><code>a = √(χ²·λ₁)</code>, <code>b = √(χ²·λ₂)</code>.</li>
+  <li>Polygone 42 points, rendu Leaflet.</li>
+</ol>
+
+<!-- ============================================================ -->
+<h2 id="m12">12. Optimiseur en 4 phases</h2>
+
+<h3>12.1 Phase 1 — Scan grossier (parallèle)</h3>
+<ul>
+  <li><strong>Axes</strong> : ±60°/5° autour du vent + 0–360°/15°.</li>
+  <li><strong>Offsets</strong> : −1.0 à +1.0 NM / 0.2.</li>
+  <li><strong>Workers</strong> : 2–8.</li>
+</ul>
+
+<h3>12.2 Phase 2 — Raffinement</h3>
+<p>Top 8 au <code>nPara</code> max → axe ±5°/1° × offset ±0.15 NM/0.05.</p>
+
+<h3>12.3 Phase 3 — Ordre de sortie (AG)</h3>
+
+<p><strong>Ordre initial — nouvelle règle (évolution §15.9).</strong> L'ordre classique supprime le hop&amp;pop (non utilisé dans la plupart des sticks réels) et <strong>répartit les trackers à trois positions du stick</strong> (début, milieu, fin) pour aérer le trafic sous voile :</p>
+
+<pre>belly_big → [tracking_1] → belly_small → freefly_big → freefly_small →
+aff → [tracking_2] → tandem → [tracking_3 / wingsuit]</pre>
+
+<p>Règle de répartition :</p>
+<ul>
+  <li>1 tracker → placé <strong>en fin</strong> de stick.</li>
+  <li>2 trackers → 1 au <strong>milieu</strong>, 1 <strong>en fin</strong>.</li>
+  <li>≥ 3 trackers → <strong>1 en début, 1 au milieu, le reste en fin</strong>.</li>
+  <li>Wingsuits toujours <strong>en dernier</strong> (DT FFP 49 : vitesse verticale faible + finesse élevée + trajectoire réservée).</li>
+</ul>
+
+<h4>Paramètres AG</h4>
+<ul>
+  <li>Population <code>popSize = min(20, max(8, 2N))</code>.</li>
+  <li>Générations : 100 (N ≤ 7) / 300 (N &gt; 7).</li>
+  <li>Sélection élitiste 50 %.</li>
+  <li>Mutation : swap aléatoire.</li>
+  <li>Pas de crossover (évol. §15.15 : Order Crossover OX).</li>
+</ul>
+
+<h3>12.4 Phase 4 — Validation Monte-Carlo</h3>
+<p>Config optimale + ordre soumis à MC avec paramètres configurables. Validation finale via <code>simPass</code> avec <code>dtCfg.ff = 0.15 s</code>.</p>
+
+<h3>12.5 Fonction objectif — pondérations</h3>
+<div class="formula">S = S<sub>nPara</sub> + S<sub>vent</sub> + S<sub>marge</sub> + S<sub>sep</sub> + S<sub>temps</sub> − S<sub>offset</sub></div>
+<table>
+<thead><tr><th>Composante</th><th>Formule (poids actuel)</th><th>Sens</th></tr></thead>
+<tbody>
+<tr><td>Parachutistes</td><td><code>nPara × 10 000</code></td><td>Priorité absolue</td></tr>
+<tr><td>Alignement vent</td><td><code>max(0, 1 − |Δaxe|/90°) × 500</code></td><td>500 max</td></tr>
+<tr><td>Marge RDV min</td><td><code>min(margeMin/300, 1) × 2 000</code></td><td>2 000 max</td></tr>
+<tr><td>Sep. min</td><td><code>min(sepMin/400, 1) × 1 500</code></td><td>1 500 max</td></tr>
+<tr><td>Temps inter-sortie</td><td><code>min(dtSortie/12, 1) × 300</code></td><td>300 max</td></tr>
+<tr><td>Pénalité offset</td><td><code>|crossNm| × 200</code></td><td>Max négatif</td></tr>
+</tbody>
+</table>
+<p>NOGO (NFZ violée, marge négative, sep &lt; 50 m, <code>dtSortie</code> &lt; 5 s) ⇒ score <code>−∞</code>.</p>
+
+<div class="callout">
+<strong>Les poids sont aujourd'hui hardcodés</strong> dans <code>objectiveScore</code>. Le §15.10 propose de les exposer dans l'UI pour permettre au chef largueur de calibrer selon la priorité du jour (marges vs. centration vs. vent).
+</div>
+
+<!-- ============================================================ -->
+<h2 id="m13">13. Zones interdites (NFZ)</h2>
+
+<h3>13.1 Modèle</h3>
+<p>Polygone lat/lon + <code>altMin</code>, <code>altMax</code> + type <code>hard</code>/<code>soft</code>. Sérialisation worker : <code>_polyEN</code> + <code>_bbox</code>.</p>
+
+<h3>13.2 Test</h3>
+<p>Échantillonnage tous les 3 points ; rejet altitude ; rejet bbox ; ray-casting.</p>
+
+<h3>13.3 Limites</h3>
+<ul>
+  <li><code>soft</code> non scorées (évol. §15.9).</li>
+  <li>Pas de fenêtre temporelle (évol. §15.11).</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="m14">14. Synthèse des hypothèses courantes</h2>
+
+<table>
+<thead><tr><th>Domaine</th><th>Paramètre</th><th>Valeur</th><th>Remarque</th></tr></thead>
+<tbody>
+<tr><td rowspan="7"><strong>Atmo</strong></td><td>g</td><td>9.80665 m/s²</td><td>Constante</td></tr>
+<tr><td>R_air</td><td>287.058</td><td>Constante</td></tr>
+<tr><td>ρ₀</td><td>1.225 kg/m³</td><td>ISA MSL</td></tr>
+<tr><td>Clamp T</td><td>150 K</td><td>Protection</td></tr>
+<tr><td>Gradient QNH</td><td>8.43 m/hPa</td><td>Altimétrie standard</td></tr>
+<tr><td>Source ρ</td><td>ISA + <code>isaDelta</code></td><td>Temps Open-Meteo non utilisées (évol. §15.13)</td></tr>
+<tr><td>LUT densité</td><td>0–13 000 m / 10 m</td><td>Construite à <code>isa=0</code></td></tr>
+<tr><td rowspan="4"><strong>Vent</strong></td><td>z₀</td><td>0.03 m</td><td>Terrain plat/herbe</td></tr>
+<tr><td>Interpolation</td><td>Linéaire sur E/N</td><td>Physiquement valide (§4.4)</td></tr>
+<tr><td>PLEVELS</td><td>12 niveaux 500–1000 hPa</td><td>Open-Meteo</td></tr>
+<tr><td>Cache</td><td>Lazy sentinelle</td><td>Évol. §15.14 : LUT eager</td></tr>
+<tr><td rowspan="4"><strong>Chute</strong></td><td>RK4 dt</td><td>0.25 s (0.15 s valid.)</td><td></td></tr>
+<tr><td>Traînée</td><td>Paramétrée par <code>vT</code></td><td>Isotrope</td></tr>
+<tr><td>Tracking vT ×</td><td>1.15</td><td>Heuristique</td></tr>
+<tr><td>Finesse tracking max</td><td>1.5</td><td>Sous-estime wingsuit (évol. §15.3)</td></tr>
+<tr><td rowspan="5"><strong>Ouverture</strong></td><td>Durée totale</td><td>5.5 s</td><td>Constante (évol. §15.4)</td></tr>
+<tr><td>Phase pilot chute</td><td>1.0 s</td><td><code>vc·(1−0.1f)</code></td></tr>
+<tr><td>Line stretch</td><td>1.5 s</td><td>Linéaire</td></tr>
+<tr><td>Inflation</td><td>3.0 s</td><td>Hermite</td></tr>
+<tr><td>RK2 dt</td><td>0.1 s</td><td></td></tr>
+<tr><td rowspan="4"><strong>Voile</strong></td><td>dt</td><td>0.5 s</td><td></td></tr>
+<tr><td>maxTurnRate</td><td>30°/s</td><td>Modulé par skill</td></tr>
+<tr><td>rateAccel</td><td>90°/s²</td><td></td></tr>
+<tr><td>turnSinkFactor</td><td>0.015</td><td>Quadratique</td></tr>
+<tr><td rowspan="3"><strong>Steering</strong></td><td>tPilotCommon</td><td>8 s</td><td>Break-off direct</td></tr>
+<tr><td>reactionDelay</td><td>2.0/max(skill,0.1) s</td><td></td></tr>
+<tr><td>headingError</td><td>20°·(1−skill)</td><td></td></tr>
+<tr><td rowspan="3"><strong>Skill défaut</strong></td><td>Élève, tandem</td><td>0.5–0.6</td><td>Évol. §15.12 : lié typologie</td></tr>
+<tr><td>Ventral, freefly</td><td>0.8</td><td></td></tr>
+<tr><td>Tracking, WS</td><td>0.85–0.95</td><td></td></tr>
+<tr><td rowspan="2"><strong>RV</strong></td><td>rvAlt</td><td>300 m AGL</td><td>Plancher</td></tr>
+<tr><td>rvLength/rvWidth</td><td>200/100 m</td><td></td></tr>
+<tr><td rowspan="2"><strong>Séparations</strong></td><td>sepThresh</td><td>50 m</td><td></td></tr>
+<tr><td>timeMin</td><td>5 s inter-sortie</td><td></td></tr>
+<tr><td rowspan="4"><strong>MC</strong></td><td>N défaut</td><td>100</td><td></td></tr>
+<tr><td>σ vent spd/dir</td><td>3 kt / 15°</td><td></td></tr>
+<tr><td>AR(1) φ</td><td>0.7</td><td>Correl ~1 km</td></tr>
+<tr><td>σ vc / vz / glide / hOuv / skill</td><td><strong>5 → 10 %</strong> (§15.8) / 8 % / 10 % / 50 m / 0.1</td><td></td></tr>
+<tr><td rowspan="4"><strong>Optim</strong></td><td>Axes</td><td>±60°/5° + 15°/360°</td><td></td></tr>
+<tr><td>Offsets grossiers</td><td>±1 NM / 0.2</td><td></td></tr>
+<tr><td>Raffinement</td><td>±5°/1°, ±0.15 NM/0.05</td><td></td></tr>
+<tr><td>Poids objectif</td><td>Hardcodés</td><td>Évol. §15.10 : UI</td></tr>
+</tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="m15">15. Limites actuelles et plan d'amélioration</h2>
+
+<!-- 15.1 -->
+<div class="prop" id="m15-1">
+<h4>15.1 Unifier la physique (supprimer <code>simulation.js</code>)</h4>
+<span class="limit">Limite.</span> Physique en double : <code>physics-core.js</code> (canonique) + <code>simulation.js</code> (main-thread legacy).
+<p><strong>Proposition.</strong> Migrer le main-thread vers <code>PhysicsCore</code> :</p>
+<ol>
+  <li>Remplacer <code>getAtmosphere</code>, <code>getDensity</code>, <code>computeTAS</code>, <code>rk4Step</code>, <code>rk2Step</code>, <code>windVecAtZ</code> par <code>PhysicsCore.*</code>.</li>
+  <li>Remplacer <code>runCoreSimulation</code> par <code>PhysicsCore.simPass</code>.</li>
+  <li>Garder <code>runSimulation</code> et <code>simulateHeadless</code> comme fines enveloppes.</li>
+</ol>
+<p><strong>Fichiers.</strong> <code>simulation.js</code>. <strong>Effet.</strong> Classe entière de bugs éliminée, ~500 lignes en moins.</p>
+</div>
+
+<!-- 15.2 -->
+<div class="prop" id="m15-2">
+<h4>15.2 Typologies alignées sur la recherche aéro et la DT FFP 49</h4>
+<span class="limit">Limite.</span> 9 typologies grossières, pas de distinction sit-fly vs tête en bas, pas de wingsuit réaliste, <code>skill</code> implicite à 1.0 partout.
+<p><strong>Proposition.</strong> Refondre <code>PARA_TYPOLOGIES</code> en alignant sur <code>AERODYNAMICS_RESEARCH §2–4</code> pour la chute et les finesses voile, sur la <strong>DT FFP 49 (avril 2025)</strong> pour les wingsuits (altitude mini WS2 brevetée 1 100 m, WS1 1 200 m, séparation ≥ 10 s entre WS, sortie en dernier), et sur la table §15.12 pour les skills défaut.</p>
+<pre>const PARA_TYPOLOGIES = {
+  // Ventral
+  belly_std:    { name:'Ventral (RW) standard',  vc: 55, vzVoile: 5.0, glide: 2.8, hOuv: 1000,
+                  hBreak: 1500, sepDist: 80, skill: 0.8, canopyClass: 'sport_9c' },
+  // Freefly
+  sit_fly:      { name:'Sit-fly',                vc: 68, vzVoile: 5.5, glide: 2.7, hOuv: 1200,
+                  hBreak: 1700, sepDist: 120, skill: 0.8, canopyClass: 'sport_9c' },
+  head_down:    { name:'Tête en bas (VFS)',      vc: 78, vzVoile: 5.5, glide: 2.7, hOuv: 1200,
+                  hBreak: 1700, sepDist: 120, skill: 0.85, canopyClass: 'sport_9c' },
+  // Angle / tracking
+  angle_fly:    { name:'Angle flying',           vc: 65, vzVoile: 5.0, glide: 2.8, hOuv: 1200,
+                  hBreak: 1600, sepDist: 150, skill: 0.85,
+                  isTracking: true, trackDist: 1800, trackAxis: 90,
+                  canopyClass: 'sport_9c' },
+  tracking:     { name:'Dérive (combi)',          vc: 45, vzVoile: 5.0, glide: 2.8, hOuv: 1000,
+                  hBreak: 1500, sepDist: 150, skill: 0.9,
+                  isTracking: true, trackDist: 2500, trackAxis: 90,
+                  canopyClass: 'sport_9c' },
+  // Wingsuits — DT FFP 49
+  wingsuit_ws1: { name:'Wingsuit WS1 (initiation)', vc: 42, vzVoile: 5.2, glide: 2.6, hOuv: 1200,
+                  hBreak: 1400, sepDist: 200, skill: 0.85,
+                  isWingsuit: true, wsLD: 2.2, wsSide: 'auto',
+                  trackDist: 3500, trackAxis: 90,
+                  canopyClass: 'sport_7c' },
+  wingsuit_ws2: { name:'Wingsuit WS2 (sport)',      vc: 32, vzVoile: 5.0, glide: 3.0, hOuv: 1100,
+                  hBreak: 1200, sepDist: 200, skill: 0.9,
+                  isWingsuit: true, wsLD: 2.8, wsSide: 'auto',
+                  trackDist: 6500, trackAxis: 90,
+                  canopyClass: 'sport_7c' },
+  wingsuit_ws3: { name:'Wingsuit WS3 (expert)',     vc: 22, vzVoile: 4.8, glide: 3.1, hOuv: 1100,
+                  hBreak: 1200, sepDist: 200, skill: 0.95,
+                  isWingsuit: true, wsLD: 3.2, wsSide: 'auto',
+                  trackDist: 10000, trackAxis: 90,
+                  canopyClass: 'sport_7c' },
+  // Élèves
+  eleve_12:     { name:'Élève (ouv. 1200 m)',    vc: 52, vzVoile: 5.0, glide: 2.5, hOuv: 1200,
+                  hBreak: 1300, sepDist: 0, skill: 0.5, canopyClass: 'sport_9c' },
+  eleve_15:     { name:'Élève (ouv. 1500 m)',    vc: 52, vzVoile: 5.0, glide: 2.5, hOuv: 1500,
+                  hBreak: 1600, sepDist: 0, skill: 0.5, canopyClass: 'sport_9c' },
+  tandem:       { name:'Tandem (ouv. 1500 m)',   vc: 54, vzVoile: 6.5, glide: 2.7, hOuv: 1500,
+                  hBreak: 1600, sepDist: 0, skill: 0.6, canopyClass: 'tandem' }
+};</pre>
+<p><strong>Fichiers.</strong> <code>app.js::PARA_TYPOLOGIES</code> + builder UI.</p>
+</div>
+
+<!-- 15.3 -->
+<div class="prop" id="m15-3">
+<h4>15.3 Wingsuit : finesse relevée, pilotage dédié, option côté de vol</h4>
+<span class="limit">Limite.</span> Plafond <code>grTrack = 1.5</code> empêche la wingsuit d'atteindre sa finesse réelle. Surtout, <strong>pas de gestion du côté de vol</strong> — critique en pratique.
+
+<p><strong>Contexte FFP DT49 + pratique DZ (Pamiers/LFDJ).</strong> Les wingsuits d'un même largage suivent <strong>toutes la même ligne de vol</strong>, <strong>toutes du même côté de l'axe</strong> (à Pamiers, nord ou sud selon l'axe du jour), pour ne pas croiser les sous voile. Angle sortie 30–45° par rapport à l'axe, vol rectiligne 30–60 s puis virage retour. Séparation ≥ 10 s entre wingsuiteurs (DT49).</p>
+
+<h4>(a) Loi aérodynamique wingsuit</h4>
+<p>Découpler la logique du tracking pur, utiliser la relation <code>vz² · (1 + (L/D)²) = v<sub>c</sub>²</code> :</p>
+<pre>if (jp.isWingsuit && jp.wsLD) {
+  var LD = jp.wsLD;
+  var vzEff = jp.vc / Math.sqrt(1 + LD*LD);   // ~7 m/s pour LD=3, vc=22
+  var vhWS  = LD * vzEff;                     // ~21 m/s horizontal
+  var wsRad = (env.axeDeg + jp.trackAxis + wsSideOffset(jp, env)) * DEG2RAD;
+  trackVec = { e: Math.sin(wsRad)*vhWS, n: Math.cos(wsRad)*vhWS };
+}
+else if (jp.isTracking) {
+  var vtTrack = jp.vc * 1.15;
+  var grTrack = Math.min(jp.trackDist / Math.max(totalFallZ, 100), 1.2);  // ← 1.2
+  var vhTrack = grTrack * vtTrack;
+  // ...
+}</pre>
+
+<h4>(b) Option côté de vol <code>wsSide</code></h4>
+<table>
+<thead><tr><th><code>wsSide</code></th><th>Signification</th></tr></thead>
+<tbody>
+<tr><td><code>'auto'</code></td><td>Calculé par <code>simPass</code> selon signe du cross-track RV</td></tr>
+<tr><td><code>'left'</code></td><td>Vol à gauche de l'axe (<code>trackAxis = −90°</code> relatif)</td></tr>
+<tr><td><code>'right'</code></td><td>Vol à droite de l'axe (<code>+90°</code>)</td></tr>
+<tr><td><code>'N'</code>, <code>'S'</code>, <code>'E'</code>, <code>'W'</code></td><td>Cardinal absolu (indépendant de l'axe)</td></tr>
+</tbody>
+</table>
+<pre>function wsSideOffset(jp, env) {
+  if (jp.wsSide === 'left')  return -90 - jp.trackAxis;
+  if (jp.wsSide === 'right') return +90 - jp.trackAxis;
+  if (jp.wsSide === 'N') return   0 - env.axeDeg - jp.trackAxis;
+  if (jp.wsSide === 'S') return 180 - env.axeDeg - jp.trackAxis;
+  if (jp.wsSide === 'E') return  90 - env.axeDeg - jp.trackAxis;
+  if (jp.wsSide === 'W') return 270 - env.axeDeg - jp.trackAxis;
+  return 0; // 'auto'
+}</pre>
+<p><strong>UI.</strong> Dans <code>buildJumpers</code>, sélecteur <code>wsSide</code> visible uniquement pour <code>isWingsuit = true</code>, avec bouton "Appliquer à toutes les WS" pour propager le choix (cohérence FFP : toutes du même côté).</p>
+
+<h4>(c) Règle d'espacement WS ≥ 10 s</h4>
+<p>Contrainte spéciale dans la phase de séparation (§15.8) : le <code>dtSortie</code> effectif entre deux wingsuits est <code>max(dtSortie, 10 s)</code>, conforme DT FFP 49.</p>
+
+<p><strong>Fichiers.</strong> <code>physics-core.js::simJumper</code>, <code>simPass</code>, <code>app.js</code> (typologies + builder UI), <code>ui-optimizer.js</code> (sélecteur côté).</p>
+</div>
+
+<!-- 15.4 -->
+<div class="prop" id="m15-4">
+<h4>15.4 Ouverture : durée et profil différenciés par classe de voile</h4>
+<span class="limit">Limite.</span> 5.5 s quel que soit le type. Valeurs de référence (AERODYNAMICS §5.1 + skydivemag WS Progression 3 + DT FFP 49 WS matériel) :
+<table>
+<thead><tr><th>Classe voile</th><th>Snivel typique</th><th>Inflation totale</th><th>Conseils matériel WS</th></tr></thead>
+<tbody>
+<tr><td>Sport 9-cell moderne</td><td>3–6 s</td><td>4–5 s</td><td>—</td></tr>
+<tr><td>Sport 7-cell docile</td><td>2–4 s</td><td>3–4 s</td><td><strong>Recommandé WS</strong>, WL &lt; 1.3, drisse 2.40 m, extracteur 28–32″ (DT49)</td></tr>
+<tr><td>Tandem drogue</td><td>2–3 s</td><td>3 s</td><td>—</td></tr>
+<tr><td>Cross-braced swoop</td><td>1–3 s</td><td>2–3 s</td><td>Snivel court</td></tr>
+</tbody>
+</table>
+<pre>var OPENING_PROFILE = {
+  sport_9c:    { tP: 0.5, tL: 0.8, tI: 3.5, ratio: 3.0 },
+  sport_7c:    { tP: 0.6, tL: 0.9, tI: 2.5, ratio: 3.0 },
+  tandem:      { tP: 0.5, tL: 0.7, tI: 2.8, ratio: 2.5 },
+  cross_brace: { tP: 0.5, tL: 0.7, tI: 2.0, ratio: 3.5 }
+};</pre>
+<p>Bonus : exposer <code>simResults.perJumper.hCanopyStart</code> pour vérifier le respect du minimum 1 100 m DT49 WS2.</p>
+<p><strong>Fichiers.</strong> <code>physics-core.js::simOpening</code>.</p>
+</div>
+
+<!-- 15.5 -->
+<div class="prop" id="m15-5">
+<h4>15.5 Finesse variable sous voile (rear-risers, min-sink)</h4>
+<span class="limit">Limite majeure.</span> Finesse constante → long spot sous-estimé, pas de min-sink, vent arrière optimiste.
+<table>
+<thead><tr><th>Régime</th><th><code>glide_eff</code></th><th><code>vz_eff</code></th><th>Quand</th></tr></thead>
+<tbody>
+<tr><td><code>full_flight</code></td><td><code>glide</code></td><td><code>vzVoile</code></td><td>Nominal</td></tr>
+<tr><td><code>rear_riser</code></td><td>× 1.08</td><td>× 0.85</td><td>Long face au vent</td></tr>
+<tr><td><code>min_sink</code></td><td>× 0.80</td><td>× 0.60</td><td>Long vent arrière</td></tr>
+</tbody>
+</table>
+<pre>function _selectRegime(stateE, stateN, tgtE, tgtN, w, vh_full) {
+  var dx = tgtE - stateE, dy = tgtN - stateN;
+  var dh = Math.sqrt(dx*dx + dy*dy);
+  if (dh &lt; 1) return 'full_flight';
+  var wp = w.e * (dx/dh) + w.n * (dy/dh);   // + = tailwind
+  if (wp &gt;  0.4*vh_full)                      return 'min_sink';
+  if (wp &lt; -0.5*vh_full &amp;&amp; wp &gt; -vh_full)     return 'rear_riser';
+  return 'full_flight';
+}</pre>
+<p>Effet MC : ellipses atterrissage −10 à −15 % (long), +5 % (court). <strong>Fichiers.</strong> <code>physics-core.js::simCanopy</code>, <code>createSteerToPoint</code>.</p>
+</div>
+
+<!-- 15.6 -->
+<div class="prop" id="m15-6">
+<h4>15.6 Finesse vs vitesse air et densité</h4>
+<span class="limit">Limite.</span> <code>glide</code> constant ; le L/D est max à une vitesse spécifique.
+<div class="formula">glide_eff = glide × (1 − α · ((v<sub>h</sub>/v<sub>h,opt</sub>) − 1)²)</div>
+<p><code>α = 0.15</code>, <code>v<sub>h,opt</sub> ≈ 12.9 m/s</code>. Gain marginal, priorité basse.</p>
+</div>
+
+<!-- 15.7 -->
+<div class="prop" id="m15-7">
+<h4>15.7 Charge alaire explicite</h4>
+<span class="limit">Limite.</span> <code>vzVoile</code> et <code>glide</code> scalaires directs.
+<div class="formula">
+vzVoile = vz<sub>ref</sub> · √(WL/WL<sub>ref</sub>)<br>
+vh = glide · vzVoile<br>
+v<sub>stall</sub> = 7 · √WL m/s
+</div>
+<table>
+<thead><tr><th>Classe</th><th>WL</th><th>vz<sub>ref</sub> à WL 1</th><th>glide</th></tr></thead>
+<tbody>
+<tr><td>Docile 9-cell</td><td>0.8–1.1</td><td>5.0 m/s</td><td>2.9</td></tr>
+<tr><td>Intermédiaire</td><td>1.0–1.4</td><td>5.2 m/s</td><td>3.1</td></tr>
+<tr><td>Elliptique 9-cell</td><td>1.2–1.6</td><td>5.3 m/s</td><td>3.2</td></tr>
+<tr><td>Cross-braced</td><td>1.8–2.5</td><td>5.5 m/s</td><td>3.2</td></tr>
+<tr><td>BASE</td><td>0.6–1.1</td><td>4.5 m/s</td><td>3.0</td></tr>
+<tr><td>Tandem</td><td>0.7–0.9</td><td>6.5 m/s</td><td>2.7</td></tr>
+</tbody>
+</table>
+<p><strong>Fichiers.</strong> <code>app.js</code>, <code>physics-core.js::simCanopy</code>.</p>
+</div>
+
+<!-- 15.8 -->
+<div class="prop" id="m15-8">
+<h4>15.8 Monte-Carlo : refonte des sources d'incertitude</h4>
+<span class="limit">Remplace la version initiale</span> (altitude avion / ouverture dure / tour de suspentes écartés). Les incertitudes ci-dessous dominent réellement la dispersion observée en largage sport.
+
+<h4>(a) Temps entre les sorties — climb-out + taille de groupe</h4>
+<p>Actuellement <code>dtSortie</code> déterministe. En réalité :</p>
+<ul>
+  <li><strong>Solo propre</strong> : valeur nominale ± σ ≈ 0.5 s.</li>
+  <li><strong>Groupe 2–4</strong> : climb-out 3–5 s additionnel (mise en place sur la barre avant countdown).</li>
+  <li><strong>Groupe 5+</strong> : climb-out 5–8 s, dispersion large.</li>
+</ul>
+<pre>function perturbExitTimes(jumpers, dtNominal) {
+  return jumpers.map(function (j) {
+    var nb = j.nbPara || 1;
+    var climbOutMean =
+      nb === 1 ? 0 :
+      nb &lt;= 4 ? 2.0 + 0.5 * nb :   // 2.5 s @ 2, 4 s @ 4
+                5.0 + 0.6 * nb;    // 8 s @ 5, 11 s @ 10
+    var climbOutSigma = 0.4 + 0.15 * nb;
+    var jitter   = gaussRandom() * 0.6;   // σ = 0.6 s (6 s annoncé → 5.4–6.6 s)
+    var climbOut = climbOutMean + gaussRandom() * climbOutSigma;
+    return { _climbOut: Math.max(0, climbOut), _exitJitter: jitter };
+  });
+}</pre>
+<p>Dans <code>simPass</code> : <code>t_exit_j = delaiTopVert + Σ_{k&lt;j} (dtSortie + climbOut_k + jitter_k) + jitter_j</code>.</p>
+
+<h4>(b) σ vitesse terminale = 10 % (au lieu de 5 %)</h4>
+<p>Variabilité intrinsèque jour-à-jour (±5 %) + incertitude sur la catégorie typologique (±5 % de fourchette) ⇒ somme quadratique ~10 %.</p>
+
+<h4>(c) σ cap tracking ±20° (±10° wingsuit)</h4>
+<pre>if (j.isTracking || j.isWingsuit) {
+  var axisErrorSigma = j.isWingsuit ? 10 : 20;
+  j.trackAxis = (j.trackAxis || 90) + gaussRandom() * axisErrorSigma;
+}</pre>
+<p>σ plus faible pour WS (visibilité + directionnalité).</p>
+
+<h4>(d) Dérive inconsciente pour non-trackers</h4>
+<p>Un ventral "stable" dérive de 5–15 m sur 30 s de chute sans s'en rendre compte.</p>
+<pre>var driftAxisRad = Math.random() * 2 * Math.PI;
+var driftSpeed   = Math.abs(gaussRandom()) * 3;   // σ = 3 m/s (moy ~2.4)
+j._driftVec = {
+  e: Math.sin(driftAxisRad) * driftSpeed,
+  n: Math.cos(driftAxisRad) * driftSpeed
+};</pre>
+<p>Sur 30 s, 2 m/s horizontal → 60 m de déviation, réaliste.</p>
+
+<h4>(e) σ heading à l'ouverture ±30°</h4>
+<p>Line twist léger ou inflation asymétrique → biais initial. Pilote corrige en ~50 m.</p>
+<pre>j._headingOpenErr = gaussRandom() * 30;   // σ = 30°</pre>
+
+<h4>(f-g-h) σ hOuv, skill, vent</h4>
+<p>σ <code>hOuv</code> = 50 m (conservé). σ <code>skill</code> = 0.1 autour de la moyenne typologique (§15.12). σ vent conservé (AR(1) φ=0.7, 3 kt, 15°).</p>
+
+<h4>Effet Monte-Carlo attendu</h4>
+<p>Ellipses atterrissage <strong>+25 à +40 % en largeur</strong> pour freefly (climb-out + dérive inconsciente gagnent 50–100 m latéraux). Ellipses wingsuits restent serrées (tracking directionnel, dérive non applicable).</p>
+
+<p><strong>Fichiers.</strong> <code>monte-carlo.js::perturbJumpers</code>, <code>physics-core.js::simPass</code> (<code>_climbOut</code>, <code>_exitJitter</code>), <code>simJumper</code> (<code>_driftVec</code>, <code>_headingOpenErr</code>).</p>
+</div>
+
+<!-- 15.9 -->
+<div class="prop" id="m15-9">
+<h4>15.9 Fonction objectif enrichie : soft NFZ, vent arrière, plafond nuageux</h4>
+<span class="limit">Limites.</span> Soft NFZ non scorées, alignement vent ne pénalise pas vent arrière, pas de marge plafond.
+<ol>
+  <li><strong>Soft NFZ</strong> : <code>score -= softNfzViolationCount × 100</code>.</li>
+  <li><strong>Pénalité vent arrière</strong> :
+<pre>var axeDiff = ((result.axe - windFromDeg + 540) % 360) - 180;
+var alignBonus;
+if      (Math.abs(axeDiff) &lt; 30)  alignBonus = 500;
+else if (Math.abs(axeDiff) &gt; 150) alignBonus = -200;
+else                              alignBonus = 500 * (1 - (Math.abs(axeDiff)-30)/60);
+score += alignBonus;</pre>
+  </li>
+  <li><strong>Marge plafond</strong> : si <code>cloud_low &gt; 50 %</code> et <code>altM &gt; cloudBase</code>, pénalité proportionnelle.</li>
+</ol>
+<p><strong>Fichiers.</strong> <code>physics-core.js::objectiveScore</code>.</p>
+</div>
+
+<!-- 15.10 -->
+<div class="prop" id="m15-10">
+<h4>15.10 Poids de la fonction objectif configurables en UI</h4>
+<span class="limit">Limite.</span> Coefficients (10 000, 500, 2 000, 1 500, 300, 200) hardcodés. Or le chef largueur veut parfois privilégier marges (jour limite) ou centration (exigence technique).
+<p><strong>Proposition.</strong> Exposer les poids dans un panneau <code>ui-optimizer.js</code> :</p>
+<pre>// Nouvelle signature
+PhysicsCore.objectiveScore(result, windFromDeg, weights)
+
+// weights défaut
+var DEFAULT_WEIGHTS = {
+  nPara:    10000,
+  alignWind:  500,
+  marge:     2000,
+  sep:       1500,
+  dtSortie:   300,
+  offset:    -200,
+  softNfz:   -100
+};</pre>
+<p><strong>UI.</strong> Panneau "Priorités d'optimisation" avec sliders 0–2 (multiplicateur) pour chaque composante. Persistance <code>localStorage</code>.</p>
+<p><strong>Fichiers.</strong> <code>physics-core.js::objectiveScore</code>, <code>ui-optimizer.js</code>, <code>optimizer-v2.js::_phaseStickOrder</code>.</p>
+</div>
+
+<!-- 15.11 -->
+<div class="prop" id="m15-11">
+<h4>15.11 NFZ : fenêtres temporelles et zones soft actives</h4>
+<pre>{
+  type: 'hard' | 'soft',
+  altMin, altMax,
+  poly: [{lat, lon}, ...],
+  tWindow: null | { tStart: ISO, tEnd: ISO },
+  priority: 1..5
+}</pre>
+<p>Filtrage <code>_checkNFZ</code> selon <code>meteoData.time</code>. Pour <code>soft</code> : compteur de violations (alimente §15.9).</p>
+</div>
+
+<!-- 15.12 -->
+<div class="prop" id="m15-12">
+<h4>15.12 Skills par défaut liés à la typologie</h4>
+<span class="limit">Limite.</span> <code>skill</code> implicite à 1.0 partout dans <code>simCanopy</code>. Irréaliste : élève ≠ WS3.
+<table>
+<thead><tr><th>Typologie</th><th><code>skill</code> défaut</th><th>Raison</th></tr></thead>
+<tbody>
+<tr><td>Élève 1200/1500</td><td>0.5</td><td>Découverte pilotage, délais longs</td></tr>
+<tr><td>Tandem</td><td>0.6</td><td>Instructeur + voile chargée + passager</td></tr>
+<tr><td>Ventral, freefly</td><td>0.8</td><td>Sport confirmé</td></tr>
+<tr><td>Angle, tracking</td><td>0.85–0.9</td><td>Spécialité</td></tr>
+<tr><td>Wingsuit WS1</td><td>0.85</td><td>Brevet récent, nouveau matériel</td></tr>
+<tr><td>Wingsuit WS2</td><td>0.9</td><td>Expérimenté</td></tr>
+<tr><td>Wingsuit WS3</td><td>0.95</td><td>Expert</td></tr>
+</tbody>
+</table>
+<p><strong>Impact <code>simCanopy</code>.</strong> <code>maxTurnRate</code> × skill, <code>reactionDelay = 2.0/max(skill, 0.1)</code>, <code>headingError = 20°·(1−skill)</code>. En MC : σ = 0.1 additive.</p>
+<p><strong>Fichiers.</strong> <code>app.js::PARA_TYPOLOGIES</code> (champ <code>skill</code> partout), <code>monte-carlo.js::perturbJumpers</code>.</p>
+</div>
+
+<!-- 15.13 -->
+<div class="prop" id="m15-13">
+<h4>15.13 Dériver ρ(z) des températures Open-Meteo</h4>
+<span class="limit">Limite.</span> ρ calculée ISA + <code>isaDelta</code>, les <code>temp</code> par niveau sont stockées mais inutilisées. Biais systématique 3–5 % ρ en atmosphère non-standard.
+<p><strong>Proposition.</strong> LUT densité dérivée de la méteo à chaque <code>fetchMeteo</code> :</p>
+<pre>function buildDensityLUTFromMeteo(windProfile, maxAlt) {
+  var sorted = windProfile.slice().sort((a,b) =&gt; a.z - b.z);
+  var lut = new Float64Array(maxAlt + 1);
+  for (var z = 0; z &lt;= maxAlt; z++) {
+    if (z &lt;= sorted[0].z || z &gt;= sorted[sorted.length-1].z) {
+      lut[z] = getAtmosphereRho(z, 0);   // repli ISA hors plage
+    } else {
+      var lo = 0, hi = sorted.length - 1;
+      while (hi - lo &gt; 1) { var m = (lo+hi)&gt;&gt;1; if (sorted[m].z &lt;= z) lo=m; else hi=m; }
+      var f = (z - sorted[lo].z) / (sorted[hi].z - sorted[lo].z);
+      var T = (sorted[lo].temp + 273.15) + f * (sorted[hi].temp - sorted[lo].temp);
+      var p = (sorted[lo].hpa + f * (sorted[hi].hpa - sorted[lo].hpa)) * 100;
+      lut[z] = p / (287.058 * T);
+    }
+  }
+  return lut;
+}</pre>
+<p>Cette LUT remplace la LUT ISA quand <code>meteoData.time</code> est l'heure courante. <code>isaDelta</code> UI devient accessoire (mode simulation manuelle sans méteo).</p>
+<p><strong>Fichiers.</strong> <code>physics-core.js</code> (nouveau path), <code>app.js::fetchMeteo</code>.</p>
+</div>
+
+<!-- 15.14 -->
+<div class="prop" id="m15-14">
+<h4>15.14 LUT vent eager précalculée (comme ρ)</h4>
+<p>Implémentation du §4.6 cible : deux <code>Float64Array</code> remplies eager à chaque <code>setWindProfile</code>, au lieu du cache lazy actuel.</p>
+<p><strong>Gain.</strong> O(1) pur, sans recherche binaire ni branche log-Prandtl dans le chemin chaud. Invalidation en 1 ms à chaque <code>setWindProfile</code>.</p>
+<p><strong>Fichiers.</strong> <code>physics-core.js::setWindProfile</code>, <code>enableWindCache</code>, <code>windAtZ</code>.</p>
+</div>
+
+<!-- 15.15 -->
+<div class="prop" id="m15-15">
+<h4>15.15 Ordre de sortie : crossover OX + mémoire d'élite</h4>
+<span class="limit">Limite.</span> AG ne fait que des swaps.
+<ul>
+  <li><strong>Crossover OX</strong> (Order Crossover) pour permutations : parent A donne un segment continu, parent B complète.</li>
+  <li><strong>Élite mémoire</strong> : garder 3 meilleurs ordres historiques comme seeds.</li>
+</ul>
+<p>Gain : +2 à 5 % sur score final pour sticks 8+. <strong>Fichiers.</strong> <code>optimizer-v2.js::_phaseStickOrder</code>.</p>
+</div>
+
+<!-- 15.16 -->
+<div class="prop" id="m15-16">
+<h4>15.16 UX : panneau "Hypothèses" dans l'UI</h4>
+<p>Panneau <code>ui-optimizer.js</code> affichant la table §14 condensée, lue depuis les constantes de <code>PhysicsCore</code>. Aide le pilote à calibrer ses attentes et à savoir ce qui n'est pas modélisé.</p>
+</div>
+
+<!-- 15.17 -->
+<div class="prop" id="m15-17">
+<h4>15.17 Paramétrage Monte-Carlo enrichi en UI</h4>
+<span class="limit">Limite.</span> Le panneau MC actuel n'expose que <code>mcN</code>, <code>mcWindSpd</code>, <code>mcWindDir</code>, <code>mcVc</code>, <code>mcVz</code>, <code>mcGlide</code>, <code>mcHouv</code>. Toutes les nouvelles sources d'incertitude introduites au §15.8 (cap tracking, dérive non-tracker, heading ouverture, climb-out, jitter) sont <strong>silencieuses</strong> côté UI.
+
+<p><strong>Proposition.</strong> Refondre le panneau Monte-Carlo en trois groupes hiérarchisés :</p>
+<pre>┌─ Monte-Carlo ───────────────────────────────────────┐
+│  Itérations N : [100] (50–1000, slider)             │
+│  Niveau de confiance ellipses : (•) 95 %  ( ) 99.7% │
+│  Profil : [Standard ▾] (Conservateur / Standard /   │
+│           Aggressif / Personnalisé)                 │
+├─ Vent ──────────────────────────────────────────────┤
+│  σ vitesse [3] kt   σ direction [15] °              │
+│  Corrélation verticale (φ AR(1)) [0.7]              │
+├─ Parachutiste ──────────────────────────────────────┤
+│  σ vc (terminale)    [10] %                         │
+│  σ vzVoile           [8 ] %                         │
+│  σ finesse           [10] %                         │
+│  σ hOuv              [50] m                         │
+│  σ skill             [0.1]                          │
+│  σ heading ouverture [30] °                         │
+│  σ axe tracking      [20] °                         │
+│  σ axe wingsuit      [10] °                         │
+│  σ dérive non-track  [3 ] m/s                       │
+│  Climb-out activé    [✔]                            │
+│  σ jitter sortie     [0.6] s                        │
+└─────────────────────────────────────────────────────┘
+[Réinitialiser défauts]   [Sauvegarder profil DZ]</pre>
+
+<h4>Profils prédéfinis</h4>
+<table>
+<thead><tr><th>Profil</th><th>N</th><th>σ vent</th><th>σ vc</th><th>σ skill</th><th>Quand</th></tr></thead>
+<tbody>
+<tr><td>Conservateur</td><td>200</td><td>5 kt / 25°</td><td>15 %</td><td>0.15</td><td>Météo douteuse, stick mixte, exigence sécurité élevée</td></tr>
+<tr><td>Standard</td><td>100</td><td>3 kt / 15°</td><td>10 %</td><td>0.10</td><td>Cas nominal</td></tr>
+<tr><td>Agressif</td><td>50</td><td>1.5 kt / 8°</td><td>5 %</td><td>0.05</td><td>Compétition contrôlée, stick homogène expérimenté</td></tr>
+</tbody>
+</table>
+
+<p><strong>Persistance.</strong> Profil personnalisé en <code>localStorage</code> sous clé <code>mcProfile_&lt;DZ&gt;</code> — chaque DZ peut avoir son réglage.</p>
+
+<p><strong>Implémentation.</strong> L'objet <code>sigma</code> est déjà passé à <code>MonteCarlo.run</code> ; ajouter les champs nouveaux et les lire dans <code>perturbJumpers</code> (cf. §15.8). Côté UI, panneau collapsible dans <code>ui-optimizer.js</code> à côté de "Priorités" (§15.10).</p>
+
+<p><strong>Fichiers.</strong> <code>ui-optimizer.js</code>, <code>monte-carlo.js::run</code> + <code>perturbJumpers</code>, <code>app.js</code> (<code>localStorage</code>).</p>
+</div>
+
+<!-- 15.18 -->
+<div class="prop" id="m15-18">
+<h4>15.18 Enveloppe d'incertitude le long de la trajectoire (1σ / 3σ)</h4>
+<span class="limit">Limite double.</span>
+<ol>
+  <li>Le Monte-Carlo actuel ne stocke que <strong>deux ellipses</strong> par parachutiste : ouverture et atterrissage. Tout ce qui se passe entre les deux est invisible.</li>
+  <li>La palette de couleurs de <code>drawEllipses</code> ne contient que <strong>10 entrées</strong> ; au-delà de 10 paras les couleurs se répètent et certains parachutistes deviennent visuellement masqués par superposition.</li>
+</ol>
+
+<h4>(a) Échantillonnage temporel des trajectoires en MC</h4>
+<p>Dans <code>MonteCarlo.run</code>, à chaque itération et chaque parachutiste, échantillonner la trajectoire à intervalle régulier (par ex. <code>dtSample = 5 s</code>) :</p>
+<pre>// Stockage : trajSamples[j][k] = liste des (E, N) sur les N itérations à l'instant t_k
+var trajSamples = [];
+for (var j = 0; j &lt; nPara; j++) trajSamples.push([]);
+
+res.timedTrajs.forEach(function (tt, j) {
+  var sp = tt.sp;
+  for (var k = 0; k &lt; N_TIME_BINS; k++) {
+    var t_k = k * dtSample;
+    var pt = PhysicsCore.interpSp(sp, tt.t0 + t_k);
+    if (!pt) continue;
+    if (!trajSamples[j][k]) trajSamples[j][k] = { E: [], N: [] };
+    trajSamples[j][k].E.push(pt.x);
+    trajSamples[j][k].N.push(pt.y);
+  }
+});</pre>
+
+<h4>(b) Calcul d'ellipse par bin temporel</h4>
+<p>En fin de boucle, ellipse 1σ et 3σ par bin via <code>computeEllipse(E, N, level)</code> :</p>
+<table>
+<thead><tr><th>Sigma</th><th>χ² (2 ddl)</th><th>Confidence</th></tr></thead>
+<tbody>
+<tr><td>1σ</td><td>2.279</td><td>68.27 %</td></tr>
+<tr><td>2σ</td><td>6.180</td><td>95.45 %</td></tr>
+<tr><td>3σ</td><td>11.83</td><td>99.73 %</td></tr>
+</tbody>
+</table>
+<p>Conversion : <code>χ² = −2·ln(1 − conf)</code>.</p>
+
+<h4>(c) Rendu — tubes d'incertitude</h4>
+<p>Plutôt que dessiner une ellipse à chaque bin (illisible), construire un <strong>polygone tube</strong> : enveloppe gauche-droite des ellipses successives, projetée sur la trajectoire moyenne :</p>
+<pre>function buildEnvelope(trajMean, ellipses, sigmaLevel) {
+  var leftSide = [], rightSide = [];
+  ellipses.forEach(function (ell, k) {
+    var rad = sigmaLevel * Math.max(ell.a, ell.b);
+    var heading = trajHeadingAt(trajMean, k);
+    var perpE = -Math.cos(heading), perpN = Math.sin(heading);
+    leftSide.push({ e: ell.cx + perpE * rad, n: ell.cy + perpN * rad });
+    rightSide.unshift({ e: ell.cx - perpE * rad, n: ell.cy - perpN * rad });
+  });
+  return leftSide.concat(rightSide);  // polygone fermé
+}</pre>
+<p>Deux tubes par parachutiste : 1σ rempli, 3σ contour seul ou rempli très transparent.</p>
+
+<h4>(d) Couleurs pour &gt; 10 parachutistes — rotation HSL</h4>
+<pre>function colorFor(idx, total) {
+  var hue = (idx * 360 / Math.max(total, 1)) % 360;
+  return 'hsl(' + hue + ', 70%, 50%)';
+}</pre>
+<p>Garantit <code>total</code> couleurs distinctes même pour 20 paras (l'œil distingue ~30 teintes en saturation 70 %).</p>
+
+<h4>(e) Toggles UI</h4>
+<ul>
+  <li>☐ Points de sortie</li>
+  <li>☐ Ellipse ouverture / atterrissage</li>
+  <li>☐ Enveloppe trajectoire 1σ</li>
+  <li>☐ Enveloppe trajectoire 3σ</li>
+</ul>
+<p>Combinable. Par défaut : ouverture/atterrissage ON, trajectoires OFF (lourd au-delà de 8 paras).</p>
+
+<div class="callout">
+<strong>Coûts.</strong> Mémoire : N=100 × N_paras=15 × N_bins=30 × 2 × 8 B ≈ 720 kB. Rendu : ~1 800 points Leaflet — imperceptible.
+<br><br>
+<strong>Effet pédagogique.</strong> Permet de voir <em>où</em> la trajectoire est incertaine. Détecte les cas où "la marge moyenne est OK mais le 3σ touche une NFZ" — situation NOGO masquée par le percentile.
+</div>
+
+<p><strong>Fichiers.</strong> <code>monte-carlo.js::run</code> (échantillonnage temporel + ellipses par bin), <code>monte-carlo.js::drawEnvelopes</code> (nouvelle fonction), <code>ui-optimizer.js</code> (toggles).</p>
+</div>
+
+<!-- 15.19 -->
+<div class="prop" id="m15-19">
+<h4>15.19 Stick type pour l'optimisation</h4>
+<span class="limit">Limite.</span> Le bouton "OPTIMISER" travaille sur le stick courant tel qu'il est dans <code>jumpersList</code>. Or :
+<ul>
+  <li>À l'init, <code>buildJumpers</code> peuple <code>jumpersList</code> avec <strong>4 ventral standard</strong> (<code>vr_mv</code>) si vide. C'est ce qui sera optimisé tant que l'utilisateur n'a pas explicitement composé son stick.</li>
+  <li>Pour explorer la configuration d'une DZ (axe optimal "type", vent type d'une saison), composer manuellement un stick représentatif est fastidieux.</li>
+  <li>Un <strong>stick type</strong> documenté par avion / discipline manque pour la planification.</li>
+</ul>
+
+<p><strong>Proposition.</strong> Bibliothèque de sticks types alignés sur la pratique réelle des DZ françaises :</p>
+<pre>const STICK_PRESETS = {
+  ecole_pc6: {
+    name: 'École — PC-6 (8 pax)',
+    description: '1 tandem + 2 élèves + 4 sport + 1 freefly',
+    composition: [
+      { type: 'tandem',    count: 1 },
+      { type: 'eleve_15',  count: 2 },
+      { type: 'belly_std', count: 4 },
+      { type: 'sit_fly',   count: 1 }
+    ]
+  },
+  boogie_pac: {
+    name: 'Boogie sport — PAC 750 (12 pax)',
+    description: '4 ventral + 4 freefly + 2 tracking + 2 wingsuit',
+    composition: [
+      { type: 'belly_std',    count: 4 },
+      { type: 'sit_fly',      count: 2 },
+      { type: 'head_down',    count: 2 },
+      { type: 'tracking',     count: 2 },
+      { type: 'wingsuit_ws2', count: 2 }
+    ]
+  },
+  comp_vr4: {
+    name: 'Compétition VR-4',
+    description: '4 ventral homogènes (équipe nationale)',
+    composition: [
+      { type: 'belly_std', count: 4, sepDist: 0 }
+    ]
+  },
+  ws_focus: {
+    name: 'Wingsuit dédié',
+    description: '6 wingsuits mixtes WS1/WS2/WS3',
+    composition: [
+      { type: 'wingsuit_ws1', count: 2 },
+      { type: 'wingsuit_ws2', count: 3 },
+      { type: 'wingsuit_ws3', count: 1 }
+    ]
+  },
+  tandem_max: {
+    name: 'Commercial tandem',
+    description: '6 tandems consécutifs',
+    composition: [{ type: 'tandem', count: 6 }]
+  },
+  caravan_full: {
+    name: 'Cessna Caravan complet (15 pax)',
+    description: '2 tandems + 3 élèves + 6 sport + 2 freefly + 2 tracking',
+    composition: [
+      { type: 'tandem',    count: 2 },
+      { type: 'eleve_15',  count: 2 },
+      { type: 'eleve_12',  count: 1 },
+      { type: 'belly_std', count: 6 },
+      { type: 'sit_fly',   count: 2 },
+      { type: 'tracking',  count: 2 }
+    ]
+  }
+};</pre>
+
+<h4>UI</h4>
+<pre>[Stick type ▾] [Charger]   [+ Ajouter para]   [Vider]</pre>
+<p>Sélection → "Charger" remplit <code>jumpersList</code> en dépliant la composition (un objet <code>PARA_TYPOLOGIES</code> cloné par <code>count</code> × <code>type</code>) puis appelle <code>buildJumpers()</code> + <code>recompute()</code>.</p>
+
+<h4>Bénéfice optimisation</h4>
+<p>Avec un stick type chargé, l'optimiseur résout un problème <strong>représentatif</strong> :</p>
+<ul>
+  <li>Tracking → axe contraint par leur direction d'évacuation.</li>
+  <li>Wingsuit → côté de vol cohérent (<code>wsSide</code> propagé).</li>
+  <li>Tandems → marges RDV plus fines (voile chargée, descente rapide).</li>
+  <li>Élèves → marges minimales et <code>dtSortie</code> plus longs.</li>
+</ul>
+<p>L'axe / offset / ordre trouvés sont <strong>directement applicables le jour J</strong> sans relancer l'optimisation pour le stick effectif (sauf composition très différente).</p>
+
+<div class="callout">
+<strong>Bonus — Statistiques de stick types.</strong> Pour planification, faire tourner l'optimiseur sur les 6 sticks types en parallèle (un worker chacun) avec une matrice météo (axe vent × vitesse vent), et présenter une carte de chaleur <code>stick × condition → score moyen</code>. Aide à choisir l'avion pour la rotation. Documentaire pour l'instant — hors scope immédiat.
+</div>
+
+<p><strong>Fichiers.</strong> <code>app.js</code> (constante <code>STICK_PRESETS</code> + chargement), builder UI dans <code>buildJumpers</code>, sélecteur HTML près de la zone parachutistes.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="m16">16. Annexes — API publique</h2>
+
+<h3>16.1 <code>PhysicsCore</code></h3>
+<pre>PhysicsCore.KT2MS, NM2M, DEG2RAD, RAD2DEG, G, RHO0
+
+// Atmosphere
+PhysicsCore.getDensity(altM, isa?)
+PhysicsCore.densityCorrection(altM, isa?)
+PhysicsCore.computeTAS(kiasMs, altM, isa?)
+
+// Wind
+PhysicsCore.setWindProfile(profile)
+PhysicsCore.enableWindCache(maxAlt)
+PhysicsCore.windAtZ(z)
+
+// Integrators
+PhysicsCore.rk4(s, dt, vT, isa, trackVec?)
+PhysicsCore.rk2(s, dt, vT, isa)
+
+// Phases
+PhysicsCore.simFreefall(s0, vT, targetZ, isa, t0, dt, trackVec?)
+PhysicsCore.simOpening(s0, vc, vzVoile, isa, elevM, dt)
+PhysicsCore.simCanopy(s0, vzV, glide, elevM, isa, steerFn, stopFn, opts)
+
+// Steering
+PhysicsCore.createSteerToPoint(targetE, targetN, vhMs, opts)
+PhysicsCore.createSteerTwoPhase(perpE, perpN, tgtE, tgtN, vhMs, tPilot, opts)
+
+// Full pass
+PhysicsCore.simJumper(jp, env, rvZone, steerFn, dtCfg, t0)
+PhysicsCore.simPass(cfg)
+
+// Scoring
+PhysicsCore.objectiveScore(result, windFromDeg, weights?)   // ← weights (§15.10)
+PhysicsCore.classicExitOrder(jumpers)
+PhysicsCore.classifyJumper(j)
+
+// Helpers
+PhysicsCore.interpSp(sp, t)
+PhysicsCore.computePairMinDists(timedTrajs)</pre>
+
+<h3>16.2 <code>MonteCarlo</code></h3>
+<pre>MonteCarlo.run(baseCfg, sigma, N, progressFn)
+MonteCarlo.drawEllipses(map, mcResult, dz)
+MonteCarlo.clearEllipses(map)
+MonteCarlo.computeEllipse(xs, ys, confidence?)
+MonteCarlo.perturbWind(profile, sigma)
+MonteCarlo.perturbJumpers(jumpers, sigma)
+MonteCarlo.gaussRandom()</pre>
+
+<h3>16.3 <code>OptimizerV2</code></h3>
+<pre>OptimizerV2.run(cfg, opts)    // async ; opts.onProgress, opts.onComplete, opts.weights
+OptimizerV2.isRunning()
+OptimizerV2.getResults()</pre>
+
+<h3>16.4 Checklist pour modifier la physique</h3>
+<ul class="checklist">
+  <li>Modifier <code>physics-core.js</code> (source canonique).</li>
+  <li>Modifier <code>simulation.js</code> (jumeau legacy) — ou supprimer si §15.1 est fait.</li>
+  <li>Mettre à jour <code>SCIENCE.md</code> (équations) et <code>METHODOLOGIE.md</code> (hypothèses).</li>
+  <li>Nouvelle entrée → <code>cfg</code> de <code>simPass</code> + message worker (§2.5).</li>
+  <li>Changement de typologie → <code>app.js::PARA_TYPOLOGIES</code>.</li>
+  <li>Tester LFDJ Pamiers avant/après.</li>
+</ul>
+
+<footer>
+Document compilé le 2026-04-24. Maintenu en parallèle de <code>SCIENCE.md</code>, <code>AERODYNAMICS_RESEARCH.md</code>, <code>METHODES_LARGAGE.md</code>, <code>CLAUDE.md</code>. Wingsuit aligné sur la <strong>DT FFP 49 modifiée le 15 avril 2025</strong>.
+</footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+## Secrets — NEVER commit
+credentials.json
+.env
+.env.*
+
+## Tooling
+node_modules/
+.claude/
+.DS_Store
+*.log
+
+## Local data dumps / archives
+*.duckdb
+*.duckdb.*
+*.csv.bak.*
+data/
+databases/
+fgula_*
+
+## Generated / scratch
+/tmp/
+*.tmp
+
+## Editor / IDE
+.vscode/
+.idea/
+*.swp
